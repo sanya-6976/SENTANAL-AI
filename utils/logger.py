@@ -2,13 +2,7 @@
 Sentinel AI — Structured Logging
 
 Provides a pre-configured Loguru logger for the entire data module.
-Logs to both console (colored) and rotating file.
-
-Usage:
-    from utils.logger import logger
-
-    logger.info("Processing started")
-    logger.error("Failed to load data", exc_info=True)
+Logs to both console (colored) and dedicated rotating files (etl.log, error.log).
 """
 
 from __future__ import annotations
@@ -26,7 +20,8 @@ def setup_logger() -> None:
     Configure the application logger.
 
     - Console: colored, INFO+ level in production, DEBUG in development.
-    - File: rotating log at logs/sentinel_data.log, 10 MB max, 30-day retention.
+    - File (etl.log): Detailed execution trace, 10 MB max, 30-day retention.
+    - File (error.log): Only ERROR and CRITICAL logs.
     """
     settings = get_settings()
 
@@ -46,13 +41,25 @@ def setup_logger() -> None:
         colorize=True,
     )
 
-    # File handler
+    # Log directories
     log_dir = PROJECT_ROOT / "logs"
     log_dir.mkdir(exist_ok=True)
 
+    # General ETL Log
     _logger.add(
-        log_dir / "sentinel_data.log",
+        log_dir / "etl.log",
         level="DEBUG",
+        format="{time:YYYY-MM-DD HH:mm:ss} | {level: <8} | {name}:{function}:{line} | {message}",
+        rotation="10 MB",
+        retention="30 days",
+        compression="gz",
+        enqueue=True,
+    )
+
+    # Dedicated Error Log
+    _logger.add(
+        log_dir / "error.log",
+        level="ERROR",
         format="{time:YYYY-MM-DD HH:mm:ss} | {level: <8} | {name}:{function}:{line} | {message}",
         rotation="10 MB",
         retention="30 days",

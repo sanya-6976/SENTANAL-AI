@@ -1,33 +1,35 @@
 # ============================================================
 # Sentinel AI — Data & Intelligence Module
-# Production Dependencies (pinned)
+# Production Dependencies (compatible with Python 3.13)
 # ============================================================
 
 # Data Engineering
-pandas==2.2.3
-numpy==1.26.4
-openpyxl==3.1.5
+pandas
+numpy
+openpyxl
 
 # Database
-sqlalchemy==2.0.36
-psycopg2-binary==2.9.10
-alembic==1.13.3
+sqlalchemy
+psycopg2-binary
+alembic
 
 # Neo4j
-neo4j==5.26.0
+neo4j
 
 # GIS
-geopandas==0.14.4
-shapely==2.0.6
+geopandas
+shapely
 
 # Visualization
-plotly==5.24.1
+plotly
 
 # Configuration
-python-dotenv==1.0.1
-pydantic==2.10.3
-pydantic-settings==2.7.0
+python-dotenv
+pydantic
+pydantic-settings
 
 # Utilities
-loguru==0.7.3
-tqdm==4.67.1
+loguru
+tqdm
+pyyaml
+psutil

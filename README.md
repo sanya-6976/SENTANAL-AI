@@ -35,5 +35,14 @@ This is the `data` branch. All data engineering work happens here before being m
 ## Sprints
 
 - **Sprint 1**: Data Foundation & Architecture Blueprint (Completed)
-- **Sprint 2**: Project Scaffolding & Synthetic Data (In Progress)
-- **Sprint 3-10**: See Sprint 1 documentation for full roadmap.
+- **Sprint 2**: Project Scaffolding & Synthetic Data (Completed)
+- **Sprint 3**: Production ETL Pipeline and Data Quality Framework (Completed)
+
+## Documentation
+
+- `README.md` — Project overview and quickstart
+- `CHANGELOG.md` — Sprint deliverables and repository updates
+- `DEMO.md` — Hackathon demonstration guide
+- `docs/sprint1_design_document.md` — Sprint 1 architecture and data foundation
+- `docs/sprint2_design_document.md` — Sprint 2 scaffolding and synthetic dataset generation
+- `docs/sprint3_design_document.md` — Sprint 3 ETL pipeline, validation, and reporting
