@@ -1,25 +1,14 @@
-# Hash & verify passwords
-from passlib.context import CryptContext
+# Password hashing and verification using pwdlib.
+# hash_password: hashes a plain text password using Argon2id.
+# verify_password: verifies a plain text password against a stored hash.
+from pwdlib import PasswordHash
 
-# Configure password hashing context
-pwd_context = CryptContext(
-    schemes=["bcrypt"],
-    deprecated="auto"
-)
+password_hasher = PasswordHash.recommended()
 
 
 def hash_password(password: str) -> str:
-    """
-    Hash a plain text password.
-    """
-    return pwd_context.hash(password)
+    return password_hasher.hash(password)
 
 
-def verify_password(plain_password: str, hashed_password: str) -> bool:
-    """
-    Verify a plain text password against its hash.
-    """
-    return pwd_context.verify(
-        plain_password,
-        hashed_password
-    )
+def verify_password(password: str, hashed_password: str) -> bool:
+    return password_hasher.verify(password, hashed_password)
