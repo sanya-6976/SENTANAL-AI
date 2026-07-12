@@ -40,6 +40,11 @@ class Settings(BaseSettings):
     postgres_db: str = "sentinel_ai"
     postgres_user: str = "sentinel_user"
     postgres_password: str = "changeme"
+    postgres_pool_size: int = 10
+    postgres_max_overflow: int = 20
+    postgres_pool_recycle: int = 3600
+    database_connection_retries: int = 3
+    database_retry_delay_seconds: float = 0.5
 
     # ── Neo4j ──
     neo4j_uri: str = "bolt://localhost:7687"
@@ -63,12 +68,22 @@ class Settings(BaseSettings):
         )
 
     @property
+    def database_url(self) -> str:
+        """Alias used by the database manager."""
+        return self.postgres_url
+
+    @property
     def postgres_async_url(self) -> str:
         """Async PostgreSQL connection URL (asyncpg)."""
         return (
             f"postgresql+asyncpg://{self.postgres_user}:{self.postgres_password}"
             f"@{self.postgres_host}:{self.postgres_port}/{self.postgres_db}"
         )
+
+    @property
+    def database_async_url(self) -> str:
+        """Alias used by async database integrations."""
+        return self.postgres_async_url
 
     @property
     def is_development(self) -> bool:

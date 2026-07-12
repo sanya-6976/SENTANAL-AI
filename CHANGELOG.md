@@ -4,8 +4,19 @@ All notable changes to this repository are documented in this file.
 
 ## [Unreleased]
 
-- Sprint 1, Sprint 2, and Sprint 3 work documented and synchronized.
+- Sprint 1 through Sprint 4 work documented and synchronized.
 - ETL pipeline completed with validation, reporting, logging, checkpointing, and DAG-aware recovery.
+- Added Sprint 4 data platform services: connection management, repository layer, query services, bulk loading, performance reporting, and integration interfaces.
+
+## Sprint 4 - Data Platform Integration & Database Services
+
+- Added a reusable PostgreSQL/SQLite connection manager with retry logic and session helpers.
+- Centralized configuration for pool sizing, retry behavior, and database URLs.
+- Added repository abstractions for crime, district, officer, evidence, and analytics access.
+- Added query services for district summaries, monthly trends, officer workload, search, GIS exports, Neo4j exports, and AI feature inputs.
+- Added bulk loading utilities with chunked insert support and PostgreSQL COPY optimization.
+- Added database benchmark reporting utilities and platform integration wrappers.
+- Added SQLite-backed tests covering the database connection, repositories, queries, and bulk loading.
 
 ## Sprint 3 - Production ETL Pipeline
 

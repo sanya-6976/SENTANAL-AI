@@ -37,6 +37,7 @@ This is the `data` branch. All data engineering work happens here before being m
 - **Sprint 1**: Data Foundation & Architecture Blueprint (Completed)
 - **Sprint 2**: Project Scaffolding & Synthetic Data (Completed)
 - **Sprint 3**: Production ETL Pipeline and Data Quality Framework (Completed)
+- **Sprint 4**: Data Platform Integration & Database Services (Completed)
 
 ## Documentation
 
@@ -46,3 +47,4 @@ This is the `data` branch. All data engineering work happens here before being m
 - `docs/sprint1_design_document.md` — Sprint 1 architecture and data foundation
 - `docs/sprint2_design_document.md` — Sprint 2 scaffolding and synthetic dataset generation
 - `docs/sprint3_design_document.md` — Sprint 3 ETL pipeline, validation, and reporting
+- `docs/sprint4_design_document.md` — Sprint 4 database platform integration and services
