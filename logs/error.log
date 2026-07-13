@@ -1,0 +1,3 @@
+2026-07-14 00:00:25 | ERROR    | etl.validate:validate_dataset:63 | [test_dup] CRITICAL: Found 2 duplicate rows on PK 'id'.
+2026-07-14 00:09:15 | ERROR    | etl.validate:validate_dataset:63 | [test_dup] CRITICAL: Found 2 duplicate rows on PK 'id'.
+2026-07-14 00:13:27 | ERROR    | etl.validate:validate_dataset:63 | [test_dup] CRITICAL: Found 2 duplicate rows on PK 'id'.

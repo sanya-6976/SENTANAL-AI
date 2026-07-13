@@ -8,7 +8,7 @@ from datetime import datetime, timedelta, timezone
 import jwt
 from dotenv import load_dotenv
 
-from backend.auth.models import TokenPayload
+from models import TokenPayload
 from backend.auth.exceptions import InvalidTokenError, ExpiredTokenError
 
 load_dotenv()
@@ -38,7 +38,7 @@ def verify_access_token(token: str) -> TokenPayload:
     try:
         decoded_data = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         if "sub" in decoded_data:
-            decoded_data["sub"] = int(decoded_data["sub"])
+            decoded_data["sub"] = str(decoded_data["sub"])
         return TokenPayload(**decoded_data)
     except jwt.ExpiredSignatureError as e:
         raise ExpiredTokenError("Token has expired") from e
@@ -52,7 +52,7 @@ def _decode_token(token: str) -> TokenPayload:
     try:
         decoded_data = jwt.decode(token, options={"verify_signature": False})
         if "sub" in decoded_data:
-            decoded_data["sub"] = int(decoded_data["sub"])
+            decoded_data["sub"] = str(decoded_data["sub"])
         return TokenPayload(**decoded_data)
     except Exception as e:
         raise InvalidTokenError(f"Failed to decode unverified token: {str(e)}") from e

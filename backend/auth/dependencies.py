@@ -10,24 +10,45 @@
 
 from fastapi import Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from sqlalchemy.orm import Session
 
+from database.connection import get_db
+from database.models import User
+from database.repositories import UserRepository
 from backend.auth.jwt_handler import verify_access_token
 from backend.auth.models import CurrentUser, Roles
-from backend.auth.exceptions import InactiveUserError, InsufficientPermissionError
+from backend.auth.exceptions import InactiveUserError, InsufficientPermissionError, InvalidTokenError
+from backend.auth.role_mapper import map_db_role_to_auth_role
 
 security = HTTPBearer()
 
 
-def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)) -> CurrentUser:
+def map_db_user_to_current_user(db_user: User) -> CurrentUser:
+    db_role_name = db_user.role.role_name if db_user.role else None
+    auth_role = map_db_role_to_auth_role(db_role_name)
+
+    return CurrentUser(
+        id=db_user.user_id,
+        role=auth_role,
+        district_id=db_user.district_id,
+        station_id=db_user.station_id,
+        is_active=db_user.is_active
+    )
+
+
+def get_current_user(
+    credentials: HTTPAuthorizationCredentials = Depends(security),
+    db: Session = Depends(get_db)
+) -> CurrentUser:
     token = credentials.credentials
     payload = verify_access_token(token)
-    return CurrentUser(
-        id=payload.sub,
-        role=Roles(payload.role_id),
-        district_id=payload.district_id,
-        station_id=payload.station_id,
-        is_active=True
-    )
+    
+    user_repo = UserRepository(db)
+    db_user = user_repo.get(User, str(payload.sub))
+    if not db_user:
+        raise InvalidTokenError("User not found")
+        
+    return map_db_user_to_current_user(db_user)
 
 
 def get_current_active_user(user: CurrentUser = Depends(get_current_user)) -> CurrentUser:
