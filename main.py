@@ -1,5 +1,4 @@
-from services.gemini_service import gemini_service
-
+from app.services.gemini_service import gemini_service
 
 def main():
     print("=" * 50)

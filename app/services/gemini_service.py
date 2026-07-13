@@ -1,6 +1,6 @@
 from google import genai
 
-from core.config import settings
+from app.core.config import settings
 
 
 class GeminiService:
