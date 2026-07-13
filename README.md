@@ -12,6 +12,7 @@ This is the `data` branch. All data engineering work happens here before being m
 - `analytics/` — KPI computation, temporal trends, and district-level statistics
 - `gis/` — Geospatial processing, heatmaps, and clustering
 - `neo4j/` — Knowledge graph schema, builder, and queries
+- `delivery/` — Sprint 5 data delivery layer and export orchestration
 - `config/` — Environment variables, database connections, and centralized constants
 - `utils/` — Logging, data validation, and shared helpers
 - `docs/` — Sprint design documents, data dictionary, and schemas
@@ -38,6 +39,7 @@ This is the `data` branch. All data engineering work happens here before being m
 - **Sprint 2**: Project Scaffolding & Synthetic Data (Completed)
 - **Sprint 3**: Production ETL Pipeline and Data Quality Framework (Completed)
 - **Sprint 4**: Data Platform Integration & Database Services (Completed)
+- **Sprint 5**: Final Data Delivery Layer and reusable export bundles (Completed)
 
 ## Documentation
 
@@ -48,3 +50,4 @@ This is the `data` branch. All data engineering work happens here before being m
 - `docs/sprint2_design_document.md` — Sprint 2 scaffolding and synthetic dataset generation
 - `docs/sprint3_design_document.md` — Sprint 3 ETL pipeline, validation, and reporting
 - `docs/sprint4_design_document.md` — Sprint 4 database platform integration and services
+- `docs/sprint5_design_document.md` — Sprint 5 delivery layer, exports, and report generation
