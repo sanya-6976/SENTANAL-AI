@@ -295,3 +295,24 @@ ai/
 - Multi-language Support
 - AI Investigation Timeline
 - Explainable AI Dashboard
+
+# Sprint A1 - OCR Pipeline ✅
+
+## Goal
+Enable Sentinel AI to extract text from images and PDFs.
+
+## Features Completed
+- ✅ OCR Engine (Tesseract)
+- ✅ Image Text Extraction
+- ✅ Digital PDF Text Extraction
+- ✅ Basic Scanned PDF Handling
+- ✅ Unified Document Loading
+
+## Technologies Used
+- Tesseract OCR
+- pytesseract
+- Pillow
+- PyMuPDF
+
+## Outcome
+Sentinel AI can successfully extract text from images and PDF documents, creating the foundation for AI-based information extraction.
