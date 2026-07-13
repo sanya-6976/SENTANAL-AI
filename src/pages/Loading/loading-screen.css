@@ -1,0 +1,135 @@
+.loading-screen {
+  position: relative;
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow: hidden;
+  background-color: #090B10;
+  background-image: radial-gradient(circle at center, #131A26 0%, #090B10 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+}
+
+/* Subtle police control room HUD lines */
+.loading-screen__overlay {
+  position: absolute;
+  inset: 0;
+  background: 
+    linear-gradient(rgba(37, 99, 235, 0.008) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(37, 99, 235, 0.008) 1px, transparent 1px);
+  background-size: 32px 32px;
+  background-position: center;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.loading-screen__inner {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 440px;
+  width: 100%;
+}
+
+.loading-screen__logo {
+  height: 80px;
+  width: auto;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background-color: #11161F;
+  padding: 2px;
+  margin-bottom: 24px;
+}
+
+.loading-screen__title {
+  font-size: 2.25rem;
+  font-weight: 800;
+  letter-spacing: 0.25em;
+  color: #F8FAFC;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+
+.loading-screen__subtitle {
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  color: #94A3B8;
+  text-transform: uppercase;
+  margin-bottom: 48px;
+}
+
+/* Premium horizontal progress bar styling */
+.loading-screen__progress-container {
+  width: 100%;
+  height: 4px;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 9999px;
+  overflow: hidden;
+  margin-bottom: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.02);
+}
+
+.loading-screen__progress-bar {
+  height: 100%;
+  background-color: #2563EB;
+  border-radius: 9999px;
+  transition: width 100ms linear;
+}
+
+/* Operation message under the progress bar */
+.loading-screen__message {
+  font-family: monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  color: #94A3B8;
+  min-height: 18px;
+  opacity: 0.85;
+}
+
+/* Connected Network Nodes Background */
+.loading-screen__networks {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 2;
+  opacity: 0.14;
+}
+
+.network-node {
+  animation: pulse-node 4s infinite ease-in-out;
+}
+
+.network-edge {
+  animation: pulse-edge 5s infinite ease-in-out;
+}
+
+@keyframes pulse-node {
+  0%, 100% {
+    opacity: 0.3;
+    r: 3px;
+  }
+  50% {
+    opacity: 0.9;
+    r: 4.5px;
+  }
+}
+
+@keyframes pulse-edge {
+  0%, 100% {
+    opacity: 0.15;
+    stroke-dashoffset: 0;
+  }
+  50% {
+    opacity: 0.75;
+    stroke-dashoffset: 12;
+  }
+}
+
