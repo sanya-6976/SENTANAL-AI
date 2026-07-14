@@ -47,3 +47,74 @@
 2026-07-14 00:13:27 | ERROR    | etl.validate:validate_dataset:63 | [test_dup] CRITICAL: Found 2 duplicate rows on PK 'id'.
 2026-07-14 00:13:27 | DEBUG    | etl.validate:_save_bad_records:100 | Saved 2 bad records to C:\Users\aryan\SENTANAL-AI\datasets\exports\reports\test_dup_duplicates.csv
 2026-07-14 00:13:27 | INFO     | etl.validate:validate_dataset:88 | [test_dup] Validation Complete. Valid: 1, Failed: 0, Duplicates: 2. Quality Score: 73.33%
+2026-07-14 00:18:43 | WARNING  | database.connection:_create_engine:74 | PostgreSQL unavailable (OperationalError). Falling back to SQLite at C:\Users\aryan\SENTANAL-AI\datasets\sentinel_ai.db.
+2026-07-14 00:18:43 | INFO     | database.connection:_build_sqlite_engine:95 | Using SQLite fallback database at C:\Users\aryan\SENTANAL-AI\datasets\sentinel_ai.db
+2026-07-14 00:19:01 | WARNING  | database.connection:_create_engine:74 | PostgreSQL unavailable (OperationalError). Falling back to SQLite at C:\Users\aryan\SENTANAL-AI\datasets\sentinel_ai.db.
+2026-07-14 00:19:01 | INFO     | database.connection:_build_sqlite_engine:95 | Using SQLite fallback database at C:\Users\aryan\SENTANAL-AI\datasets\sentinel_ai.db
+2026-07-14 00:19:17 | WARNING  | database.connection:_create_engine:74 | PostgreSQL unavailable (OperationalError). Falling back to SQLite at C:\Users\aryan\SENTANAL-AI\datasets\sentinel_ai.db.
+2026-07-14 00:19:17 | INFO     | database.connection:_build_sqlite_engine:95 | Using SQLite fallback database at C:\Users\aryan\SENTANAL-AI\datasets\sentinel_ai.db
+2026-07-14 00:19:21 | INFO     | database.bulk_loader:load_dataframe:68 | [districts] Loaded 2 rows in 2 batches.
+2026-07-14 00:19:21 | WARNING  | database.connection:retry_operation:114 | Database operation failed on attempt 1. Retrying in 0.00s.
+2026-07-14 00:19:21 | WARNING  | database.connection:retry_operation:114 | Database operation failed on attempt 2. Retrying in 0.00s.
+2026-07-14 00:19:21 | INFO     | etl.validate:validate_dataset:55 | Validating test_perfect (3 rows)...
+2026-07-14 00:19:21 | INFO     | etl.validate:validate_dataset:88 | [test_perfect] Validation Complete. Valid: 3, Failed: 0, Duplicates: 0. Quality Score: 100.0%
+2026-07-14 00:19:21 | INFO     | etl.validate:validate_dataset:55 | Validating test_dup (3 rows)...
+2026-07-14 00:19:21 | ERROR    | etl.validate:validate_dataset:63 | [test_dup] CRITICAL: Found 2 duplicate rows on PK 'id'.
+2026-07-14 00:19:21 | DEBUG    | etl.validate:_save_bad_records:100 | Saved 2 bad records to C:\Users\aryan\SENTANAL-AI\datasets\exports\reports\test_dup_duplicates.csv
+2026-07-14 00:19:21 | INFO     | etl.validate:validate_dataset:88 | [test_dup] Validation Complete. Valid: 1, Failed: 0, Duplicates: 2. Quality Score: 73.33%
+2026-07-14 00:22:37 | WARNING  | database.connection:_create_engine:74 | PostgreSQL unavailable (OperationalError). Falling back to SQLite at C:\Users\aryan\SENTANAL-AI\datasets\sentinel_ai.db.
+2026-07-14 00:22:37 | INFO     | database.connection:_build_sqlite_engine:95 | Using SQLite fallback database at C:\Users\aryan\SENTANAL-AI\datasets\sentinel_ai.db
+2026-07-14 00:26:17 | WARNING  | database.connection:_create_engine:74 | PostgreSQL unavailable (OperationalError). Falling back to SQLite at C:\Users\aryan\SENTANAL-AI\datasets\sentinel_ai.db.
+2026-07-14 00:26:17 | INFO     | database.connection:_build_sqlite_engine:95 | Using SQLite fallback database at C:\Users\aryan\SENTANAL-AI\datasets\sentinel_ai.db
+2026-07-14 00:27:15 | WARNING  | database.connection:_create_engine:74 | PostgreSQL unavailable (OperationalError). Falling back to SQLite at C:\Users\aryan\SENTANAL-AI\datasets\sentinel_ai.db.
+2026-07-14 00:27:15 | INFO     | database.connection:_build_sqlite_engine:95 | Using SQLite fallback database at C:\Users\aryan\SENTANAL-AI\datasets\sentinel_ai.db
+2026-07-14 11:58:45 | WARNING  | database.connection:_create_engine:74 | PostgreSQL unavailable (OperationalError). Falling back to SQLite at C:\Users\aryan\SENTANAL-AI\datasets\sentinel_ai.db.
+2026-07-14 11:58:45 | INFO     | database.connection:_build_sqlite_engine:95 | Using SQLite fallback database at C:\Users\aryan\SENTANAL-AI\datasets\sentinel_ai.db
+2026-07-14 11:58:57 | WARNING  | database.connection:_create_engine:74 | PostgreSQL unavailable (OperationalError). Falling back to SQLite at C:\Users\aryan\SENTANAL-AI\datasets\sentinel_ai.db.
+2026-07-14 11:58:57 | INFO     | database.connection:_build_sqlite_engine:95 | Using SQLite fallback database at C:\Users\aryan\SENTANAL-AI\datasets\sentinel_ai.db
+2026-07-14 11:59:07 | WARNING  | database.connection:_create_engine:74 | PostgreSQL unavailable (OperationalError). Falling back to SQLite at C:\Users\aryan\SENTANAL-AI\datasets\sentinel_ai.db.
+2026-07-14 11:59:07 | INFO     | database.connection:_build_sqlite_engine:95 | Using SQLite fallback database at C:\Users\aryan\SENTANAL-AI\datasets\sentinel_ai.db
+2026-07-14 11:59:57 | WARNING  | database.connection:_create_engine:74 | PostgreSQL unavailable (OperationalError). Falling back to SQLite at C:\Users\aryan\SENTANAL-AI\datasets\sentinel_ai.db.
+2026-07-14 11:59:57 | INFO     | database.connection:_build_sqlite_engine:95 | Using SQLite fallback database at C:\Users\aryan\SENTANAL-AI\datasets\sentinel_ai.db
+2026-07-14 11:59:57 | INFO     | database.bulk_loader:load_dataframe:68 | [districts] Loaded 2 rows in 2 batches.
+2026-07-14 11:59:57 | WARNING  | database.connection:retry_operation:114 | Database operation failed on attempt 1. Retrying in 0.00s.
+2026-07-14 11:59:57 | WARNING  | database.connection:retry_operation:114 | Database operation failed on attempt 2. Retrying in 0.00s.
+2026-07-14 12:09:17 | WARNING  | database.connection:_create_engine:74 | PostgreSQL unavailable (OperationalError). Falling back to SQLite at C:\Users\aryan\SENTANAL-AI\datasets\sentinel_ai.db.
+2026-07-14 12:09:17 | INFO     | database.connection:_build_sqlite_engine:95 | Using SQLite fallback database at C:\Users\aryan\SENTANAL-AI\datasets\sentinel_ai.db
+2026-07-14 12:10:57 | WARNING  | database.connection:_create_engine:74 | PostgreSQL unavailable (OperationalError). Falling back to SQLite at C:\Users\aryan\SENTANAL-AI\datasets\sentinel_ai.db.
+2026-07-14 12:10:57 | INFO     | database.connection:_build_sqlite_engine:95 | Using SQLite fallback database at C:\Users\aryan\SENTANAL-AI\datasets\sentinel_ai.db
+2026-07-14 12:11:33 | WARNING  | database.connection:_create_engine:74 | PostgreSQL unavailable (OperationalError). Falling back to SQLite at C:\Users\aryan\SENTANAL-AI\datasets\sentinel_ai.db.
+2026-07-14 12:11:33 | INFO     | database.connection:_build_sqlite_engine:95 | Using SQLite fallback database at C:\Users\aryan\SENTANAL-AI\datasets\sentinel_ai.db
+2026-07-14 12:11:43 | INFO     | database.bulk_loader:load_dataframe:68 | [districts] Loaded 2 rows in 2 batches.
+2026-07-14 12:11:43 | WARNING  | database.connection:retry_operation:114 | Database operation failed on attempt 1. Retrying in 0.00s.
+2026-07-14 12:11:43 | WARNING  | database.connection:retry_operation:114 | Database operation failed on attempt 2. Retrying in 0.00s.
+2026-07-14 12:11:43 | INFO     | etl.validate:validate_dataset:55 | Validating test_perfect (3 rows)...
+2026-07-14 12:11:43 | INFO     | etl.validate:validate_dataset:88 | [test_perfect] Validation Complete. Valid: 3, Failed: 0, Duplicates: 0. Quality Score: 100.0%
+2026-07-14 12:11:43 | INFO     | etl.validate:validate_dataset:55 | Validating test_dup (3 rows)...
+2026-07-14 12:11:43 | ERROR    | etl.validate:validate_dataset:63 | [test_dup] CRITICAL: Found 2 duplicate rows on PK 'id'.
+2026-07-14 12:11:43 | DEBUG    | etl.validate:_save_bad_records:100 | Saved 2 bad records to C:\Users\aryan\SENTANAL-AI\datasets\exports\reports\test_dup_duplicates.csv
+2026-07-14 12:11:43 | INFO     | etl.validate:validate_dataset:88 | [test_dup] Validation Complete. Valid: 1, Failed: 0, Duplicates: 2. Quality Score: 73.33%
+2026-07-14 12:12:26 | WARNING  | database.connection:_create_engine:74 | PostgreSQL unavailable (OperationalError). Falling back to SQLite at C:\Users\aryan\SENTANAL-AI\datasets\sentinel_ai.db.
+2026-07-14 12:12:26 | INFO     | database.connection:_build_sqlite_engine:95 | Using SQLite fallback database at C:\Users\aryan\SENTANAL-AI\datasets\sentinel_ai.db
+2026-07-14 12:12:34 | INFO     | database.bulk_loader:load_dataframe:68 | [districts] Loaded 2 rows in 2 batches.
+2026-07-14 12:12:34 | WARNING  | database.connection:retry_operation:114 | Database operation failed on attempt 1. Retrying in 0.00s.
+2026-07-14 12:12:34 | WARNING  | database.connection:retry_operation:114 | Database operation failed on attempt 2. Retrying in 0.00s.
+2026-07-14 12:12:34 | INFO     | etl.validate:validate_dataset:55 | Validating test_perfect (3 rows)...
+2026-07-14 12:12:34 | INFO     | etl.validate:validate_dataset:88 | [test_perfect] Validation Complete. Valid: 3, Failed: 0, Duplicates: 0. Quality Score: 100.0%
+2026-07-14 12:12:34 | INFO     | etl.validate:validate_dataset:55 | Validating test_dup (3 rows)...
+2026-07-14 12:12:34 | ERROR    | etl.validate:validate_dataset:63 | [test_dup] CRITICAL: Found 2 duplicate rows on PK 'id'.
+2026-07-14 12:12:34 | DEBUG    | etl.validate:_save_bad_records:100 | Saved 2 bad records to C:\Users\aryan\SENTANAL-AI\datasets\exports\reports\test_dup_duplicates.csv
+2026-07-14 12:12:34 | INFO     | etl.validate:validate_dataset:88 | [test_dup] Validation Complete. Valid: 1, Failed: 0, Duplicates: 2. Quality Score: 73.33%
+2026-07-14 12:13:11 | WARNING  | database.connection:_create_engine:74 | PostgreSQL unavailable (OperationalError). Falling back to SQLite at C:\Users\aryan\SENTANAL-AI\datasets\sentinel_ai.db.
+2026-07-14 12:13:11 | INFO     | database.connection:_build_sqlite_engine:95 | Using SQLite fallback database at C:\Users\aryan\SENTANAL-AI\datasets\sentinel_ai.db
+2026-07-14 12:13:18 | INFO     | database.bulk_loader:load_dataframe:68 | [districts] Loaded 2 rows in 2 batches.
+2026-07-14 12:13:18 | WARNING  | database.connection:retry_operation:114 | Database operation failed on attempt 1. Retrying in 0.00s.
+2026-07-14 12:13:18 | WARNING  | database.connection:retry_operation:114 | Database operation failed on attempt 2. Retrying in 0.00s.
+2026-07-14 12:13:19 | INFO     | etl.validate:validate_dataset:55 | Validating test_perfect (3 rows)...
+2026-07-14 12:13:19 | INFO     | etl.validate:validate_dataset:88 | [test_perfect] Validation Complete. Valid: 3, Failed: 0, Duplicates: 0. Quality Score: 100.0%
+2026-07-14 12:13:19 | INFO     | etl.validate:validate_dataset:55 | Validating test_dup (3 rows)...
+2026-07-14 12:13:19 | ERROR    | etl.validate:validate_dataset:63 | [test_dup] CRITICAL: Found 2 duplicate rows on PK 'id'.
+2026-07-14 12:13:19 | DEBUG    | etl.validate:_save_bad_records:100 | Saved 2 bad records to C:\Users\aryan\SENTANAL-AI\datasets\exports\reports\test_dup_duplicates.csv
+2026-07-14 12:13:19 | INFO     | etl.validate:validate_dataset:88 | [test_dup] Validation Complete. Valid: 1, Failed: 0, Duplicates: 2. Quality Score: 73.33%
+2026-07-14 12:23:32 | WARNING  | database.connection:_create_engine:74 | PostgreSQL unavailable (OperationalError). Falling back to SQLite at datasets\sentinel_ai.db.
+2026-07-14 12:23:32 | INFO     | database.connection:_build_sqlite_engine:95 | Using SQLite fallback database at datasets\sentinel_ai.db

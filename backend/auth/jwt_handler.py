@@ -8,7 +8,9 @@ from datetime import datetime, timedelta, timezone
 import jwt
 from dotenv import load_dotenv
 
-from models import TokenPayload
+# pyrefly: ignore [missing-import]
+from backend.auth.models import TokenPayload
+# pyrefly: ignore [missing-import]
 from backend.auth.exceptions import InvalidTokenError, ExpiredTokenError
 
 load_dotenv()

@@ -29,8 +29,10 @@ os.environ["ACCESS_TOKEN_EXPIRE_MINUTES"] = "30"
 # Imports
 # ------------------------------------------------------------------
 
+# pyrefly: ignore [missing-import]
 from backend.auth.password import hash_password, verify_password
 
+# pyrefly: ignore [missing-import]
 from backend.auth.models import (
     Roles,
     Permission,
@@ -38,11 +40,13 @@ from backend.auth.models import (
     CurrentUser
 )
 
+# pyrefly: ignore [missing-import]
 from backend.auth.jwt_handler import (
     create_access_token,
     verify_access_token
 )
 
+# pyrefly: ignore [missing-import]
 from backend.auth.permissions import (
     has_permission,
     can_access_district,
