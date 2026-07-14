@@ -9,7 +9,7 @@ class GeminiService:
             api_key=settings.GEMINI_API_KEY
         )
 
-        self.model = "gemini-flash-latest"
+        self.model = "gemini-3.5-flash"
 
     def ask(self, prompt: str) -> str:
         response = self.client.models.generate_content(
