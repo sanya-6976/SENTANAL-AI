@@ -29,8 +29,10 @@ os.environ["ACCESS_TOKEN_EXPIRE_MINUTES"] = "30"
 # Imports
 # ------------------------------------------------------------------
 
+# pyrefly: ignore [missing-import]
 from backend.auth.password import hash_password, verify_password
 
+# pyrefly: ignore [missing-import]
 from backend.auth.models import (
     Roles,
     Permission,
@@ -38,11 +40,13 @@ from backend.auth.models import (
     CurrentUser
 )
 
+# pyrefly: ignore [missing-import]
 from backend.auth.jwt_handler import (
     create_access_token,
     verify_access_token
 )
 
+# pyrefly: ignore [missing-import]
 from backend.auth.permissions import (
     has_permission,
     can_access_district,
@@ -77,17 +81,17 @@ print("JWT TEST")
 print("=" * 60)
 
 payload = TokenPayload(
-    sub=1,
+    sub="1",
     role_id=Roles.SYSTEM_ADMIN,
-    district_id=1,
-    station_id=101
+    district_id="1",
+    station_id="101"
 )
 
 token = create_access_token(payload)
 
 decoded = verify_access_token(token)
 
-assert decoded.sub == 1
+assert decoded.sub == "1"
 assert decoded.role_id == Roles.SYSTEM_ADMIN
 
 print("✓ Token generation")
@@ -128,12 +132,12 @@ assert can_manage_users(current_user)
 
 assert can_access_district(
     current_user,
-    1
+    "1"
 )
 
 assert can_access_station(
     current_user,
-    101
+    "101"
 )
 
 print("✓ Permission hierarchy")

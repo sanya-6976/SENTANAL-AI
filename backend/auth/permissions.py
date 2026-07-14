@@ -72,7 +72,7 @@ def has_permission(user: CurrentUser, permission: Permission) -> bool:
     return permission in user_permissions
 
 
-def can_access_district(user: CurrentUser, district_id: int) -> bool:
+def can_access_district(user: CurrentUser, district_id: str) -> bool:
     if not user.is_active:
         return False
     if user.role in (Roles.SYSTEM_ADMIN, Roles.STATE_ADMIN):
@@ -80,7 +80,7 @@ def can_access_district(user: CurrentUser, district_id: int) -> bool:
     return user.district_id is not None and user.district_id == district_id
 
 
-def can_access_station(user: CurrentUser, station_id: Union[int, dict, StationAccessProtocol]) -> bool:
+def can_access_station(user: CurrentUser, station_id: Union[str, dict, StationAccessProtocol]) -> bool:
     if not user.is_active:
         return False
     if user.role in (Roles.SYSTEM_ADMIN, Roles.STATE_ADMIN):
@@ -88,7 +88,7 @@ def can_access_station(user: CurrentUser, station_id: Union[int, dict, StationAc
     
     station_id_val = station_id
     station_district_id = None
-    if not isinstance(station_id, (int, str)):
+    if not isinstance(station_id, str):
         if isinstance(station_id, dict):
             station_id_val = station_id.get("id")
             station_district_id = station_id.get("district_id")
@@ -101,7 +101,7 @@ def can_access_station(user: CurrentUser, station_id: Union[int, dict, StationAc
             return user.district_id is not None and user.district_id == station_district_id
         return user.district_id is not None
         
-    return user.station_id is not None and str(user.station_id) == str(station_id_val)
+    return user.station_id is not None and user.station_id == station_id_val
 
 
 def can_manage_users(user: CurrentUser) -> bool:

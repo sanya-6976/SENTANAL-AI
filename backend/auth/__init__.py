@@ -1,5 +1,4 @@
-# Public interface for the Sentinel AI backend authentication and authorization module.
-
+from backend.auth.router import auth_router
 from backend.auth.password import hash_password, verify_password
 from backend.auth.jwt_handler import create_access_token, verify_access_token
 from backend.auth.permissions import (
@@ -37,6 +36,7 @@ from backend.auth.exceptions import (
 )
 
 __all__ = [
+    "auth_router",
     "hash_password",
     "verify_password",
     "create_access_token",

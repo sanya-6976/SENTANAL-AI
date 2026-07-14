@@ -32,18 +32,18 @@ class Permission(str, Enum):
 
 
 class TokenPayload(BaseModel):
-    sub: int
+    sub: str
     role_id: int
-    district_id: Optional[int] = None
-    station_id: Optional[int] = None
+    district_id: Optional[str] = None
+    station_id: Optional[str] = None
     exp: Optional[int] = None
 
 
 class CurrentUser(BaseModel):
-    id: int
+    id: str
     role: Roles
-    district_id: Optional[int] = None
-    station_id: Optional[int] = None
+    district_id: Optional[str] = None
+    station_id: Optional[str] = None
     is_active: bool = True
 
 
