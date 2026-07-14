@@ -1,23 +1,34 @@
 from google import genai
 
 from app.core.config import settings
+from app.core.model_manager import model_manager
 
 
 class GeminiService:
     def __init__(self):
-        self.client = genai.Client(
-            api_key=settings.GEMINI_API_KEY
-        )
-
-        self.model = "gemini-3.5-flash"
+        self.client = genai.Client(api_key=settings.GEMINI_API_KEY)
 
     def ask(self, prompt: str) -> str:
-        response = self.client.models.generate_content(
-            model=self.model,
-            contents=prompt,
-        )
+        last_error = None
 
-        return response.text
+        for model in model_manager.get_models():
+            try:
+                print(f"Trying model: {model}")
+
+                response = self.client.models.generate_content(
+                    model=model,
+                    contents=prompt,
+                )
+
+                print(f"Using model: {model}")
+
+                return response.text
+
+            except Exception as e:
+                print(f"Model {model} failed: {e}")
+                last_error = e
+
+        raise Exception(f"All models failed.\nLast error: {last_error}")
 
 
 gemini_service = GeminiService()

@@ -26,7 +26,9 @@ Document:
 """
 
         response = gemini_service.ask(prompt)
-
+        print(response)
+        # Remove Markdown code fences if Gemini adds them
+        response = response.replace("```json", "").replace("```", "").strip()
         return json.loads(response)
 
 
