@@ -3,28 +3,26 @@ import { NavLink } from 'react-router-dom'
 import {
   LayoutDashboard,
   Database,
-  BarChart3,
   Map,
   Briefcase,
   Network,
   Bot,
-  FileSpreadsheet,
-  Settings,
   ChevronLeft,
   ChevronRight,
-  ShieldCheck
+  ShieldCheck,
+  FolderUp,
+  Scan
 } from 'lucide-react'
 
 const navItems = [
   { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { to: '/crime-database', label: 'Crime Database', icon: Database },
-  { to: '/analytics', label: 'Analytics', icon: BarChart3 },
   { to: '/gis', label: 'GIS Intelligence', icon: Map },
   { to: '/investigation', label: 'Investigation Workspace', icon: Briefcase },
   { to: '/criminal-network', label: 'Criminal Network', icon: Network },
-  { to: '/ai-assistant', label: 'AI Assistant', icon: Bot },
-  { to: '/reports', label: 'Reports', icon: FileSpreadsheet },
-  { to: '/settings', label: 'Settings', icon: Settings },
+  { to: '/ai-assistant', label: 'AI Investigation Assistant', icon: Bot },
+  { to: '/reports', label: 'FIR Upload & Evidence', icon: FolderUp },
+  { to: '/ocr-review', label: 'OCR Review', icon: Scan },
 ]
 
 function Sidebar() {

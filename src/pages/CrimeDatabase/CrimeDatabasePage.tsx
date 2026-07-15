@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { useNavigate } from 'react-router-dom'
 import {
   Download,
   SlidersHorizontal,
@@ -196,6 +197,7 @@ const dateOptions = [
 ]
 
 function CrimeDatabasePage() {
+  const navigate = useNavigate()
   const [search, setSearch] = useState('')
   const [district, setDistrict] = useState('All Districts')
   const [crimeType, setCrimeType] = useState('All Types')
@@ -260,7 +262,7 @@ function CrimeDatabasePage() {
   // Action Click Alerts
   const handleRowInspect = (row: CrimeRecord, type: 'view' | 'record' | 'navigate') => {
     if (type === 'view') {
-      alert(`[OPERATION SECURITY ACCESS] Inspecting Details for ${row.fir}:\n\n- Crime Type: ${row.type}\n- Suspect Name: ${row.suspect}\n- Contact Number: ${row.phone}\n- Registered Vehicle: ${row.vehicle || 'None'}\n- Police Station: ${row.station}`)
+      navigate(`/crime-database/${row.fir.replace(/\//g, '_')}`)
     } else if (type === 'record') {
       alert(`[CASE MANAGEMENT SYSTEM] Opening Case Records Logs for ${row.fir} in Workspace...`)
     } else {
@@ -378,6 +380,7 @@ function CrimeDatabasePage() {
                 {filteredRecords.map((row) => (
                   <tr
                     key={row.fir}
+                    onClick={() => navigate(`/crime-database/${row.fir.replace(/\//g, '_')}`)}
                     className={`hover:bg-[#182235]/40 transition-all duration-150 text-[#F8FAFC] cursor-pointer ${getSeverityStrip(row.severity)}`}
                   >
                     <td className="px-5 py-3.5 font-bold font-mono text-[#2563EB]">
@@ -398,7 +401,7 @@ function CrimeDatabasePage() {
                         
                         {/* Action 1: Eye Icon */}
                         <button
-                          onClick={() => handleRowInspect(row, 'view')}
+                          onClick={(e) => { e.stopPropagation(); handleRowInspect(row, 'view'); }}
                           title="View Details"
                           className="hover:text-white transition-all duration-150 cursor-pointer p-1 rounded hover:bg-[#182235]"
                         >
@@ -407,7 +410,7 @@ function CrimeDatabasePage() {
                         
                         {/* Action 2: FileText Icon */}
                         <button
-                          onClick={() => handleRowInspect(row, 'record')}
+                          onClick={(e) => { e.stopPropagation(); handleRowInspect(row, 'record'); }}
                           title="Open Record Logs"
                           className="hover:text-[#2563EB] transition-all duration-150 cursor-pointer p-1 rounded hover:bg-[#182235]"
                         >
@@ -416,7 +419,7 @@ function CrimeDatabasePage() {
                         
                         {/* Action 3: Navigate Chevron */}
                         <button
-                          onClick={() => handleRowInspect(row, 'navigate')}
+                          onClick={(e) => { e.stopPropagation(); handleRowInspect(row, 'navigate'); }}
                           title="Navigate Geographic coordinates"
                           className="hover:text-[#2563EB] transition-all duration-150 cursor-pointer p-1 rounded hover:bg-[#182235]"
                         >

@@ -30,7 +30,7 @@ export function PageHeader({ title, subtitle, role = 'SCRB Analyst' }: { title: 
       <div>
         <h1 className="text-3xl font-extrabold tracking-tight text-[#F8FAFC]">{title}</h1>
         <p className="text-xs uppercase tracking-widest text-[#94A3B8] font-mono mt-1">{subtitle}</p>
-        <p className="text-xs text-[#94A3B8]/80 mt-2 font-normal">Welcome back, Officer.</p>
+        <p className="text-xs text-[#94A3B8]/80 mt-2 font-normal">Welcome back, DCP Anjan.</p>
       </div>
 
       <div className="flex items-center gap-6">

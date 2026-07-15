@@ -1,117 +1,201 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { Check, ShieldCheck } from 'lucide-react'
 import kspLogo from '../../assets/ksp-logo.jpg'
 import './loading-screen.css'
 
-const LOADING_DURATION_MS = 2500
-const READY_DELAY_MS = 400
-
-const STATUS_MESSAGES = [
-  'Connecting Secure Server...',
-  'Loading Crime Database...',
-  'Initializing AI Models...',
-  'Building Crime Intelligence...',
-  'Preparing Investigation Workspace...',
-  'Launching Dashboard...',
+const BOOT_DURATION = 3000
+const ACCESS_DELAY = 500
+const BOOT_STEPS = [
+  'INITIALIZING AI CORE...',
+  'CONNECTING TO CRIMINAL DATABASE...',
+  'VERIFYING OFFICER CREDENTIALS...',
+  'LOADING CASE INTELLIGENCE...',
+  'STARTING FACIAL RECOGNITION ENGINE...',
+  'ESTABLISHING SECURE NETWORK...'
 ] as const
-
-function getStatusMessage(progress: number): string {
-  if (progress >= 83) return STATUS_MESSAGES[5]
-  if (progress >= 66) return STATUS_MESSAGES[4]
-  if (progress >= 50) return STATUS_MESSAGES[3]
-  if (progress >= 33) return STATUS_MESSAGES[2]
-  if (progress >= 16) return STATUS_MESSAGES[1]
-  return STATUS_MESSAGES[0]
-}
 
 function LoadingScreen() {
   const navigate = useNavigate()
   const [progress, setProgress] = useState(0)
+  const [isGranted, setIsGranted] = useState(false)
 
+  // Check if already booted in this session to prevent repeating
   useEffect(() => {
+    if (sessionStorage.getItem('sentinel_booted')) {
+      navigate('/login', { replace: true })
+    }
+  }, [navigate])
+
+  // 1. Progress tick interval
+  useEffect(() => {
+    if (sessionStorage.getItem('sentinel_booted')) return
+
     const startTime = performance.now()
-    let animationFrameId = 0
+    let frameId: number
 
-    const updateProgress = (currentTime: number) => {
-      const elapsed = currentTime - startTime
-      const nextProgress = Math.min(100, Math.round((elapsed / LOADING_DURATION_MS) * 100))
+    const tick = (now: number) => {
+      const elapsed = now - startTime
+      const currentProgress = Math.min(100, Math.round((elapsed / BOOT_DURATION) * 100))
+      
+      setProgress(currentProgress)
 
-      setProgress(nextProgress)
-
-      if (nextProgress < 100) {
-        animationFrameId = requestAnimationFrame(updateProgress)
+      if (currentProgress < 100) {
+        frameId = requestAnimationFrame(tick)
       }
     }
 
-    animationFrameId = requestAnimationFrame(updateProgress)
-
-    return () => cancelAnimationFrame(animationFrameId)
+    frameId = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(frameId)
   }, [])
 
+  // 2. Redirect to login page when progress reaches 100%
   useEffect(() => {
-    if (progress < 100) return
-
-    const timeoutId = window.setTimeout(() => {
+    if (progress !== 100) return
+    setIsGranted(true)
+    sessionStorage.setItem('sentinel_booted', 'true')
+    
+    const timeout = window.setTimeout(() => {
       navigate('/login', { replace: true })
-    }, READY_DELAY_MS)
+    }, ACCESS_DELAY)
 
-    return () => window.clearTimeout(timeoutId)
-  }, [progress, navigate])
+    return () => window.clearTimeout(timeout)
+  }, [navigate, progress])
+
+  // 3. Step calculations based on progress percentage
+  const activeStep = Math.min(
+    BOOT_STEPS.length - 1,
+    Math.floor((progress / 100) * BOOT_STEPS.length)
+  )
+
+  const displayedSteps = useMemo(() => {
+    return BOOT_STEPS.slice(0, activeStep + 1)
+  }, [activeStep])
 
   return (
-    <div className="loading-screen select-none">
-      {/* Background Grid Pattern Overlay */}
-      <div className="loading-screen__overlay" aria-hidden="true" />
-
-      {/* Connected Network Nodes Background (subtle intelligence-gathering visualization) */}
-      <svg className="loading-screen__networks" viewBox="0 0 800 600" preserveAspectRatio="none" aria-hidden="true">
-        {/* Nodes */}
-        <circle cx="160" cy="180" r="3" className="network-node fill-[#2563EB]" />
-        <circle cx="280" cy="120" r="3" className="network-node fill-[#2563EB]" />
-        <circle cx="620" cy="150" r="3" className="network-node fill-[#2563EB]" />
-        <circle cx="680" cy="380" r="3" className="network-node fill-[#2563EB]" />
-        <circle cx="490" cy="420" r="3" className="network-node fill-[#2563EB]" />
-        <circle cx="180" cy="460" r="3" className="network-node fill-[#2563EB]" />
-        <circle cx="340" cy="480" r="3" className="network-node fill-[#2563EB]" />
-        
-        {/* Connected Edges */}
-        <line x1="160" y1="180" x2="280" y2="120" className="network-edge stroke-[#2563EB]" strokeWidth="0.8" strokeDasharray="3 3" />
-        <line x1="280" y1="120" x2="620" y2="150" className="network-edge stroke-[#2563EB]" strokeWidth="0.8" strokeDasharray="3 3" />
-        <line x1="620" y1="150" x2="680" y2="380" className="network-edge stroke-[#2563EB]" strokeWidth="0.8" strokeDasharray="3 3" />
-        <line x1="680" y1="380" x2="490" y2="420" className="network-edge stroke-[#2563EB]" strokeWidth="0.8" strokeDasharray="3 3" />
-        <line x1="490" y1="420" x2="340" y2="480" className="network-edge stroke-[#2563EB]" strokeWidth="0.8" strokeDasharray="3 3" />
-        <line x1="340" y1="480" x2="180" y2="460" className="network-edge stroke-[#2563EB]" strokeWidth="0.8" strokeDasharray="3 3" />
-        <line x1="180" y1="460" x2="160" y2="180" className="network-edge stroke-[#2563EB]" strokeWidth="0.8" strokeDasharray="3 3" />
-        <line x1="280" y1="120" x2="490" y2="420" className="network-edge stroke-[#2563EB]" strokeWidth="0.8" strokeDasharray="3 3" />
-      </svg>
-
-      {/* Main Centered Box */}
-      <div className="loading-screen__inner">
-        {/* Karnataka Police Shield Logo */}
-        <img
-          src={kspLogo}
-          alt="Karnataka State Police Logo"
-          className="loading-screen__logo"
-        />
-
-        {/* Operating System branding titles */}
-        <h1 className="loading-screen__title">Sentinel AI</h1>
-        <p className="loading-screen__subtitle">Crime Intelligence Operating System</p>
-
-        {/* Premium Horizontal Progress track */}
-        <div className="loading-screen__progress-container">
-          <div
-            className="loading-screen__progress-bar"
-            style={{ width: `${progress}%` }}
+    <main 
+      className={`boot-screen ${isGranted ? 'boot-screen--granted' : ''}`} 
+      aria-label="Sentinel AI system startup"
+    >
+      {/* Background grids and visual overlays */}
+      <div className="boot-screen__grid" />
+      <div className="boot-screen__streak boot-screen__streak--one" />
+      <div className="boot-screen__streak boot-screen__streak--two" />
+      
+      <div className="boot-screen__radar">
+        <i />
+        <b />
+        <span />
+      </div>
+      
+      <div className="boot-screen__scanlines" />
+      
+      {/* Floating background glowing particles */}
+      <div className="boot-screen__particles">
+        {Array.from({ length: 28 }, (_, index) => (
+          <i 
+            key={index} 
+            style={{ 
+              '--i': index, 
+              left: `${(index * 37) % 100}%`, 
+              top: `${(index * 19) % 100}%` 
+            } as React.CSSProperties} 
           />
+        ))}
+      </div>
+
+      {/* Floating System Status Aside Panel */}
+      <aside className="boot-status">
+        <div className="boot-status__heading">
+          <span className="boot-status__pulse" /> AI STATUS
+        </div>
+        <div className="boot-status__row">
+          <span>Neural Engine</span>
+          <b>ONLINE</b>
+        </div>
+        <div className="boot-status__row">
+          <span>Database</span>
+          <b>CONNECTED</b>
+        </div>
+        <div className="boot-status__row">
+          <span>Encryption</span>
+          <b>ACTIVE</b>
+        </div>
+        <div className="boot-status__row">
+          <span>Threat Scanner</span>
+          <b>READY</b>
+        </div>
+      </aside>
+
+      {/* Center Boot Content Wrapper */}
+      <section className="boot-screen__content">
+        <div className="boot-screen__seal">
+          <span className="boot-screen__orbit" />
+          <img src={kspLogo} alt="Karnataka State Police logo" />
+        </div>
+        
+        <p className="boot-screen__classification">
+          <ShieldCheck size={12} /> Government Intelligence Network
+        </p>
+        
+        <h1>SENTINEL <em>AI</em></h1>
+        
+        <p className="boot-screen__subtitle">
+          Crime Intelligence Operating System
+        </p>
+
+        {/* Boot Sequence Log output lines */}
+        <div className="boot-log" aria-live="polite">
+          {displayedSteps.map((step, index) => {
+            const complete = index < activeStep || progress === 100
+            const active = index === activeStep && !complete
+            return (
+              <div 
+                className={`boot-log__item ${complete ? 'boot-log__item--complete' : ''}`} 
+                key={step}
+              >
+                <span className="boot-log__marker">
+                  {complete ? <Check size={13} strokeWidth={3} /> : <i />}
+                </span>
+                <span className="boot-log__text">
+                  {step}
+                  {active && <b className="boot-log__cursor" />}
+                </span>
+                {complete && <span className="boot-log__complete">COMPLETE</span>}
+              </div>
+            )
+          })}
+          {progress === 100 && <div className="boot-log__ready">SYSTEM READY</div>}
         </div>
 
-        {/* Operating System loader status log */}
-        <p className="loading-screen__message">
-          {getStatusMessage(progress)}
-        </p>
+        {/* Bottom Progress Bar */}
+        <div className="boot-progress">
+          <div className="boot-progress__labels">
+            <span>BOOT SEQUENCE</span>
+            <b>{progress}%</b>
+          </div>
+          <div className="boot-progress__track">
+            <span style={{ width: `${progress}%` }} />
+          </div>
+          <div className="boot-progress__ticks">
+            <span>0%</span>
+            <span>25%</span>
+            <span>52%</span>
+            <span>81%</span>
+            <span>100%</span>
+          </div>
+        </div>
+      </section>
+
+      {/* Secure Channel footer metadata */}
+      <div className="boot-screen__footer">
+        <span>SECURE CHANNEL: KSP-INTEL-09</span>
+        <span>ENCRYPTION: AES-256</span>
       </div>
-    </div>
+
+      {/* ACCESS GRANTED flash animation */}
+      {isGranted && <div className="boot-screen__access">ACCESS GRANTED</div>}
+    </main>
   )
 }
 

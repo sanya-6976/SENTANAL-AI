@@ -1,4 +1,4 @@
-import { Route, Routes } from 'react-router-dom'
+import { Navigate, Route, Routes } from 'react-router-dom'
 import NotFoundPage from '../components/common/NotFoundPage'
 import AuthLayout from '../layouts/AuthLayout'
 import DashboardLayout from '../layouts/DashboardLayout'
@@ -14,11 +14,13 @@ import LoadingScreen from '../pages/Loading/LoadingScreen'
 import LoginPage from '../pages/Login/LoginPage'
 import ReportsPage from '../pages/Reports/ReportsPage'
 import SettingsPage from '../pages/Settings/SettingsPage'
+import OCRReviewPage from '../pages/OCRReview/OCRReviewPage'
 
 function AppRoutes() {
   return (
     <Routes>
-      <Route path="/" element={<LoadingScreen />} />
+      <Route path="/" element={<Navigate to="/login" replace />} />
+      <Route path="/loading" element={<LoadingScreen />} />
 
       <Route element={<AuthLayout />}>
         <Route path="/login" element={<LoginPage />} />
@@ -34,6 +36,7 @@ function AppRoutes() {
         <Route path="/criminal-network" element={<CriminalNetworkPage />} />
         <Route path="/ai-assistant" element={<AIAssistantPage />} />
         <Route path="/reports" element={<ReportsPage />} />
+        <Route path="/ocr-review" element={<OCRReviewPage />} />
         <Route path="/settings" element={<SettingsPage />} />
       </Route>
 
@@ -43,3 +46,4 @@ function AppRoutes() {
 }
 
 export default AppRoutes
+

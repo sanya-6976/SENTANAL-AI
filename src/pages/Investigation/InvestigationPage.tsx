@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import {
   GlobalSearch,
   InvestigationTabs,
@@ -31,6 +32,7 @@ interface EntityVictim {
 type EntityItem = EntityAccused | EntityVehicle | EntityVictim
 
 function InvestigationPage() {
+  const navigate = useNavigate()
   const [search, setSearch] = useState('')
   const [activeTab, setActiveTab] = useState('Case Overview')
 
@@ -45,7 +47,7 @@ function InvestigationPage() {
     severity: 'Medium'
   }
 
-  // Key entities mock list
+  // Key key entities mock list
   const entitiesList: EntityItem[] = [
     {
       type: 'accused',
@@ -75,15 +77,10 @@ function InvestigationPage() {
     'Cross-check fingerprints.'
   ]
 
-  // Toast actions
+  // Toast actions and navigation
   const handleInspectEntity = (item: EntityItem) => {
-    if (item.type === 'accused') {
-      alert(`[BIOMETRIC SYSTEM SEARCH] Pulling criminal databases log for Suspect Accused: ${item.name} / Age: ${item.age}...`)
-    } else if (item.type === 'vehicle') {
-      alert(`[TRANSPORT DATABASE SEARCH] Fetching ownership and traffic logs for Vehicle: ${item.regNo}...`)
-    } else {
-      alert(`[DATABASE INQUEST RECORD] Accessing registration log for Witness/Victim: ${item.name}...`)
-    }
+    console.log('Inspecting case entity:', item)
+    navigate(`/crime-database/${caseData.fir}`)
   }
 
   const handleAskAI = () => {

@@ -1,17 +1,95 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Mail, Lock, Eye, EyeOff, ShieldCheck, Check } from 'lucide-react'
 import kspLogo from '../../assets/ksp-logo.jpg'
-import policeSuv from '../../assets/police_suv.png'
+import loginBg from '../../assets/login_bg.png'
 
 function LoginPage() {
   const navigate = useNavigate()
+  const canvasRef = useRef<HTMLCanvasElement>(null)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [rememberMe, setRememberMe] = useState(false)
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+
+  // 1. Particle Canvas System & Document Body Background Styling
+  useEffect(() => {
+    // Set root body background styles with seamless edge blending and upward alignment
+    document.body.style.backgroundImage = `linear-gradient(to right, #050816 0%, rgba(5, 8, 22, 0) 15%, rgba(5, 8, 22, 0) 85%, #050816 100%), linear-gradient(rgba(4, 8, 18, 0.45), rgba(4, 8, 18, 0.45)), url('${loginBg}')`
+    document.body.style.backgroundSize = '80vw auto'
+    document.body.style.backgroundPosition = 'center 88%'
+    document.body.style.backgroundRepeat = 'no-repeat'
+    document.body.style.backgroundAttachment = 'fixed'
+    document.body.style.backgroundColor = '#050816'
+
+    // Initialize Particle Canvas
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+
+    let animationFrameId: number
+    let particles: { x: number; y: number; vx: number; vy: number; r: number; alpha: number }[] = []
+
+    const resizeCanvas = () => {
+      canvas.width = window.innerWidth
+      canvas.height = window.innerHeight
+      initParticles()
+    }
+
+    const initParticles = () => {
+      particles = []
+      const count = Math.min(50, Math.floor((canvas.width * canvas.height) / 30000))
+      for (let i = 0; i < count; i++) {
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          vx: (Math.random() - 0.5) * 0.25,
+          vy: (Math.random() - 0.5) * 0.25,
+          r: Math.random() * 1.8 + 0.6,
+          alpha: Math.random() * 0.4 + 0.15
+        })
+      }
+    }
+
+    const animate = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+      particles.forEach((p) => {
+        p.x += p.vx
+        p.y += p.vy
+
+        // Wrap boundaries
+        if (p.x < 0) p.x = canvas.width
+        if (p.x > canvas.width) p.x = 0
+        if (p.y < 0) p.y = canvas.height
+        if (p.y > canvas.height) p.y = 0
+
+        ctx.beginPath()
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2)
+        ctx.fillStyle = `rgba(56, 189, 248, ${p.alpha})` // Accent Cyan
+        ctx.fill()
+      })
+      animationFrameId = requestAnimationFrame(animate)
+    }
+
+    window.addEventListener('resize', resizeCanvas)
+    resizeCanvas()
+    animate()
+
+    return () => {
+      // Clean up body styles and events
+      window.removeEventListener('resize', resizeCanvas)
+      cancelAnimationFrame(animationFrameId)
+      document.body.style.backgroundImage = ''
+      document.body.style.backgroundSize = ''
+      document.body.style.backgroundPosition = ''
+      document.body.style.backgroundRepeat = ''
+      document.body.style.backgroundAttachment = ''
+      document.body.style.backgroundColor = ''
+    }
+  }, [])
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -22,7 +100,6 @@ function LoginPage() {
     setError('')
     setIsLoading(true)
 
-    // Simulate link authentication
     setTimeout(() => {
       setIsLoading(false)
       navigate('/dashboard')
@@ -30,101 +107,109 @@ function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col md:flex-row bg-[#090B10] text-[#F8FAFC] overflow-hidden select-none">
+    <div className="min-h-screen w-screen relative flex items-center justify-center p-4 sm:p-8 md:p-12 lg:p-16 text-[#F8FAFC] overflow-x-hidden select-none bg-transparent">
       
-      {/* 1. LEFT PANEL (45% split) */}
-      <div className="relative hidden md:flex md:w-[45%] flex-col justify-between overflow-hidden pt-8 pb-12 px-12 border-r border-[rgba(255,255,255,0.08)] bg-[#090B10]">
-        
-        {/* Full-panel background image of police SUVs */}
-        <div className="absolute inset-0 z-0">
-          <img
-            src={policeSuv}
-            alt="Police Patrol Vehicle Background"
-            className="w-full h-full object-cover object-[center_80%]"
-          />
-          {/* Dark overlay covers the image (brighter opacity for more visibility) */}
-          <div className="absolute inset-0 bg-black/42" />
-          {/* Bottom gradient fade */}
-          <div className="absolute inset-0 bg-gradient-to-t from-[#090B10] via-transparent to-black/20" />
-        </div>
+      {/* Dynamic Style Blocks for Keyframe Animations */}
+      <style>{`
+        @keyframes float {
+          0% { transform: translateY(0px); }
+          50% { transform: translateY(-8px); }
+          100% { transform: translateY(0px); }
+        }
+        @keyframes beam {
+          0% { transform: translate(-30%, -30%) rotate(0deg); }
+          50% { transform: translate(-10%, -10%) rotate(180deg); }
+          100% { transform: translate(-30%, -30%) rotate(360deg); }
+        }
+        .animate-float {
+          animation: float 5s ease-in-out infinite;
+        }
+        .animate-beam-slow {
+          animation: beam 35s ease-in-out infinite;
+        }
+        .animate-beam-reverse {
+          animation: beam 50s ease-in-out infinite reverse;
+        }
+      `}</style>
 
-        {/* Content Centered Over the Background (shifted upwards into sky area) */}
-        <div className="relative z-10 flex flex-col items-center text-center mt-3 px-4">
-          {/* Karnataka State Police Logo */}
-          <img
-            src={kspLogo}
-            alt="Karnataka State Police Logo"
-            className="h-20 w-auto rounded-full object-contain mb-6 border border-white/10 p-0.5 bg-[#11161F] shadow-lg"
-          />
-          
-          <h2 className="text-3xl font-extrabold tracking-[0.25em] text-[#F8FAFC]">SENTINEL AI</h2>
-          <p className="text-xs uppercase tracking-[0.2em] text-[#2563EB] font-bold mt-2 font-mono">
-            Crime Intelligence Operating System
-          </p>
-          
-          <div className="w-12 h-[2px] bg-[#2563EB] my-8" />
-          
-          <p className="text-sm md:text-base text-[#E2E8F0] font-medium leading-relaxed max-w-sm">
-            Empowering Karnataka Police with AI-powered intelligence, analytics and investigation tools.
-          </p>
-        </div>
-        
-        {/* Generous empty space in the middle, letting the police car background show organically */}
-        <div className="flex-1" />
+      {/* Floating Canvas Particles */}
+      <canvas ref={canvasRef} className="absolute inset-0 z-0 pointer-events-none w-full h-full" />
+
+      {/* Slow Moving Cyan Light Beams */}
+      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-[20%] -left-[20%] w-[60%] h-[60%] rounded-full bg-[#2563EB]/5 blur-[120px] animate-beam-slow" />
+        <div className="absolute -bottom-[20%] -right-[20%] w-[70%] h-[70%] rounded-full bg-[#38BDF8]/4 blur-[130px] animate-beam-reverse" />
       </div>
 
-      {/* 2. RIGHT PANEL (55% split) */}
-      <div className="flex-1 flex flex-col justify-between p-8 sm:p-12 relative bg-[#090B10]">
+      <div className="w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-center z-10 relative">
         
-        {/* Background Grid Overlay */}
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(37,99,235,0.008)_1px,transparent_1px),linear-gradient(90deg,rgba(37,99,235,0.008)_1px,transparent_1px)] bg-[size:36px_36px] pointer-events-none opacity-40 z-0" />
+        {/* ==================================================
+            LEFT SIDE COLUMN: Branding & System Telemetry
+            ================================================== */}
+        <div className="lg:col-span-7 flex flex-col sm:flex-row items-center sm:items-start gap-6 text-center sm:text-left lg:-translate-y-45">
+          
+          {/* Logo Container (Left) */}
+          <div className="animate-float shrink-0">
+            <img
+              src={kspLogo}
+              alt="Karnataka State Police Logo"
+              className="h-28 w-auto rounded-full object-contain border-2 border-[#38BDF8]/40 p-1 bg-[#121623]/80 shadow-[0_0_25px_rgba(56,189,248,0.25)]"
+            />
+          </div>
 
-        {/* Mobile Logo Block (Hidden on Desktop) */}
-        <div className="md:hidden flex flex-col items-center text-center mb-8 relative z-10">
-          <img
-            src={kspLogo}
-            alt="Karnataka State Police Logo"
-            className="h-14 w-auto rounded-full object-contain mb-3 border border-white/10"
-          />
-          <h2 className="text-xl font-bold tracking-[0.2em] text-[#F8FAFC]">SENTINEL AI</h2>
-          <p className="text-[10px] uppercase tracking-wider text-[#94A3B8] font-mono mt-0.5">
-            Crime Intelligence Operating System
-          </p>
+          {/* Text Content Container (Right) */}
+          <div className="flex flex-col items-center sm:items-start text-center sm:text-left">
+            <h2 className="text-4xl sm:text-5xl font-extrabold tracking-[0.22em] text-white animate-fade-in">
+              SENTINEL AI
+            </h2>
+            <p className="text-sm font-bold tracking-[0.18em] text-[#38BDF8] mt-3 uppercase font-mono">
+              Crime Intelligence Operating System
+            </p>
+            <p className="text-xs sm:text-sm text-[#94A3B8] font-sans font-medium leading-relaxed mt-5 max-w-xl">
+              Empowering Karnataka Police with AI-driven investigation, analytics, facial recognition, criminal intelligence and predictive policing.
+            </p>
+          </div>
+
         </div>
 
-        {/* Vertically Centered Login Form Card */}
-        <div className="flex-1 flex items-center justify-center relative z-10">
-          <div className="w-full max-w-[420px] bg-[#11161F] border border-[rgba(255,255,255,0.08)] rounded-[16px] p-8 shadow-2xl">
+        {/* ==================================================
+            RIGHT SIDE COLUMN: Glassmorphism Login Card
+            ================================================== */}
+        <div className="lg:col-span-5 flex justify-center w-full">
+          
+          <div className="w-full max-w-[440px] bg-[rgba(18,22,35,0.55)] backdrop-blur-[12px] border border-[rgba(80,150,255,0.25)] rounded-[24px] p-8 shadow-[0_0_40px_rgba(37,99,235,0.18)] flex flex-col transition-all duration-300">
             
-            <div className="mb-8">
-              <h3 className="text-2xl font-bold tracking-tight text-[#F8FAFC]">Welcome Back, Officer</h3>
-              <p className="text-xs text-[#94A3B8] mt-1.5 font-mono uppercase tracking-wider">
-                Sign in to continue securely.
+            {/* Header Text */}
+            <div className="mb-6.5">
+              <h3 className="text-2xl font-bold tracking-tight text-white">Welcome Back, Officer</h3>
+              <p className="text-[10px] font-mono text-[#94A3B8] uppercase tracking-wider mt-1">
+                Secure authentication required.
               </p>
             </div>
 
+            {/* Error notifications */}
             {error && (
-              <div className="mb-5 p-3.5 bg-[#EF4444]/10 border border-[#EF4444]/20 rounded-lg text-xs font-mono text-[#EF4444]">
+              <div className="mb-5 p-3.5 bg-[#EF4444]/10 border border-[#EF4444]/20 rounded-xl text-xs font-mono text-[#EF4444]">
                 ⚠️ {error}
               </div>
             )}
 
             <form onSubmit={handleSubmit} className="space-y-5">
               
-              {/* Email Address */}
-              <div>
-                <label className="block text-[10px] font-mono uppercase tracking-wider text-[#94A3B8] mb-1.5">
-                  Email Address / Username
+              {/* Officer ID / Email */}
+              <div className="space-y-1.5">
+                <label className="block text-[9.5px] font-mono uppercase tracking-wider text-[#94A3B8]">
+                  Officer ID / Email Address
                 </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#94A3B8]/60">
+                <div className="relative group">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#94A3B8]/60 group-focus-within:text-[#38BDF8] transition-colors">
                     <Mail className="h-4 w-4" />
                   </div>
                   <input
-                    type="email"
+                    type="text"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full bg-[#090B10] border border-[rgba(255,255,255,0.08)] rounded-lg pl-10 pr-4 py-3 text-sm text-[#F8FAFC] placeholder-slate-600 focus:outline-none focus:border-[#2563EB] focus:ring-1 focus:ring-[#2563EB] transition-colors"
+                    className="w-full bg-[#050816]/70 border border-[rgba(80,150,255,0.2)] focus:border-[#38BDF8] focus:ring-1 focus:ring-[#38BDF8] rounded-xl pl-10 pr-4 py-3.5 text-xs font-semibold text-white placeholder-slate-600 outline-none transition-all duration-150"
                     placeholder="officer.email@ksp.gov.in"
                     required
                   />
@@ -132,26 +217,26 @@ function LoginPage() {
               </div>
 
               {/* Password */}
-              <div>
-                <label className="block text-[10px] font-mono uppercase tracking-wider text-[#94A3B8] mb-1.5">
+              <div className="space-y-1.5">
+                <label className="block text-[9.5px] font-mono uppercase tracking-wider text-[#94A3B8]">
                   Password
                 </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#94A3B8]/60">
+                <div className="relative group">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#94A3B8]/60 group-focus-within:text-[#38BDF8] transition-colors">
                     <Lock className="h-4 w-4" />
                   </div>
                   <input
                     type={showPassword ? 'text' : 'password'}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full bg-[#090B10] border border-[rgba(255,255,255,0.08)] rounded-lg pl-10 pr-10 py-3 text-sm text-[#F8FAFC] placeholder-slate-600 focus:outline-none focus:border-[#2563EB] focus:ring-1 focus:ring-[#2563EB] transition-colors"
+                    className="w-full bg-[#050816]/70 border border-[rgba(80,150,255,0.2)] focus:border-[#38BDF8] focus:ring-1 focus:ring-[#38BDF8] rounded-xl pl-10 pr-10 py-3.5 text-xs font-semibold text-white placeholder-slate-600 outline-none transition-all duration-150"
                     placeholder="••••••••••••"
                     required
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-[#94A3B8]/60 hover:text-[#F8FAFC] focus:outline-none"
+                    className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-[#94A3B8]/60 hover:text-white transition-colors"
                   >
                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
@@ -159,8 +244,8 @@ function LoginPage() {
               </div>
 
               {/* Checkboxes items */}
-              <div className="flex items-center justify-between text-xs pt-1">
-                <label className="flex items-center gap-2 cursor-pointer select-none">
+              <div className="flex items-center justify-between text-xs pt-1 select-none">
+                <label className="flex items-center gap-2 cursor-pointer">
                   <div className="relative">
                     <input
                       type="checkbox"
@@ -168,32 +253,32 @@ function LoginPage() {
                       onChange={() => setRememberMe(!rememberMe)}
                       className="sr-only"
                     />
-                    <div className={`w-4 h-4 rounded border transition-colors flex items-center justify-center ${
-                      rememberMe ? 'bg-[#2563EB] border-[#2563EB]' : 'border-[rgba(255,255,255,0.08)] bg-[#090B10]'
+                    <div className={`w-4 h-4 rounded border flex items-center justify-center transition-all ${
+                      rememberMe ? 'bg-[#2563EB] border-[#2563EB] shadow-[0_0_8px_rgba(37,99,235,0.5)]' : 'border-[rgba(80,150,255,0.2)] bg-[#050816]/70'
                     }`}>
                       {rememberMe && <Check className="h-3 w-3 text-white stroke-[3.5]" />}
                     </div>
                   </div>
-                  <span className="text-[#94A3B8] font-mono text-[11px]">Remember Me</span>
+                  <span className="text-[#94A3B8] font-mono text-[10.5px] tracking-wide">Remember Me</span>
                 </label>
                 
                 <a
                   href="#forgot-password"
                   onClick={(e) => {
-                    e.preventDefault();
-                    alert("Contact the district SCRB Administrator IT coordinator to reset local passwords.");
+                    e.preventDefault()
+                    alert('Contact the district SCRB Administrator IT coordinator to reset local credentials.')
                   }}
-                  className="text-[#94A3B8] hover:text-[#F8FAFC] font-mono text-[11px] transition-colors"
+                  className="text-[#94A3B8] hover:text-[#38BDF8] font-mono text-[10.5px] transition-colors"
                 >
                   Forgot Password?
                 </a>
               </div>
 
-              {/* Submit Action button */}
+              {/* Submit button */}
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full bg-[#2563EB] hover:bg-[#1D4ED8] disabled:opacity-50 text-[#F8FAFC] font-bold text-xs tracking-[0.16em] uppercase py-3.5 rounded-lg transition-colors cursor-pointer duration-200 mt-2"
+                className="w-full bg-[#2563EB] hover:bg-[#1D4ED8] disabled:opacity-50 text-white font-bold text-xs tracking-[0.16em] uppercase py-4 rounded-xl transition-all cursor-pointer duration-200 hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(56,189,248,0.35)] active:scale-95 outline-none mt-2"
               >
                 {isLoading ? (
                   <span className="flex items-center justify-center gap-2">
@@ -201,30 +286,28 @@ function LoginPage() {
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                     </svg>
-                    Validating Connection...
+                    Establishing Connection...
                   </span>
                 ) : (
                   'ACCESS SENTINEL AI'
                 )}
               </button>
             </form>
-          </div>
-        </div>
 
-        {/* Security Warning notice */}
-        <div className="flex flex-col items-center gap-2 mt-8 relative z-10">
-          <div className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-wider text-[#94A3B8] bg-[#11161F]/80 border border-[rgba(255,255,255,0.06)] px-4 py-2.5 rounded-lg shadow-sm">
-            <ShieldCheck className="h-4 w-4 text-[#2563EB]" />
-            <span>Secure • Trusted • Confidential</span>
+            {/* Secure metadata badges */}
+            <div className="flex flex-col items-center gap-2.5 mt-8 border-t border-[rgba(80,150,255,0.15)] pt-6">
+              <div className="flex items-center gap-2 text-[9.5px] font-mono uppercase tracking-wider text-[#94A3B8] bg-[#050816]/75 border border-[rgba(80,150,255,0.15)] px-4 py-2.5 rounded-xl">
+                <ShieldCheck className="h-4.5 w-4.5 text-[#38BDF8]" />
+                <span>Secure • Trusted • Confidential</span>
+              </div>
+              
+              <div className="text-[9px] text-[#EF4444]/90 font-mono tracking-widest uppercase mt-0.5 text-center font-bold">
+                ⚠️ Restricted Access - Authorized Personnel Only
+              </div>
+            </div>
+
           </div>
-          
-          <div className="text-[10px] text-[#EF4444]/80 font-mono tracking-wider uppercase mt-1">
-            ⚠️ Restricted Government Access - Authorized Personnel Only
-          </div>
-          
-          <span className="text-[9px] text-[#94A3B8]/30 font-mono tracking-widest uppercase mt-4">
-            Karnataka State Police © 2026. All Rights Reserved.
-          </span>
+
         </div>
 
       </div>
@@ -234,3 +317,4 @@ function LoginPage() {
 }
 
 export default LoginPage
+

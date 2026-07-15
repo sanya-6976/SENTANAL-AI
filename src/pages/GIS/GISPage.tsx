@@ -60,10 +60,10 @@ function GISPage() {
       />
 
       {/* 3. Responsive Map Grid Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
         
-        {/* Left Side: Large Map Card (75% on desktop, cols 3) */}
-        <div className="col-span-1 lg:col-span-3">
+        {/* Left Side: Large Map Card (80% on desktop, cols 4) */}
+        <div className="col-span-1 lg:col-span-4">
           <GISMap
             heatmap={heatmap}
             points={points}
@@ -76,7 +76,7 @@ function GISPage() {
           />
         </div>
 
-        {/* Right Side: Control Panels Card (25% on desktop, cols 1) */}
+        {/* Right Side: Control Panels Card (20% on desktop, cols 1) */}
         <div className="col-span-1 bg-[#111827] border border-[rgba(255,255,255,0.06)] rounded-xl p-5 shadow-sm space-y-6 self-start">
           {/* Layer Checks section */}
           <LayerPanel
