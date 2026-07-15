@@ -1,75 +1,50 @@
-# React + TypeScript + Vite
+# Sentinel AI — Data & Intelligence Module
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This repository contains the complete data engineering, analytics, GIS, and Neo4j graph implementation for the **Sentinel AI Crime Intelligence Operating System**, developed for the Karnataka State Police.
 
-Currently, two official plugins are available:
+## Branch Strategy
+This is the `data` branch. All data engineering work happens here before being merged into `main`.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Module Architecture
 
-## React Compiler
+- `datasets/` — Raw, cleaned, processed, and exported data files (Not tracked in Git)
+- `etl/` — Extract, Transform, Load, and Validate pipelines
+- `analytics/` — KPI computation, temporal trends, and district-level statistics
+- `gis/` — Geospatial processing, heatmaps, and clustering
+- `neo4j/` — Knowledge graph schema, builder, and queries
+- `config/` — Environment variables, database connections, and centralized constants
+- `utils/` — Logging, data validation, and shared helpers
+- `docs/` — Sprint design documents, data dictionary, and schemas
+- `tests/` — Pytest-based test suite
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Quickstart
 
-## Expanding the ESLint configuration
+1. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+2. Copy the environment template and fill in credentials:
+   ```bash
+   cp .env.example .env
+   ```
+3. Initialize the database (coming in Sprint 2):
+   ```bash
+   # Run Alembic migrations or SQL scripts
+   ```
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Sprints
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+- **Sprint 1**: Data Foundation & Architecture Blueprint (Completed)
+- **Sprint 2**: Project Scaffolding & Synthetic Data (Completed)
+- **Sprint 3**: Production ETL Pipeline and Data Quality Framework (Completed)
+- **Sprint 4**: Data Platform Integration & Database Services (Completed)
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## Documentation
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
-```
+- `README.md` — Project overview and quickstart
+- `CHANGELOG.md` — Sprint deliverables and repository updates
+- `DEMO.md` — Hackathon demonstration guide
+- `docs/sprint1_design_document.md` — Sprint 1 architecture and data foundation
+- `docs/sprint2_design_document.md` — Sprint 2 scaffolding and synthetic dataset generation
+- `docs/sprint3_design_document.md` — Sprint 3 ETL pipeline, validation, and reporting
+- `docs/sprint4_design_document.md` — Sprint 4 database platform integration and services
