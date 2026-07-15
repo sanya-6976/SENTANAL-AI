@@ -24,12 +24,22 @@ dependencies = [
     "psycopg2-binary>=2.9.9",
     "alembic>=1.13.0",
 
+    # Backend authentication and API
+    "fastapi>=0.110.0",
+    "PyJWT>=2.8.0",
+    "pwdlib[argon2]>=0.2.0",
+
     # ── Neo4j ──
     "neo4j>=5.15.0",
 
     # ── GIS ──
     "geopandas>=0.14.0",
     "shapely>=2.0.0",
+
+    # Document and image ingestion
+    "Pillow>=10.0.0",
+    "PyMuPDF>=1.23.0",
+    "pytesseract>=0.3.10",
 
     # ── Visualization ──
     "plotly>=5.18.0",

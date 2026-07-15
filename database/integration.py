@@ -56,6 +56,9 @@ class Neo4jExportInterfaces:
     def relationship_rows(self) -> list[dict[str, Any]]:
         return self.query_service.export_relationship_rows()
 
+    def graph_payload(self) -> dict[str, list[dict[str, Any]]]:
+        return self.query_service.graph_export()
+
 
 @dataclass(slots=True)
 class AIDataInterfaces:
@@ -81,4 +84,3 @@ class DataPlatformInterfaces:
 
 class DatabaseIntegrationLayer(DataPlatformInterfaces):
     """Backward-compatible alias for the platform integration wrapper."""
-

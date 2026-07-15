@@ -40,6 +40,56 @@ class BaseRepository:
     def __init__(self, session: Session) -> None:
         self.session = session
 
+    @staticmethod
+    def _role_level(current_user: Any) -> int | None:
+        role = getattr(current_user, "role", None)
+        value = getattr(role, "value", role)
+        if isinstance(value, int):
+            return value
+        role_name = str(getattr(role, "role_name", value)).lower().replace("_", " ")
+        if "system" in role_name:
+            return 1
+        if "state" in role_name:
+            return 2
+        if "district" in role_name or "superintendent" in role_name:
+            return 3
+        if "station" in role_name or "house" in role_name:
+            return 4
+        if "investigat" in role_name:
+            return 5
+        return None
+
+    def scoped_query(self, entity_type: type[ModelT], current_user: Any | None = None):
+        """Return an entity query restricted to the user's geographic scope."""
+        query = self.session.query(entity_type)
+        if current_user is None or self._role_level(current_user) in (None, 1, 2):
+            return query
+
+        role_level = self._role_level(current_user)
+        if role_level == 3:
+            scope_value = getattr(current_user, "district_id", None)
+            scope_column = getattr(entity_type, "district_id", None)
+            if scope_value is None:
+                return query.filter(False)
+            if scope_column is not None:
+                return query.filter(scope_column == scope_value)
+            if entity_type is Crime:
+                return query.join(Crime.fir).filter(FIR.district_id == scope_value)
+            if entity_type is Evidence:
+                return query.join(Evidence.collected_by_officer).filter(Officer.district_id == scope_value)
+        if role_level in (4, 5):
+            scope_value = getattr(current_user, "station_id", None)
+            scope_column = getattr(entity_type, "station_id", None)
+            if scope_value is None:
+                return query.filter(False)
+            if scope_column is not None:
+                return query.filter(scope_column == scope_value)
+            if entity_type is Crime:
+                return query.join(Crime.fir).filter(FIR.station_id == scope_value)
+            if entity_type is Evidence:
+                return query.join(Evidence.collected_by_officer).filter(Officer.station_id == scope_value)
+        return query.filter(False)
+
     def add(self, entity: ModelT) -> ModelT:
         self.session.add(entity)
         return entity
@@ -103,21 +153,24 @@ class UserRepository(BaseRepository):
     def get_by_username(self, username: str) -> User | None:
         return self.session.query(User).filter(User.username == username).one_or_none()
 
+    def get(self, entity_type: type[User], entity_id: str) -> User | None:
+        return super().get(entity_type, entity_id)
+
 
 class OfficerRepository(BaseRepository):
-    def get_by_badge_number(self, badge_number: str) -> Officer | None:
-        return self.session.query(Officer).filter(Officer.badge_number == badge_number).one_or_none()
+    def get_by_badge_number(self, badge_number: str, current_user: Any | None = None) -> Officer | None:
+        return self.scoped_query(Officer, current_user).filter(Officer.badge_number == badge_number).one_or_none()
 
-    def list_by_district(self, district_id: str) -> list[Officer]:
-        return list(self.session.query(Officer).filter(Officer.district_id == district_id).all())
+    def list_by_district(self, district_id: str, current_user: Any | None = None) -> list[Officer]:
+        return list(self.scoped_query(Officer, current_user).filter(Officer.district_id == district_id).all())
 
 
 class FIRRepository(BaseRepository):
-    def get_by_number(self, fir_number: str) -> FIR | None:
-        return self.session.query(FIR).filter(FIR.fir_number == fir_number).one_or_none()
+    def get_by_number(self, fir_number: str, current_user: Any | None = None) -> FIR | None:
+        return self.scoped_query(FIR, current_user).filter(FIR.fir_number == fir_number).one_or_none()
 
-    def list_by_district(self, district_id: str) -> list[FIR]:
-        return list(self.session.query(FIR).filter(FIR.district_id == district_id).all())
+    def list_by_district(self, district_id: str, current_user: Any | None = None) -> list[FIR]:
+        return list(self.scoped_query(FIR, current_user).filter(FIR.district_id == district_id).all())
 
 
 class CrimeCategoryRepository(BaseRepository):
@@ -126,15 +179,15 @@ class CrimeCategoryRepository(BaseRepository):
 
 
 class CrimeRepository(BaseRepository):
-    def get_by_fir(self, fir_id: str) -> list[Crime]:
-        return list(self.session.query(Crime).filter(Crime.fir_id == fir_id).all())
+    def get_by_fir(self, fir_id: str, current_user: Any | None = None) -> list[Crime]:
+        return list(self.scoped_query(Crime, current_user).filter(Crime.fir_id == fir_id).all())
 
-    def get_by_category(self, category_id: str) -> list[Crime]:
-        return list(self.session.query(Crime).filter(Crime.category_id == category_id).all())
+    def get_by_category(self, category_id: str, current_user: Any | None = None) -> list[Crime]:
+        return list(self.scoped_query(Crime, current_user).filter(Crime.category_id == category_id).all())
 
-    def get_recent(self, limit: int = 50) -> list[Crime]:
+    def get_recent(self, limit: int = 50, current_user: Any | None = None) -> list[Crime]:
         return list(
-            self.session.query(Crime)
+            self.scoped_query(Crime, current_user)
             .order_by(Crime.reported_at.desc().nullslast(), Crime.crime_id.desc())
             .limit(limit)
             .all()
@@ -167,11 +220,11 @@ class WeaponRepository(BaseRepository):
 
 
 class EvidenceRepository(BaseRepository):
-    def get_by_type(self, evidence_type: str) -> list[Evidence]:
-        return list(self.session.query(Evidence).filter(Evidence.evidence_type == evidence_type).all())
+    def get_by_type(self, evidence_type: str, current_user: Any | None = None) -> list[Evidence]:
+        return list(self.scoped_query(Evidence, current_user).filter(Evidence.evidence_type == evidence_type).all())
 
-    def get_by_collector(self, officer_id: str) -> list[Evidence]:
-        return list(self.session.query(Evidence).filter(Evidence.collected_by == officer_id).all())
+    def get_by_collector(self, officer_id: str, current_user: Any | None = None) -> list[Evidence]:
+        return list(self.scoped_query(Evidence, current_user).filter(Evidence.collected_by == officer_id).all())
 
 
 class ActivityLogRepository(BaseRepository):
@@ -198,34 +251,48 @@ class CrimeRelationshipRepository(BaseRepository):
 class AnalyticsRepository(BaseRepository):
     """Reusable data-access helpers for analytics consumers."""
 
+    def __init__(self, session: Session, current_user: Any | None = None) -> None:
+        super().__init__(session)
+        self.current_user = current_user
+
+    def _case_scope(self, query):
+        level = self._role_level(self.current_user) if self.current_user is not None else None
+        if level not in (3, 4, 5):
+            return query
+        field = FIR.district_id if level == 3 else FIR.station_id
+        value = getattr(self.current_user, "district_id" if level == 3 else "station_id", None)
+        return query.filter(field == value) if value is not None else query.filter(False)
+
     def crimes_by_district(self) -> list[tuple[str, int]]:
-        rows = (
+        query = (
             self.session.query(District.district_name, func.count(Crime.crime_id))
             .join(FIR, FIR.district_id == District.district_id)
             .join(Crime, Crime.fir_id == FIR.fir_id)
             .group_by(District.district_name)
             .order_by(func.count(Crime.crime_id).desc())
-            .all()
         )
+        rows = self._case_scope(query).all()
         return [(row[0], int(row[1])) for row in rows]
 
     def crimes_by_category(self) -> list[tuple[str, int]]:
-        rows = (
+        query = (
             self.session.query(CrimeCategory.category_name, func.count(Crime.crime_id))
             .join(Crime, Crime.category_id == CrimeCategory.category_id)
+            .join(FIR, FIR.fir_id == Crime.fir_id)
             .group_by(CrimeCategory.category_name)
             .order_by(func.count(Crime.crime_id).desc())
-            .all()
         )
+        rows = self._case_scope(query).all()
         return [(row[0], int(row[1])) for row in rows]
 
     def monthly_crime_counts(self) -> list[dict[str, Any]]:
         dialect = self.session.bind.dialect.name if self.session.bind is not None else "sqlite"
         month_expr = func.date_trunc("month", Crime.reported_at) if dialect == "postgresql" else func.strftime("%Y-%m-01", Crime.reported_at)
-        rows = (
+        query = (
             self.session.query(month_expr.label("month"), func.count(Crime.crime_id))
+            .join(FIR, FIR.fir_id == Crime.fir_id)
             .group_by(month_expr)
             .order_by(month_expr)
-            .all()
         )
+        rows = self._case_scope(query).all()
         return [{"month": row[0].isoformat() if hasattr(row[0], "isoformat") else row[0], "crime_count": int(row[1])} for row in rows]

@@ -13,12 +13,22 @@ sqlalchemy
 psycopg2-binary
 alembic
 
+# Backend authentication and API
+fastapi
+PyJWT
+pwdlib[argon2]
+
 # Neo4j
 neo4j
 
 # GIS
 geopandas
 shapely
+
+# Document and image ingestion
+Pillow
+PyMuPDF
+pytesseract
 
 # Visualization
 plotly
