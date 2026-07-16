@@ -25,11 +25,20 @@ class AnomalyDetector:
             )
 
         if len(anomalies) == 0:
-            anomalies.append(
-                "No significant anomaly detected."
-            )
 
-        return anomalies
+            return {
+                "is_anomaly": False,
+                "anomaly_count": 0,
+                "reasons": [
+                    "No significant anomaly detected."
+                ]
+            }
+
+        return {
+            "is_anomaly": True,
+            "anomaly_count": len(anomalies),
+            "reasons": anomalies
+        }
 
 
 anomaly_detector = AnomalyDetector()

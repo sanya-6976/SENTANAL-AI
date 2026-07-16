@@ -10,7 +10,12 @@ result = anomaly_detector.detect(record)
 
 print("\n========== ANOMALY DETECTION ==========\n")
 
-for item in result:
-    print("-", item)
+print(f"Anomaly Detected : {result['is_anomaly']}")
+print(f"Anomaly Count    : {result['anomaly_count']}")
+
+print("\nReasons:")
+
+for reason in result["reasons"]:
+    print(f"- {reason}")
 
 print("\n======================================")

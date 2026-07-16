@@ -1,6 +1,9 @@
 [
     {
-        "document": "\nFIR Number: FIR-001\n\nCrime Type: Burglary\n\nLocation: Connaught Place\n\nA suspect wearing a black hoodie escaped on a motorcycle.\n",
+        "id": "chunk_1",
+        "source": "Unknown",
+        "chunk_id": 1,
+        "text": "\nFIR Number: FIR-001\n\nCrime Type: Burglary\n\nLocation: Connaught Place\n\nA suspect wearing a black hoodie escaped on a motorcycle.\n",
         "embedding": [
             -0.014198588,
             -0.0147811305,
