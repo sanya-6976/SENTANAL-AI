@@ -1,318 +1,280 @@
 # Sentinel AI – AI Engineering Blueprint
 
-> Version: 1.0
->
-> Module Owner: Lina Aggarwal (AI Developer)
->
-> Project Duration: 15 Days
+> Version: 2.0  
+> Module Owner: Lina Aggarwal (AI Developer)  
+> Status: AI Module Completed (Phase 1)  
+> Project: Sentinel AI – Crime Investigation Platform
 
 ---
 
 # Vision
 
-Sentinel AI is an enterprise-grade AI-powered Crime Investigation Platform designed to assist law enforcement officers in analyzing cases, retrieving relevant information, predicting crime trends, discovering hidden relationships, and generating investigation reports.
-
-The AI module acts as the intelligence engine of the entire platform.
-
----
+Sentinel AI is an AI-powered Crime Investigation Platform designed to assist law enforcement officers in analyzing crime cases, retrieving relevant information, predicting crime hotspots, detecting suspicious patterns, and generating professional investigation reports.
+The AI module serves as the intelligence engine of the entire platform.
 
 # AI Philosophy
-
-Gemini is **not** the brain.
-
-Gemini is one component of the AI Engine.
+Gemini is **not** the AI system.
+Gemini is only one component of the AI Engine.
 
 The AI Engine is responsible for:
+- Understanding officer requests
+- Selecting the appropriate AI module
+- Retrieving relevant information
+- Running machine learning models
+- Generating professional responses
 
-- Understanding user requests
-- Planning tasks
-- Selecting appropriate AI agents
-- Gathering required information
-- Producing intelligent responses
-
----
+# AI Architecture
+                    Officer Request
+                           │
+                    AI Orchestrator
+                           │
+                    AI Router
+                           │
+        ┌──────────────────┼──────────────────┐
+        ▼                  ▼                  ▼
+ Investigation Agent   Prediction Agent   Report Agent
+        │                  │                  │
+        └──────────────┬───┴──────────────────┘
+                       ▼
+              RAG Engine & ML Engine
+                       │
+                     Gemini
+                       │
+              Professional Response
 
 # AI Module Responsibilities
 
-The AI module will:
+The AI module is responsible for:
+- OCR & Document Understanding
+- FIR Information Extraction
+- Crime Investigation using RAG
+- Crime Hotspot Prediction
+- Risk Assessment
+- Explainable AI
+- Modus Operandi Anomaly Detection
+- Investigation Report Generation
 
-- Understand natural language queries
-- Search crime-related documents using RAG
-- Predict crime hotspots using ML
-- Analyze criminal networks
-- Generate investigation reports
-- Explain predictions using Explainable AI
-
----
-
-# AI Request Flow
-
-Officer Request
-
+# RAG Pipeline
+PDF / Image
 ↓
-
-AI Router
-
+OCR
 ↓
-
-AI Orchestrator
-
+Document Loader
 ↓
-
-├── Investigation Agent
-
-├── Prediction Agent
-
-├── Graph Agent
-
-├── Report Agent
-
-└── RAG Engine
-
+Text Chunking
 ↓
-
+Metadata Generation
+↓
+Embeddings
+↓
+Custom Vector Store
+↓
+Retriever
+↓
+Context Builder
+↓
+Prompt Builder
+↓
 Gemini
-
 ↓
+Investigation Response
 
-Professional Response
-
----
+# Machine Learning Pipeline
+Crime Dataset
+↓
+Data Cleaning
+↓
+Hotspot Analysis
+↓
+Risk Score Calculation
+↓
+Explainability Service
+↓
+Anomaly Detection
+↓
+Prediction Agent
 
 # AI Components
 
-## AI Router
-
-Receives every request and identifies the user's intent.
-
----
-
-## AI Orchestrator
-
-Coordinates all AI agents and combines their outputs.
-
----
-
-## Investigation Agent
-
+## OCR Service
 Responsible for:
+- Image OCR
+- PDF OCR
+- Text Extraction
+- Unified Document Loading
 
-- FIR search
-- Case analysis
-- Crime summaries
-- Legal information
-
----
-
-## Prediction Agent
-
+## AI Extraction
 Responsible for:
-
-- Crime hotspot prediction
-- Crime forecasting
-- Risk assessment
-
----
-
-## Graph Agent
-
-Responsible for:
-
-- Neo4j queries
-- Criminal relationship analysis
-- Network discovery
-
----
-
-## Report Agent
-
-Responsible for:
-
-- Investigation reports
-- PDF generation
-- Case summaries
-
----
+- FIR Number Extraction
+- Crime Type Detection
+- Suspect Detection
+- Vehicle Detection
+- Location Detection
+- Confidence Score
+- AI Summary Generation
 
 ## RAG Engine
-
 Responsible for:
+- Document Loading
+- Chunk Creation
+- Metadata Management
+- Embedding Generation
+- Vector Storage
+- Similarity Search
+- Context Building
 
-- Loading documents
-- Splitting text
-- Creating embeddings
-- Searching FAISS
-- Providing context to Gemini
+## Investigation Agent
+Responsible for:
+- FIR Search
+- Case Analysis
+- Crime Summaries
+- Evidence Retrieval
 
----
+## Prediction Agent
+Responsible for:
+- Crime Hotspot Prediction
+- Highest Risk Area
+- Risk Score
+- Confidence Score
+- Prediction Explanation
 
-# Machine Learning Pipeline
+## Explainability Service
+Responsible for:
+- Human-readable prediction explanation
+- Model reasoning
+- Risk interpretation
 
-Dataset
+## Anomaly Detector
+Responsible for:
+- Modus Operandi anomaly detection
+- Suspicious pattern identification
+- Rare case detection
 
-↓
+## Report Agent
+Responsible for:
+- Investigation Reports
+- Case Summaries
+- Recommendation Generation
 
-Cleaning
+## AI Router
+Responsible for:
+- Understanding officer intent
+- Selecting the appropriate AI Agent
 
-↓
+## AI Orchestrator
+Responsible for:
+- Coordinating AI workflow
+- Managing AI agents
+- Returning final responses
 
-Feature Engineering
+# Technology Stack
 
-↓
+## AI
+- Google Gemini API
+- Prompt Engineering
+- Retrieval-Augmented Generation (RAG)
 
-Training
+## OCR
+- Tesseract OCR
+- PyMuPDF
+- Pillow
 
-↓
+## Machine Learning
+- Pandas
+- NumPy
 
-Prediction
+## Storage
+- JSON
+- Custom Vector Store
 
-↓
+## Development
+- Python
+- Git
+- FastAPI (Backend Integration)
 
-Explainability
+# Sprint Progress
 
-↓
-
-Gemini Explanation
-
----
-
-# RAG Pipeline
-
-PDFs
-
-↓
-
-Loader
-
-↓
-
-Chunking
-
-↓
-
-Embeddings
-
-↓
-
-FAISS
-
-↓
-
-Retriever
-
-↓
-
-Gemini
-
----
-
-# Folder Structure
-
-```
-ai/
-
-├── core/
-
-├── services/
-
-├── agents/
-
-├── rag/
-
-├── ml/
-
-├── prompts/
-
-├── utils/
-
-└── tests/
-```
-
----
-
-# Sprint Plan
-
-## Sprint 1
-
-- Project Foundation
+## Sprint 1 – Foundation ✅
+Completed
 - Gemini Integration
 - Configuration
 - Logging
+- Model Manager
 
----
-
-## Sprint 2
-
-- RAG
+## Sprint 2 – Document Intelligence ✅
+Completed
+- OCR Pipeline
+- AI Extraction
+- Document Loader
+- Chunking
+- Metadata
 - Embeddings
-- FAISS
-- Retrieval
+- Custom Vector Store
+- Retriever
+- Context Builder
+- Prompt Builder
 
----
-
-## Sprint 3
-
-- Machine Learning
-- Crime Forecasting
+## Sprint 3 – Crime Intelligence ✅
+Completed
 - Hotspot Prediction
+- Risk Score
+- Confidence Score
+- Explainability
+- Anomaly Detection
 
----
-
-## Sprint 4
-
-- AI Agents
+## Sprint 4 – AI Agents ✅
+Completed
+- Investigation Agent
+- Prediction Agent
+- Report Agent
 - AI Router
 - AI Orchestrator
 
----
-
-## Sprint 5
-
-- Integration
-- Testing
+## Sprint 5 – Integration 🔄
+In Progress
+- Backend Integration
+- API Integration
+- End-to-End Testing
 - Documentation
 - Deployment
 
----
-
 # Engineering Principles
+- Single Responsibility Principle
+- Modular Architecture
+- Reusable AI Components
+- Clean Code
+- No Hardcoded Secrets
+- Git-friendly Development
+- Easy Backend Integration
+- Scalable AI Design
 
-- Every file has one responsibility.
-- Every commit represents a working feature.
-- No secrets in GitHub.
-- No duplicated code.
-- Simplicity over unnecessary complexity.
-- Every architectural decision must have a reason.
-
+# Current AI Features
+✅ OCR Pipeline
+✅ AI FIR Extraction
+✅ Retrieval-Augmented Generation
+✅ Crime Investigation Assistant
+✅ Crime Hotspot Prediction
+✅ Risk Assessment
+✅ Explainable AI
+✅ Modus Operandi Anomaly Detection
+✅ Investigation Report Generation
+✅ AI Router
+✅ AI Orchestrator
 ---
 
 # Future Scope
-
+- Graph Agent (Neo4j)
+- Criminal Network Analysis
+- Crime Forecasting
 - Voice Investigation Assistant
 - Real-time Crime Alerts
 - CCTV Integration
 - Live GIS Mapping
 - Multi-language Support
-- AI Investigation Timeline
 - Explainable AI Dashboard
 
-# Sprint A1 - OCR Pipeline ✅
-
-## Goal
-Enable Sentinel AI to extract text from images and PDFs.
-
-## Features Completed
-- ✅ OCR Engine (Tesseract)
-- ✅ Image Text Extraction
-- ✅ Digital PDF Text Extraction
-- ✅ Basic Scanned PDF Handling
-- ✅ Unified Document Loading
-
-## Technologies Used
-- Tesseract OCR
-- pytesseract
-- Pillow
-- PyMuPDF
-
-## Outcome
-Sentinel AI can successfully extract text from images and PDF documents, creating the foundation for AI-based information extraction.
+# Current Project Status
+**AI Module:** ✅ Feature Complete
+**Backend Integration:** 🔄 Pending
+**Deployment:** ⏳ Planned
+**Version:** 2.0
