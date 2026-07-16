@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { MapPin, Shield } from 'lucide-react'
 import {
   karnatakaCities,
@@ -8,6 +8,7 @@ import {
 import type { CityMarker } from '../data/mockGisData'
 import Legend from './Legend'
 import MapControls from './MapControls'
+import { getGisHeatmap, getGisClustering } from '../../../api/analytics.api'
 
 interface GISMapProps {
   // Layer states
@@ -38,6 +39,78 @@ export function GISMap({
   const [translateY, setTranslateY] = useState(0)
   const [hoveredCity, setHoveredCity] = useState<CityMarker | null>(null)
 
+  const [citiesList, setCitiesList] = useState<CityMarker[]>(karnatakaCities)
+  const [stationList, setStationList] = useState<any[]>(policeStations)
+
+  useEffect(() => {
+    const loadGisData = async () => {
+      try {
+        const [heatmapRes, clusteringRes] = await Promise.all([
+          getGisHeatmap(),
+          getGisClustering()
+        ])
+
+        const rawHeatmap = Array.isArray(heatmapRes) ? heatmapRes : []
+        const rawClustering = Array.isArray(clusteringRes) ? clusteringRes : []
+
+        // Map heatmap data to citiesList
+        const updatedCities = karnatakaCities.map(city => {
+          const match = rawHeatmap.find(r => 
+            r.district_name.toLowerCase().includes(city.name.toLowerCase()) || 
+            city.name.toLowerCase().includes(r.district_name.toLowerCase())
+          )
+          if (match) {
+            const firs = match.firs ?? 0
+            const severity = firs > 100 ? 'Critical' : firs > 40 ? 'High' : firs > 15 ? 'Medium' : 'Low'
+            return {
+              ...city,
+              activeCases: firs,
+              severity: severity as any,
+              description: `${firs} case files registered in district`
+            }
+          }
+          return city
+        })
+        setCitiesList(updatedCities)
+
+        // Map clustering data to stationList
+        if (rawClustering.length > 0) {
+          const minLng = 74.0, maxLng = 78.5
+          const minLat = 11.5, maxLat = 18.5
+
+          const mappedStations = rawClustering.map((station, index) => {
+            const lng = typeof station.longitude === 'string' ? parseFloat(station.longitude) : station.longitude
+            const lat = typeof station.latitude === 'string' ? parseFloat(station.latitude) : station.latitude
+
+            let finalX = 50, finalY = 50
+            if (!isNaN(lng) && !isNaN(lat)) {
+              const x = 15 + ((lng - minLng) / (maxLng - minLng)) * 70
+              const y = 88 - ((lat - minLat) / (maxLat - minLat)) * 76
+              finalX = Math.max(5, Math.min(95, x))
+              finalY = Math.max(5, Math.min(95, y))
+            } else {
+              const fallback = policeStations[index % policeStations.length]
+              finalX = fallback.x
+              finalY = fallback.y
+            }
+
+            return {
+              name: station.station_name,
+              city: station.station_name,
+              x: finalX,
+              y: finalY,
+              fir_count: station.fir_count
+            }
+          })
+          setStationList(mappedStations)
+        }
+      } catch (err) {
+        console.error("GIS live data fetch failed, using fallback mock coordinates:", err)
+      }
+    }
+    loadGisData()
+  }, [])
+
   // Zoom handlers
   const handleZoomIn = () => setZoom((prev) => Math.min(prev + 0.25, 2.5))
   const handleZoomOut = () => setZoom((prev) => Math.max(prev - 0.25, 0.75))
@@ -49,7 +122,7 @@ export function GISMap({
 
   // Filter city node data dynamically
   const filteredCities = useMemo(() => {
-    return karnatakaCities.filter((city) => {
+    return citiesList.filter((city) => {
       // Search keyword filter
       if (searchQuery.trim() !== '') {
         if (!city.name.toLowerCase().includes(searchQuery.toLowerCase())) return false
@@ -67,7 +140,7 @@ export function GISMap({
 
       return true
     })
-  }, [searchQuery, selectedDistrict, selectedSeverity])
+  }, [citiesList, searchQuery, selectedDistrict, selectedSeverity])
 
   // Get color code by severity
   const getSeverityColor = (sev: 'Low' | 'Medium' | 'High' | 'Critical') => {
@@ -163,7 +236,7 @@ export function GISMap({
 
           {/* 2. Police Station Pins */}
           {stations &&
-            policeStations.map((station) => (
+            stationList.map((station) => (
               <div
                 key={station.name}
                 className="absolute shrink-0 flex items-center justify-center p-1 bg-[#10B981]/15 border border-[#10B981]/40 rounded text-[#10B981] z-10"

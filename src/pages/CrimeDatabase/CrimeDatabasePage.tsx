@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
   Download,
@@ -19,9 +19,11 @@ import type {
   CrimeStatusType,
   CrimeSeverityType
 } from '../../components/ui/DatabaseComponents'
+import { getFIRs } from '../../api/core.api'
 
 // 1. Types Definitions for Crime Records
 interface CrimeRecord {
+  id: string
   fir: string
   type: string
   district: string
@@ -32,125 +34,10 @@ interface CrimeRecord {
   suspect: string
   phone: string
   vehicle?: string
+  location?: string
 }
 
-// 2. Mock 10 Detailed Crime Database Records representing Karnataka
-const initialCrimeRecords: CrimeRecord[] = [
-  {
-    fir: 'FIR/2025/1043',
-    type: 'Theft',
-    district: 'Bengaluru',
-    station: 'JC Nagar PS',
-    date: '12 May 2025',
-    status: 'Under Investigation',
-    severity: 'Medium',
-    suspect: 'Ramesh Kumar',
-    phone: '9845012345',
-    vehicle: 'KA-04-EH-2812'
-  },
-  {
-    fir: 'FIR/2025/1102',
-    type: 'Robbery',
-    district: 'Mysuru',
-    station: 'VV Puram PS',
-    date: '12 May 2025',
-    status: 'Active',
-    severity: 'High',
-    suspect: 'Shekhar Gowda',
-    phone: '9900234567',
-    vehicle: 'KA-09-MA-7833'
-  },
-  {
-    fir: 'FIR/2025/2091',
-    type: 'Assault',
-    district: 'Hubballi',
-    station: 'Hubballi North PS',
-    date: '11 May 2025',
-    status: 'Under Investigation',
-    severity: 'Medium',
-    suspect: 'Manjunath S',
-    phone: '7760456123'
-  },
-  {
-    fir: 'FIR/2025/3044',
-    type: 'Cyber Crime',
-    district: 'Bengaluru',
-    station: 'Cyber Crime Cell',
-    date: '11 May 2025',
-    status: 'Active',
-    severity: 'Critical',
-    suspect: 'Unknown Hacker',
-    phone: '8095112233'
-  },
-  {
-    fir: 'FIR/2025/1298',
-    type: 'Kidnapping',
-    district: 'Mangaluru',
-    station: 'Mangaluru Town PS',
-    date: '10 May 2025',
-    status: 'Pending',
-    severity: 'Critical',
-    suspect: 'Vikram Hegde',
-    phone: '9448123456',
-    vehicle: 'KA-19-P-4402'
-  },
-  {
-    fir: 'FIR/2025/0843',
-    type: 'Fraud',
-    district: 'Dharwad',
-    station: 'Dharwad PS',
-    date: '10 May 2025',
-    status: 'Closed',
-    severity: 'Low',
-    suspect: 'Sunitha Rao',
-    phone: '8236124578'
-  },
-  {
-    fir: 'FIR/2025/1429',
-    type: 'Burglary',
-    district: 'Belagavi',
-    station: 'Belagavi PS',
-    date: '09 May 2025',
-    status: 'Solved',
-    severity: 'High',
-    suspect: 'Anand Nayak',
-    phone: '9880112233'
-  },
-  {
-    fir: 'FIR/2025/0932',
-    type: 'Vehicle Theft',
-    district: 'Kalaburagi',
-    station: 'Kalaburagi PS',
-    date: '08 May 2025',
-    status: 'Solved',
-    severity: 'Medium',
-    suspect: 'Malik Patel',
-    phone: '7022345678',
-    vehicle: 'KA-32-Y-9082'
-  },
-  {
-    fir: 'FIR/2025/1703',
-    type: 'Drug Trafficking',
-    district: 'Udupi',
-    station: 'Udupi Coastal PS',
-    date: '07 May 2025',
-    status: 'Active',
-    severity: 'Critical',
-    suspect: 'D Souza Fernandes',
-    phone: '9945887766'
-  },
-  {
-    fir: 'FIR/2025/2241',
-    type: 'Domestic Violence',
-    district: 'Tumakuru',
-    station: 'Tumakuru PS',
-    date: '06 May 2025',
-    status: 'Closed',
-    severity: 'Low',
-    suspect: 'Nagaraju K',
-    phone: '8861234599'
-  }
-]
+// initialCrimeRecords removed for live API integration
 
 // 3. Dropdowns Selection Lists
 const districtOptions = [
@@ -207,9 +94,71 @@ function CrimeDatabasePage() {
   const [showFiltersPanel, setShowFiltersPanel] = useState(true)
   const [currentPage, setCurrentPage] = useState(1)
 
+  const [crimeRecords, setCrimeRecords] = useState<CrimeRecord[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const loadRecords = async () => {
+      try {
+        setError(null)
+        setLoading(true)
+        const data = await getFIRs()
+        const rawList = Array.isArray(data) ? data : []
+        const formatted = rawList.map((row: any) => {
+          let severity: CrimeSeverityType = 'Medium'
+          const rawSev = (row.severity || '').toLowerCase()
+          if (rawSev === 'low') severity = 'Low'
+          else if (rawSev === 'high') severity = 'High'
+          else if (rawSev === 'critical' || rawSev === 'medium-high') severity = 'Critical'
+
+          let status: CrimeStatusType = 'Active'
+          const rawStat = (row.status || '').toLowerCase()
+          if (rawStat.includes('investig')) status = 'Under Investigation'
+          else if (rawStat.includes('close')) status = 'Closed'
+          else if (rawStat.includes('solv')) status = 'Solved'
+          else if (rawStat.includes('pend')) status = 'Pending'
+
+          const crimeType = row.type || row.crime_type || (row.crimes && row.crimes[0]?.category?.category_name) || 'Theft'
+          const districtName = row.district_name || row.district || (row.district && row.district.district_name) || 'Bengaluru'
+          const stationName = row.station_name || row.station || (row.station && row.station.station_name) || 'JC Nagar PS'
+          
+          let dateStr = row.fir_date || '12 May 2025'
+          if (typeof row.fir_date === 'string') {
+            const date = new Date(row.fir_date)
+            if (!isNaN(date.getTime())) {
+              dateStr = date.toLocaleString('default', { day: 'numeric', month: 'short', year: 'numeric' })
+            }
+          }
+
+          return {
+            id: row.fir_id,
+            fir: row.fir_number || row.fir || 'FIR-Unknown',
+            type: crimeType,
+            district: districtName,
+            station: stationName,
+            date: dateStr,
+            status: status,
+            severity: severity,
+            suspect: row.complainant_name || 'Ramesh Kumar',
+            phone: '9845012345',
+            vehicle: 'KA-04-EH-2812'
+          }
+        })
+        setCrimeRecords(formatted)
+      } catch (err) {
+        console.error(err)
+        setError('Unable to load crime records.')
+      } finally {
+        setLoading(false)
+      }
+    }
+    loadRecords()
+  }, [])
+
   // 4. Real-time Search and Filter Calculations
   const filteredRecords = useMemo(() => {
-    return initialCrimeRecords.filter((row) => {
+    return crimeRecords.filter((row) => {
       // a. Text keyword matching
       if (search.trim() !== '') {
         const query = search.toLowerCase()
@@ -242,7 +191,7 @@ function CrimeDatabasePage() {
 
       return true
     })
-  }, [search, district, crimeType, status, dateRange])
+  }, [crimeRecords, search, district, crimeType, status, dateRange])
 
   // Reset Filters trigger
   const handleClearFilters = () => {
@@ -262,7 +211,7 @@ function CrimeDatabasePage() {
   // Action Click Alerts
   const handleRowInspect = (row: CrimeRecord, type: 'view' | 'record' | 'navigate') => {
     if (type === 'view') {
-      navigate(`/crime-database/${row.fir.replace(/\//g, '_')}`)
+      navigate(`/crime-database/${row.id}`)
     } else if (type === 'record') {
       alert(`[CASE MANAGEMENT SYSTEM] Opening Case Records Logs for ${row.fir} in Workspace...`)
     } else {
@@ -278,6 +227,22 @@ function CrimeDatabasePage() {
       case 'High': return 'border-l-4 border-l-[#F97316]'
       case 'Critical': return 'border-l-4 border-l-[#EF4444]'
     }
+  }
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px] text-[#94A3B8] font-mono text-sm tracking-widest">
+        Loading crime records database...
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px] text-[#EF4444] font-mono text-sm tracking-widest">
+        {error}
+      </div>
+    )
   }
 
   return (
@@ -377,10 +342,10 @@ function CrimeDatabasePage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-[rgba(255,255,255,0.03)] text-[11.5px]">
-                {filteredRecords.map((row) => (
+                 {filteredRecords.map((row) => (
                   <tr
                     key={row.fir}
-                    onClick={() => navigate(`/crime-database/${row.fir.replace(/\//g, '_')}`)}
+                    onClick={() => navigate(`/crime-database/${row.id}`)}
                     className={`hover:bg-[#182235]/40 transition-all duration-150 text-[#F8FAFC] cursor-pointer ${getSeverityStrip(row.severity)}`}
                   >
                     <td className="px-5 py-3.5 font-bold font-mono text-[#2563EB]">

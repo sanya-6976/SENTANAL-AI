@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { FolderUp } from 'lucide-react'
 import {
   UploadCard,
@@ -8,8 +9,12 @@ import {
   GuidelinesCard
 } from './components'
 import type { UploadedFileItem } from './components/UploadedFilesList'
+import { parseImageOCR } from '../../api/ai.api'
 
 function ReportsPage() {
+  const navigate = useNavigate()
+
+
   // Mock files array state
   const [files, setFiles] = useState<UploadedFileItem[]>([
     { id: '1', name: 'FIR_1254.pdf', type: 'pdf', size: '1.2 MB', status: 'Processed' },
@@ -24,8 +29,25 @@ function ReportsPage() {
   }
 
   // Upload Actions
-  const handleUploadFIR = () => {
-    alert('[UPLOAD DIALOG] Browse local directory to select FIR document records...')
+  const handleUploadFIR = async () => {
+    try {
+      const res = await parseImageOCR({ image_path: "datasets/raw/images/sample_fir.jpg" })
+      
+      const newFile: UploadedFileItem = {
+        id: `fir-${Date.now()}`,
+        name: 'sample_fir.jpg',
+        type: 'image',
+        size: '1.8 MB',
+        status: 'Processed'
+      }
+      setFiles(prev => [newFile, ...prev])
+      
+      navigate('/ocr-review', { state: { extractedText: res.extracted_text, fileName: 'sample_fir.jpg' } })
+    } catch (err) {
+      console.error(err)
+      alert('Failed to parse document text via OCR. Redirecting to review details.')
+      navigate('/ocr-review')
+    }
   }
 
   const handleCapture = () => {

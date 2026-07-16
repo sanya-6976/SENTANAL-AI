@@ -3,11 +3,13 @@ import { useNavigate } from 'react-router-dom'
 import { Mail, Lock, Eye, EyeOff, ShieldCheck, Check } from 'lucide-react'
 import kspLogo from '../../assets/ksp-logo.jpg'
 import loginBg from '../../assets/login_bg.png'
+import { login } from "../../api/auth.api";
+import { saveSession } from "../../utils/session";
 
 function LoginPage() {
   const navigate = useNavigate()
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const [email, setEmail] = useState('')
+  const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [rememberMe, setRememberMe] = useState(false)
@@ -91,20 +93,42 @@ function LoginPage() {
     }
   }, [])
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!email || !password) {
-      setError('Please provide officer credentials to log in.')
-      return
-    }
-    setError('')
-    setIsLoading(true)
+    const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-    setTimeout(() => {
-      setIsLoading(false)
-      navigate('/dashboard')
-    }, 850)
-  }
+    if (!username || !password) {
+      setError("Please enter your username and password.");
+      return;
+    }
+
+    try {
+      setError("");
+      setIsLoading(true);
+
+      const response = await login({
+        username,
+        password,
+      });
+
+      saveSession(
+        response.token.access_token,
+        response.user
+      );
+
+      navigate("/dashboard");
+    } 
+    catch (err: any) {
+      if (err.response?.status === 401) {
+        setError("Invalid username or password.");
+      } else if (err.response?.status === 403) {
+        setError("Your account has been deactivated.");
+      } else {
+        setError("Unable to connect to the server.");
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen w-screen relative flex items-center justify-center p-4 sm:p-8 md:p-12 lg:p-16 text-[#F8FAFC] overflow-x-hidden select-none bg-transparent">
@@ -199,7 +223,7 @@ function LoginPage() {
               {/* Officer ID / Email */}
               <div className="space-y-1.5">
                 <label className="block text-[9.5px] font-mono uppercase tracking-wider text-[#94A3B8]">
-                  Officer ID / Email Address
+                  Username / Email Address
                 </label>
                 <div className="relative group">
                   <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#94A3B8]/60 group-focus-within:text-[#38BDF8] transition-colors">
@@ -207,10 +231,10 @@ function LoginPage() {
                   </div>
                   <input
                     type="text"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
                     className="w-full bg-[#050816]/70 border border-[rgba(80,150,255,0.2)] focus:border-[#38BDF8] focus:ring-1 focus:ring-[#38BDF8] rounded-xl pl-10 pr-4 py-3.5 text-xs font-semibold text-white placeholder-slate-600 outline-none transition-all duration-150"
-                    placeholder="officer.email@ksp.gov.in"
+                    placeholder="Enter your username"
                     required
                   />
                 </div>

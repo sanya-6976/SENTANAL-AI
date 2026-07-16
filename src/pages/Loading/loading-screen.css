@@ -1,1 +1,237 @@
-.boot-screen{position:relative;isolation:isolate;display:grid;min-height:100vh;min-height:100dvh;place-items:center;overflow:hidden;padding:40px 28px;color:#d9edff;background:radial-gradient(ellipse at 50% 48%,#0b1e42 0%,#071127 36%,#050816 72%);font-family:Inter,ui-sans-serif,system-ui,sans-serif}.boot-screen:before{position:absolute;z-index:-1;inset:0;content:"";background:radial-gradient(circle at 16% 25%,rgba(0,153,255,.13),transparent 25%),radial-gradient(circle at 84% 78%,rgba(12,84,207,.16),transparent 27%)}.boot-screen__grid{position:absolute;z-index:-1;inset:-20%;opacity:.22;background-image:linear-gradient(rgba(71,175,255,.13) 1px,transparent 1px),linear-gradient(90deg,rgba(71,175,255,.13) 1px,transparent 1px);background-size:46px 46px;transform:perspective(420px) rotateX(58deg) translateY(15%);mask-image:linear-gradient(to bottom,transparent,#000 38%,transparent 82%)}.boot-screen__scanlines{position:absolute;inset:0;z-index:2;pointer-events:none;opacity:.14;background:repeating-linear-gradient(0deg,transparent 0 3px,rgba(96,207,255,.08) 4px)}.boot-screen__radar{position:absolute;z-index:-1;width:min(88vw,720px);aspect-ratio:1;border:1px solid rgba(55,176,255,.18);border-radius:50%;box-shadow:inset 0 0 90px rgba(0,108,250,.12),0 0 90px rgba(0,108,250,.08)}.boot-screen__radar:before,.boot-screen__radar:after,.boot-screen__radar b{position:absolute;inset:22%;border:inherit;border-radius:50%;content:""}.boot-screen__radar:after{inset:40%}.boot-screen__radar b{inset:0;border-width:0 1px;border-radius:0}.boot-screen__radar i{position:absolute;left:50%;top:50%;width:50%;height:50%;transform-origin:0 0;background:conic-gradient(from 0deg,rgba(0,194,255,.28),transparent 42deg);clip-path:polygon(0 0,100% 0,0 100%);animation:radar 5s linear infinite}.boot-screen__radar span{position:absolute;inset:0;border-radius:50%;animation:radar-pulse 3s ease-out infinite}.boot-screen__streak{position:absolute;z-index:-1;width:48vw;height:1px;opacity:.55;background:linear-gradient(90deg,transparent,#42c8ff,transparent);filter:drop-shadow(0 0 5px #0caeff);animation:streak 8s linear infinite}.boot-screen__streak--one{top:24%;left:-30%;transform:rotate(-13deg)}.boot-screen__streak--two{right:-28%;bottom:26%;transform:rotate(-12deg);animation-delay:-4s}.boot-screen__particles i{position:absolute;z-index:-1;width:2px;height:2px;border-radius:50%;background:#68d6ff;box-shadow:0 0 8px 2px #1685ff;animation:particle calc(5s + (var(--i)%5)*1s) ease-in-out infinite alternate;animation-delay:calc(var(--i)*-.32s)}.boot-screen__content{width:min(100%,600px);text-align:center;animation:enter .8s both ease-out}.boot-screen__seal{position:relative;display:grid;width:96px;height:96px;place-items:center;margin:0 auto 12px;border:1px solid rgba(91,205,255,.62);border-radius:50%;background:#07152c;box-shadow:0 0 0 7px rgba(37,147,255,.08),0 0 35px rgba(42,165,255,.46);animation:float 4.8s ease-in-out infinite}.boot-screen__seal img{width:82px;height:82px;border-radius:50%;object-fit:cover}.boot-screen__orbit{position:absolute;inset:-8px;border:1px solid rgba(117,219,255,.32);border-right-color:transparent;border-radius:inherit;animation:spin 7s linear infinite}.boot-screen__classification{display:inline-flex;align-items:center;gap:6px;margin:8px 0 13px;color:#76cfff;font:700 9px/1.2 ui-monospace,monospace;letter-spacing:.17em;text-transform:uppercase}.boot-screen h1{margin:0;color:#f1fbff;font-size:clamp(2.1rem,7vw,3.65rem);letter-spacing:.2em;line-height:1;text-indent:.2em;text-shadow:0 0 30px rgba(66,193,255,.5)}.boot-screen h1 em{font-style:normal;color:#48c8ff}.boot-screen__subtitle{margin:12px 0 30px;color:#9bb7d3;font-size:11px;font-weight:600;letter-spacing:.18em;text-transform:uppercase}.boot-log{min-height:184px;padding:15px 17px;border:1px solid rgba(99,190,255,.17);border-radius:7px;background:linear-gradient(105deg,rgba(9,29,58,.68),rgba(9,21,45,.38));box-shadow:inset 0 0 28px rgba(29,124,255,.06);text-align:left}.boot-log__item{display:flex;align-items:center;min-height:25px;color:#96abc0;font:11px/1.3 ui-monospace,SFMono-Regular,monospace;letter-spacing:.045em;opacity:0;animation:log-in .22s forwards}.boot-log__item--complete{color:#a8cdf0}.boot-log__marker{display:grid;width:21px;place-items:center;color:#61d7ff}.boot-log__marker i{width:6px;height:6px;border:1px solid #4bcfff;border-radius:50%;animation:blink 1s infinite}.boot-log__text{flex:1}.boot-log__complete{color:#55d3ff;font-size:9px}.boot-log__cursor{display:inline-block;width:7px;height:12px;margin-left:4px;vertical-align:-2px;background:#5bd8ff;animation:blink .7s infinite}.boot-log__ready{padding:8px 0 0 21px;color:#61e5ff;font:700 11px ui-monospace,monospace;letter-spacing:.14em;animation:log-in .2s forwards}.boot-progress{margin-top:23px;font:10px ui-monospace,monospace;letter-spacing:.09em}.boot-progress__labels{display:flex;justify-content:space-between;color:#8baecb}.boot-progress__labels b{color:#66d9ff}.boot-progress__track{height:7px;margin:9px 0 7px;padding:1px;overflow:hidden;border:1px solid rgba(92,194,255,.34);border-radius:2px;background:rgba(3,13,30,.8);box-shadow:0 0 14px rgba(30,159,255,.16)}.boot-progress__track span{display:block;height:100%;border-radius:1px;background:linear-gradient(90deg,#147de2,#51ddff,#c1f7ff);box-shadow:0 0 12px #36c8ff;transition:width 70ms linear}.boot-progress__ticks{display:flex;justify-content:space-between;color:#5c7895;font-size:8px}.boot-status{position:absolute;top:36px;right:36px;width:198px;padding:14px;border:1px solid rgba(98,191,255,.2);border-radius:5px;background:rgba(4,16,38,.68);box-shadow:0 0 30px rgba(5,114,255,.08);font:10px ui-monospace,monospace;animation:enter 1s .2s both ease-out}.boot-status__heading{padding-bottom:10px;border-bottom:1px solid rgba(99,190,255,.14);color:#d8f6ff;letter-spacing:.13em}.boot-status__pulse{display:inline-block;width:6px;height:6px;margin-right:6px;border-radius:50%;background:#5de4ff;box-shadow:0 0 8px #44d9ff;animation:blink 1.2s infinite}.boot-status__row{display:flex;justify-content:space-between;padding-top:10px;color:#8da7c0}.boot-status__row b{color:#54cff8;font-size:9px;letter-spacing:.05em}.boot-screen__footer{position:absolute;right:34px;bottom:28px;left:34px;display:flex;justify-content:space-between;color:#46617e;font:9px ui-monospace,monospace;letter-spacing:.12em}.boot-screen__access{position:absolute;z-index:5;inset:0;display:grid;place-items:center;color:white;background:rgba(43,186,255,.9);font-size:clamp(1.7rem,5vw,3rem);font-weight:800;letter-spacing:.25em;text-indent:.25em;text-shadow:0 2px 20px #0065b7;animation:granted .55s forwards}@keyframes radar{to{transform:rotate(360deg)}}@keyframes radar-pulse{0%{box-shadow:inset 0 0 0 0 rgba(75,205,255,.25)}100%{box-shadow:inset 0 0 0 140px rgba(75,205,255,0)}}@keyframes float{50%{transform:translateY(-9px)}}@keyframes spin{to{transform:rotate(360deg)}}@keyframes streak{0%,100%{translate:-10vw 0;opacity:0}12%,75%{opacity:.55}55%{translate:115vw 0}}@keyframes particle{to{transform:translate(24px,-40px);opacity:.2}}@keyframes blink{50%{opacity:.18}}@keyframes enter{from{opacity:0;transform:translateY(12px) scale(.98)}to{opacity:1;transform:none}}@keyframes log-in{to{opacity:1}}@keyframes granted{0%{opacity:0}18%{opacity:1}100%{opacity:0}}@media(max-width:720px){.boot-screen{padding:28px 18px;align-items:start;padding-top:42px}.boot-status{top:auto;right:auto;bottom:47px;left:18px;width:calc(100% - 36px);padding:9px 13px}.boot-status__row{display:inline-flex;width:49%;padding-top:7px}.boot-screen__footer{display:none}.boot-screen__seal{width:76px;height:76px}.boot-screen__seal img{width:64px;height:64px}.boot-screen__subtitle{margin-bottom:18px}.boot-log{min-height:178px}.boot-log__item{font-size:9px}.boot-log__complete{font-size:8px}}@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+/* Custom loading screen styling matching premium police operating systems */
+.loading-screen {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  min-height: 100vh;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  color: #f8fafc;
+  background: radial-gradient(circle at center, #0B1220 0%, #050816 100%);
+  font-family: 'Inter', system-ui, sans-serif;
+  opacity: 1;
+  transition: opacity 0.5s ease-in-out;
+}
+
+.loading-screen--granted {
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+}
+
+/* Subtle background grid */
+.loading-screen__grid {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background-image: linear-gradient(rgba(37, 99, 235, 0.015) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(37, 99, 235, 0.015) 1px, transparent 1px);
+  background-size: 36px 36px;
+  mask-image: radial-gradient(ellipse at center, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 80%);
+  pointer-events: none;
+}
+
+/* Very subtle dust particles moving slowly */
+.loading-screen__dust {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background-image: radial-gradient(rgba(56, 189, 248, 0.03) 1px, transparent 1px);
+  background-size: 80px 80px;
+  animation: dustShift 30s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes dustShift {
+  from { background-position: 0 0; }
+  to { background-position: 80px 160px; }
+}
+
+/* Content block layout spacing */
+.loading-screen__content {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 520px;
+  padding: 0 24px;
+  text-align: center;
+}
+
+/* Logo container & entry */
+.loading-screen__logo-container {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 24px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 20px rgba(37, 99, 235, 0.15);
+  animation: logoFadeIn 1s ease-out forwards;
+}
+
+.loading-screen__logo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Typography styles */
+.loading-screen__title {
+  margin: 0 0 8px 0;
+  font-size: 2.25rem;
+  font-weight: 800;
+  letter-spacing: 0.25em;
+  text-indent: 0.25em;
+  color: #ffffff;
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+  animation: textFadeIn 1.2s ease-out 0.2s both;
+}
+
+.loading-screen__tagline {
+  margin: 0 0 32px 0;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #94a3b8;
+  letter-spacing: 0.08em;
+  animation: textFadeIn 1.2s ease-out 0.4s both;
+}
+
+/* Handcuffs animation centering */
+.loading-screen__animation {
+  margin-bottom: 32px;
+  height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: scaleFadeIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.6s both;
+}
+
+/* Thin premium progress bar track */
+.loading-screen__progress-wrapper {
+  width: 100%;
+  max-width: 440px;
+  margin-bottom: 16px;
+  animation: textFadeIn 1.2s ease-out 0.8s both;
+}
+
+.loading-screen__progress-track {
+  height: 4px;
+  width: 100%;
+  border-radius: 2px;
+  background-color: rgba(255, 255, 255, 0.05);
+  overflow: hidden;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Smooth progress progression fill */
+.loading-screen__progress-bar {
+  height: 100%;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #2563eb, #38bdf8);
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.5);
+  transition: width 0.1s linear;
+}
+
+/* Percentage numbers styling */
+.loading-screen__percentage {
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #cbd5e1;
+  letter-spacing: 0.1em;
+  margin-bottom: 24px;
+  animation: textFadeIn 1.2s ease-out 0.8s both;
+}
+
+/* Status message rotation wrapping */
+.loading-screen__status-wrapper {
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: textFadeIn 1.2s ease-out 0.8s both;
+}
+
+.loading-screen__status {
+  font-size: 0.8rem;
+  font-weight: 500;
+  font-family: ui-monospace, monospace;
+  color: #64748b;
+  letter-spacing: 0.05em;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.opacity-0 {
+  opacity: 0;
+}
+
+.opacity-100 {
+  opacity: 1;
+}
+
+/* Animations for staggered entrance sequencing */
+@keyframes logoFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes textFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Full access transitions screen flash overlay */
+.loading-screen__transition-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 100;
+  background-color: rgba(3, 7, 18, 0.95);
+  animation: overlayFlash 0.5s ease-out forwards;
+}
+
+@keyframes overlayFlash {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Responsive constraints on mobile screens */
+@media (max-width: 640px) {
+  .loading-screen__title {
+    font-size: 1.75rem;
+    letter-spacing: 0.2em;
+    text-indent: 0.2em;
+  }
+  .loading-screen__tagline {
+    font-size: 0.75rem;
+  }
+  .loading-screen__progress-wrapper {
+    max-width: 320px;
+  }
+}

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import {
   CrimeHeader,
@@ -13,6 +13,8 @@ import {
   VehicleCard,
   QuickActions
 } from './components'
+import { getFIRDetails } from '../../api/core.api'
+import { generateBriefReport } from '../../api/ai.api'
 
 function CrimeDetailsPage() {
   const { crimeId } = useParams<{ crimeId: string }>()
@@ -20,26 +22,67 @@ function CrimeDetailsPage() {
   // Tab Switcher Active state
   const [activeTab, setActiveTab] = useState('Overview')
 
-  // Mock data mapping
+  const [firDetails, setFirDetails] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+
+  useEffect(() => {
+    const loadDetails = async () => {
+      if (!crimeId) return
+      try {
+        setError(null)
+        setLoading(true)
+        const data = await getFIRDetails(crimeId)
+        setFirDetails(data)
+      } catch (err) {
+        console.error(err)
+        setError('Unable to load case file details.')
+      } finally {
+        setLoading(false)
+      }
+    }
+    loadDetails()
+  }, [crimeId])
+
+  // Normalizers and Mappers
+  let mappedStatus: 'Active' | 'Investigating' | 'Closed' = 'Active'
+  const rawStat = (firDetails?.status || '').toLowerCase()
+  if (rawStat.includes('investig')) mappedStatus = 'Investigating'
+  else if (rawStat.includes('close')) mappedStatus = 'Closed'
+
+  let mappedSeverity: 'High' | 'Medium' | 'Low' = 'Medium'
+  const rawSev = (firDetails?.severity || '').toLowerCase()
+  if (rawSev === 'high' || rawSev === 'critical') mappedSeverity = 'High'
+  else if (rawSev === 'low') mappedSeverity = 'Low'
+
+  let dateStr = firDetails?.fir_date || '13 May 2025, 14:30'
+  if (typeof firDetails?.fir_date === 'string') {
+    const date = new Date(firDetails.fir_date)
+    if (!isNaN(date.getTime())) {
+      dateStr = date.toLocaleString('default', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+    }
+  }
+
   const caseHeader = {
-    fir: crimeId || 'FIR123456',
-    caseType: 'Theft Case',
-    status: 'Under Investigation'
+    fir: firDetails?.fir_number || crimeId || 'FIR123456',
+    caseType: (firDetails?.type || firDetails?.crime_type || 'Theft Case') + ' File',
+    status: mappedStatus
   }
 
   const caseInformation = {
-    fir: crimeId || 'FIR123456',
-    crimeType: 'Theft',
-    dateTime: '13 May 2025, 14:30',
-    district: 'Bengaluru Urban',
-    station: 'JC Nagar',
-    officer: 'Inspector Ramesh',
-    status: 'Under Investigation',
-    severity: 'Medium'
+    fir: firDetails?.fir_number || crimeId || 'FIR123456',
+    crimeType: firDetails?.type || firDetails?.crime_type || 'Theft',
+    dateTime: dateStr,
+    district: firDetails?.district_name || firDetails?.district || 'Bengaluru Urban',
+    station: firDetails?.station_name || firDetails?.station || 'JC Nagar',
+    officer: firDetails?.investigating_officer_name || 'Inspector Ramesh',
+    status: mappedStatus,
+    severity: mappedSeverity
   }
 
   const caseSummary = {
-    summaryText: 'A residential burglary involving forced entry was reported in Bengaluru Urban. Cash, jewellery and electronic devices were stolen. Investigation is currently underway and CCTV footage is being analysed.',
+    summaryText: firDetails?.complaint_details || 'A residential burglary involving forced entry was reported in Bengaluru Urban. Cash, jewellery and electronic devices were stolen. Investigation is currently underway.',
     estimatedLoss: '₹4.5 Lakhs',
     category: 'Property Crime'
   }
@@ -59,7 +102,7 @@ function CrimeDetailsPage() {
   }
 
   const victimData = {
-    name: 'Suresh Babu',
+    name: firDetails?.complainant_name || 'Suresh Babu',
     age: 43,
     address: '12th Cross, JC Nagar, Bengaluru',
     contact: '+91 98450 12345'
@@ -72,8 +115,35 @@ function CrimeDetailsPage() {
   }
 
   // Action Panel handlers
-  const handleQuickAction = (actionName: string) => {
-    alert(`[ACTION RECEIVED] Sentinel Executive pipeline trigger:\n- Target FIR: ${caseHeader.fir}\n- Command: ${actionName}`)
+  const handleQuickAction = async (actionName: string) => {
+    if (actionName.toLowerCase().includes('report') || actionName.toLowerCase().includes('brief')) {
+      if (!crimeId) return
+      try {
+        const res = await generateBriefReport({ fir_id: crimeId })
+        alert(`[SENTINEL INTEL BRIEF] Generated Report:\n\n${res.report}`)
+      } catch (err) {
+        console.error(err)
+        alert('Failed to generate case brief report.')
+      }
+    } else {
+      alert(`[ACTION RECEIVED] Sentinel Executive pipeline trigger:\n- Target FIR: ${caseHeader.fir}\n- Command: ${actionName}`)
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px] text-[#94A3B8] font-mono text-sm tracking-widest">
+        Loading case details...
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px] text-[#EF4444] font-mono text-sm tracking-widest">
+        {error}
+      </div>
+    )
   }
 
   return (

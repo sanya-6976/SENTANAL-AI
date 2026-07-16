@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { Scan, ArrowLeft, Pencil, Database } from 'lucide-react'
 import {
   DocumentPreview,
@@ -10,6 +10,9 @@ import type { ExtractedFormData } from './components'
 
 function OCRReviewPage() {
   const navigate = useNavigate()
+  const location = useLocation()
+  
+  const stateData = location.state as { extractedText?: string; fileName?: string } | null
 
   // Form fields state
   const [formData, setFormData] = useState<ExtractedFormData>({
@@ -25,7 +28,7 @@ function OCRReviewPage() {
     vehicleNumber: 'KA01AB1234',
     weaponUsed: 'Iron Rod',
     location: '12th Cross, JC Nagar',
-    description: 'A residential burglary was reported at JC Nagar. Rear entry was forced. Cash and jewellery worth 4.5 Lakhs were stolen. CCTV footage is under analysis.'
+    description: stateData?.extractedText || 'A residential burglary was reported at JC Nagar. Rear entry was forced. Cash and jewellery worth 4.5 Lakhs were stolen. CCTV footage is under analysis.'
   })
 
   // Handle individual field edits

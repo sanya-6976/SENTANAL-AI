@@ -29,33 +29,11 @@ import {
   KPICard,
   SecondaryButton,
 } from '../../components/ui/DashboardComponents'
+import apiClient from "../../api/client";
 
-// 1. Chart Data Definitions
-const crimeTrendData = [
-  { name: 'Jan', Crimes: 1820 },
-  { name: 'Feb', Crimes: 2100 },
-  { name: 'Mar', Crimes: 1950 },
-  { name: 'Apr', Crimes: 2400 },
-  { name: 'May', Crimes: 2220 },
-  { name: 'Jun', Crimes: 2780 },
-]
 
-const categoryData = [
-  { name: 'Theft', value: 32, color: '#2563EB' },
-  { name: 'Assault', value: 21, color: '#06B6D4' },
-  { name: 'Robbery', value: 16, color: '#8B5CF6' },
-  { name: 'Cyber Crime', value: 15, color: '#F59E0B' },
-  { name: 'Others', value: 16, color: '#EF4444' },
-]
+import { useEffect, useState } from "react";
 
-// 2. Mock District Intelligence Lists
-const districtIntelligence = [
-  { name: 'Bengaluru', status: 'High' as const, color: '#EF4444' },
-  { name: 'Mysuru', status: 'Medium' as const, color: '#F59E0B' },
-  { name: 'Hubballi', status: 'High' as const, color: '#EF4444' },
-  { name: 'Belagavi', status: 'Medium' as const, color: '#F59E0B' },
-  { name: 'Tumakuru', status: 'Low' as const, color: '#22C55E' },
-]
 
 // 3. Status Badge Components
 interface StatusBadgeProps {
@@ -92,51 +70,90 @@ function SeverityBadge({ severity }: SeverityBadgeProps) {
   )
 }
 
-// 4. Mock Cases Table Data
-const mockCases = [
-  {
-    fir: 'FIR12345',
-    type: 'Theft',
-    district: 'Bengaluru',
-    date: '12 May 2025',
-    severity: 'High' as const,
-    status: 'Investigating' as const,
-  },
-  {
-    fir: 'FIR12346',
-    type: 'Robbery',
-    district: 'Mysuru',
-    date: '12 May 2025',
-    severity: 'Medium' as const,
-    status: 'Active' as const,
-  },
-  {
-    fir: 'FIR12347',
-    type: 'Assault',
-    district: 'Hubballi',
-    date: '11 May 2025',
-    severity: 'High' as const,
-    status: 'Investigating' as const,
-  },
-  {
-    fir: 'FIR12348',
-    type: 'Cyber Crime',
-    district: 'Bengaluru',
-    date: '11 May 2025',
-    severity: 'Low' as const,
-    status: 'Active' as const,
-  },
-  {
-    fir: 'FIR12349',
-    type: 'Kidnapping',
-    district: 'Mangalore',
-    date: '10 May 2025',
-    severity: 'High' as const,
-    status: 'Investigating' as const,
-  },
-]
+interface DistrictIntelligence {
+  name: string;
+  color: string;
+  status: string;
+}
+
+interface CrimeCategory {
+  name: string;
+  value: number;
+  color: string;
+}
+
+interface RecentCase {
+  fir: string;
+  type: string;
+  district: string;
+  severity: "High" | "Medium" | "Low";
+  status: "Active" | "Investigating" | "Closed";
+}
+
+interface MonthlyStat {
+  name: string;
+  Crimes: number;
+}
 
 function DashboardPage() {
+
+  const [stats, setStats] = useState<any>(null);
+  const [crimeTrendData, setCrimeTrendData] = useState<MonthlyStat[]>([]);
+  const [categoryData, setCategoryData] = useState<CrimeCategory[]>([]);
+  const [districtIntelligence, setDistrictIntelligence] = useState<DistrictIntelligence[]>([]);
+  const [recentCases, setRecentCases] = useState<RecentCase[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadDashboard = async () => {
+      try {
+        const [
+          statsRes,
+          trendRes,
+          categoryRes,
+          districtRes,
+          firRes,
+        ] = await Promise.all([
+          apiClient.get("/analytics/dashboard/stats"),
+          apiClient.get("/analytics/dashboard/monthly-stats"),
+          apiClient.get("/analytics/dashboard/crimes-by-category"),
+          apiClient.get("/analytics/dashboard/crimes-by-district"),
+          apiClient.get("/core/firs"),
+        ]);
+
+        setStats(statsRes.data);
+        setCrimeTrendData(trendRes.data);
+        setCategoryData(categoryRes.data);
+        setDistrictIntelligence(districtRes.data);
+        setRecentCases(firRes.data);
+        console.log("Stats:", statsRes.data);
+        console.log("Trend:", trendRes.data);
+        console.log("Category:", categoryRes.data);
+        console.log("District:", districtRes.data);
+        console.log("FIR:", firRes.data);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadDashboard();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[#08182F]">
+        <div className="flex flex-col items-center">
+          <div className="h-10 w-10 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
+          <p className="mt-4 text-lg font-medium text-white">
+            Loading dashboard...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6 animate-fade-in select-none">
       
@@ -151,7 +168,7 @@ function DashboardPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
         <KPICard
           title="Total Crimes"
-          value="12,847"
+          value={stats?.total_crimes ?? "--"}
           trend="↑ +12.8%"
           trendLabel="this month"
           trendType="up"
@@ -161,7 +178,7 @@ function DashboardPage() {
         />
         <KPICard
           title="Active Cases"
-          value="2,153"
+          value={stats?.active_cases ?? "--"}
           trend="↑ +5.6%"
           trendLabel="this month"
           trendType="up"
@@ -171,7 +188,7 @@ function DashboardPage() {
         />
         <KPICard
           title="Solved Cases"
-          value="8,942"
+          value={stats?.solved_cases ?? "--"}
           trend="↑ +11.2%"
           trendLabel="this month"
           trendType="up"
@@ -181,7 +198,7 @@ function DashboardPage() {
         />
         <KPICard
           title="Arrest Rate"
-          value="68.3%"
+          value={stats?.arrest_rate ?? "--"}
           trend="↑ +8.3%"
           trendLabel="this month"
           trendType="up"
@@ -191,7 +208,7 @@ function DashboardPage() {
         />
         <KPICard
           title="High Risk Districts"
-          value="13"
+          value={stats?.high_risk_districts ?? "--"}
           trend="View Details"
           trendType="neutral"
           icon={MapPinned}
@@ -200,7 +217,7 @@ function DashboardPage() {
         />
         <KPICard
           title="Live Alerts"
-          value="27"
+          value={stats?.live_alerts ?? "--"}
           trend="View Alerts"
           trendType="neutral"
           icon={BellRing}
@@ -425,7 +442,7 @@ function DashboardPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[rgba(255,255,255,0.03)] text-[11px]">
-                  {mockCases.map((row) => (
+                  {recentCases.map((row) => (
                     <tr 
                       key={row.fir} 
                       className="hover:bg-[#182235]/40 transition-colors duration-150 text-[#F8FAFC]"

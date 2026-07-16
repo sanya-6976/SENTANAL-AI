@@ -10,6 +10,8 @@ interface GraphCanvasProps {
   onResetTrigger: number
   onCenterTrigger: number
   onExpandTrigger: number
+  nodes?: GraphNode[]
+  links?: GraphLink[]
 }
 
 export function GraphCanvas({
@@ -17,7 +19,9 @@ export function GraphCanvas({
   onSelectSuspect,
   onResetTrigger,
   onCenterTrigger,
-  onExpandTrigger
+  onExpandTrigger,
+  nodes = mockNodes,
+  links = mockLinks
 }: GraphCanvasProps) {
   const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null)
   
@@ -81,12 +85,12 @@ export function GraphCanvas({
   const connectedNodeIds = useMemo(() => {
     if (!hoveredNodeId) return new Set<string>()
     const set = new Set<string>([hoveredNodeId])
-    mockLinks.forEach((link) => {
+    links.forEach((link) => {
       if (link.source === hoveredNodeId) set.add(link.target)
       if (link.target === hoveredNodeId) set.add(link.source)
     })
     return set
-  }, [hoveredNodeId])
+  }, [hoveredNodeId, links])
 
   // Check if link is highlighted
   const isLinkHighlighted = (link: GraphLink) => {
@@ -122,9 +126,9 @@ export function GraphCanvas({
           
           {/* 1. SVG connection paths */}
           <svg className="absolute inset-0 w-full h-full pointer-events-none">
-            {mockLinks.map((link, idx) => {
-              const sourceNode = mockNodes.find((n) => n.id === link.source)
-              const targetNode = mockNodes.find((n) => n.id === link.target)
+            {links.map((link, idx) => {
+              const sourceNode = nodes.find((n) => n.id === link.source)
+              const targetNode = nodes.find((n) => n.id === link.target)
               if (!sourceNode || !targetNode) return null
 
               const isHighlighted = isLinkHighlighted(link)
@@ -150,7 +154,7 @@ export function GraphCanvas({
           </svg>
 
           {/* 2. Nodes Layer */}
-          {mockNodes.map((node) => {
+          {nodes.map((node) => {
             const isHovered = hoveredNodeId === node.id
             const isConnected = hoveredNodeId === null || connectedNodeIds.has(node.id)
             const isSearchMatch = searchQuery.trim() !== '' && node.label.toLowerCase().includes(searchQuery.toLowerCase())

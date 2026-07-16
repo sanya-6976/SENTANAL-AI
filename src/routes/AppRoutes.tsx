@@ -19,7 +19,7 @@ import OCRReviewPage from '../pages/OCRReview/OCRReviewPage'
 function AppRoutes() {
   return (
     <Routes>
-      <Route path="/" element={<Navigate to="/login" replace />} />
+      <Route path="/" element={<Navigate to="/loading" replace />} />
       <Route path="/loading" element={<LoadingScreen />} />
 
       <Route element={<AuthLayout />}>

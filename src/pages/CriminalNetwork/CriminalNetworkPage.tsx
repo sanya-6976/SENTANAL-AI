@@ -1,9 +1,11 @@
-import { useState } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import {
   NetworkToolbar,
   GraphCanvas,
   NodeCard
 } from './components'
+import { getSuspectNetwork } from '../../api/analytics.api'
+import { mockNodes } from './data/MockGraphData'
 
 interface SuspectProfile {
   name: string
@@ -29,6 +31,73 @@ function CriminalNetworkPage() {
   const [resetTrigger, setResetTrigger] = useState(0)
   const [centerTrigger, setCenterTrigger] = useState(0)
   const [expandTrigger, setExpandTrigger] = useState(0)
+
+  const [nodes, setNodes] = useState<any[]>([])
+  const [links, setLinks] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const loadGraph = async () => {
+      try {
+        setError(null)
+        setLoading(true)
+        const data = await getSuspectNetwork()
+        const rawNodes = Array.isArray(data?.nodes) ? data.nodes : []
+        const rawEdges = Array.isArray(data?.edges) ? data.edges : []
+
+        // Coordinate Mapping: if matches mock node, use x/y. Otherwise compute circular layout coordinates.
+        const numNodes = rawNodes.length
+        const centerX = 50
+        const centerY = 50
+        const radius = 32
+
+        const mappedNodes = rawNodes.map((node: any, index: number) => {
+          const mockNode = mockNodes.find(n => n.id.toLowerCase() === node.id.toLowerCase() || n.label.toLowerCase() === node.label.toLowerCase())
+          let x = mockNode?.x
+          let y = mockNode?.y
+
+          if (x === undefined || y === undefined) {
+            if (index === 0) {
+              x = centerX
+              y = centerY
+            } else {
+              const angle = ((index - 1) / (numNodes - 1)) * 2 * Math.PI
+              x = centerX + radius * Math.cos(angle)
+              y = centerY + radius * Math.sin(angle)
+            }
+          }
+
+          return {
+            id: node.id,
+            label: node.label,
+            type: node.type || (node.id === 'Rahul Kumar' ? 'suspect' : 'associate'),
+            x: Math.max(5, Math.min(95, x)),
+            y: Math.max(5, Math.min(95, y)),
+            isHighRisk: node.status === 'Active' || node.isHighRisk
+          }
+        })
+
+        const mappedLinks = rawEdges.map((edge: any) => ({
+          source: edge.source,
+          target: edge.target
+        }))
+
+        setNodes(mappedNodes)
+        setLinks(mappedLinks)
+
+        if (mappedNodes.length > 0 && !mappedNodes.some(n => n.id === 'Rahul Kumar')) {
+          setSelectedSuspect(mappedNodes[0].id)
+        }
+      } catch (err) {
+        console.error(err)
+        setError('Unable to load criminal suspect network.')
+      } finally {
+        setLoading(false)
+      }
+    }
+    loadGraph()
+  }, [])
 
   // Suspects profiles database
   const suspectsDb: Record<string, SuspectProfile> = {
@@ -87,7 +156,25 @@ function CriminalNetworkPage() {
   }
 
   // Get active selected suspect profile
-  const activeProfile = suspectsDb[selectedSuspect] || suspectsDb['Rahul Kumar']
+  const activeProfile = useMemo(() => {
+    if (suspectsDb[selectedSuspect]) {
+      return suspectsDb[selectedSuspect]
+    }
+    const matchedNode = nodes.find(n => n.id === selectedSuspect)
+    return {
+      name: matchedNode?.label || selectedSuspect,
+      age: 32,
+      district: 'Bengaluru Urban',
+      status: matchedNode?.isHighRisk ? 'Active Alert' : 'Under Investigation',
+      riskScore: matchedNode?.isHighRisk ? 90 : 65,
+      firs: 3,
+      associates: 2,
+      vehicles: 1,
+      phones: 1,
+      locations: 2,
+      arrests: 0
+    }
+  }, [selectedSuspect, nodes])
 
   // Action Handlers
   const handleToolbarReset = () => {
@@ -108,6 +195,22 @@ function CriminalNetworkPage() {
 
   const handleRightPanelAction = (actionName: string) => {
     alert(`[SYSTEM CALL] Triggering Executive Action:\n- Target Accused: ${activeProfile.name}\n- Operation: ${actionName}`)
+  }
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px] text-[#94A3B8] font-mono text-sm tracking-widest">
+        Loading suspect network...
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px] text-[#EF4444] font-mono text-sm tracking-widest">
+        {error}
+      </div>
+    )
   }
 
   return (
@@ -144,6 +247,8 @@ function CriminalNetworkPage() {
             onResetTrigger={resetTrigger}
             onCenterTrigger={centerTrigger}
             onExpandTrigger={expandTrigger}
+            nodes={nodes}
+            links={links}
           />
         </div>
 
