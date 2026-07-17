@@ -33,7 +33,7 @@ import apiClient from "../../api/client";
 
 
 import { useEffect, useState } from "react";
-
+import { useNavigate } from "react-router-dom";
 
 // 3. Status Badge Components
 interface StatusBadgeProps {
@@ -96,6 +96,7 @@ interface MonthlyStat {
 }
 
 function DashboardPage() {
+  const navigate = useNavigate();
 
   const [stats, setStats] = useState<any>(null);
   const [crimeTrendData, setCrimeTrendData] = useState<MonthlyStat[]>([]);
@@ -472,7 +473,7 @@ function DashboardPage() {
           >
             <div className="flex flex-col gap-3 mt-2 select-none">
               <button
-                onClick={() => alert("Forwarding to FIR registry database...")}
+                onClick={() => navigate("/crime-database")}
                 className="w-full flex items-center justify-between px-3.5 py-3 rounded-lg text-left text-xs font-semibold text-white bg-gradient-to-r from-[#2563EB]/80 to-[#1D4ED8]/85 border border-[#2563EB]/35 hover:scale-[1.02] hover:shadow-[0_4px_16px_rgba(37,99,235,0.25)] transition-all duration-200 cursor-pointer"
               >
                 <div className="flex items-center gap-2.5">
@@ -483,7 +484,7 @@ function DashboardPage() {
               </button>
 
               <button
-                onClick={() => alert("Initializing investigation case logs...")}
+                onClick={() => navigate("/investigation")}
                 className="w-full flex items-center justify-between px-3.5 py-3 rounded-lg text-left text-xs font-semibold text-white bg-[#111827] border border-[rgba(255,255,255,0.06)] hover:bg-[#182235] hover:scale-[1.02] transition-all duration-200 cursor-pointer"
               >
                 <div className="flex items-center gap-2.5">
@@ -494,7 +495,7 @@ function DashboardPage() {
               </button>
 
               <button
-                onClick={() => alert("Activating AI intelligence assistant console...")}
+                onClick={() => navigate("/ai-assistant")}
                 className="w-full flex items-center justify-between px-3.5 py-3 rounded-lg text-left text-xs font-bold text-white bg-gradient-to-r from-[#2563EB] to-[#1D4ED8] hover:scale-[1.02] hover:shadow-[0_4px_20px_rgba(37,99,235,0.35)] transition-all duration-200 cursor-pointer"
               >
                 <div className="flex items-center gap-2.5">
@@ -505,7 +506,7 @@ function DashboardPage() {
               </button>
 
               <button
-                onClick={() => alert("Compiling district analytics report...")}
+                onClick={() => navigate("/reports")}
                 className="w-full flex items-center justify-between px-3.5 py-3 rounded-lg text-left text-xs font-semibold text-white bg-[#111827] border border-[rgba(255,255,255,0.06)] hover:bg-[#182235] hover:scale-[1.02] transition-all duration-200 cursor-pointer"
               >
                 <div className="flex items-center gap-2.5">

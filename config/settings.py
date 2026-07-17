@@ -60,6 +60,9 @@ class Settings(BaseSettings):
     # ── Backend API ──
     backend_api_url: str = "http://localhost:8000/api/v1"
 
+    # ── ETL Configuration ──
+    bulk_load_chunk_size: int = 10000
+
     @property
     def postgres_url(self) -> str:
         """SQLAlchemy-compatible PostgreSQL connection URL."""

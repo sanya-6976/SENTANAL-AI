@@ -118,3 +118,24 @@
 2026-07-14 12:13:19 | INFO     | etl.validate:validate_dataset:88 | [test_dup] Validation Complete. Valid: 1, Failed: 0, Duplicates: 2. Quality Score: 73.33%
 2026-07-14 12:23:32 | WARNING  | database.connection:_create_engine:74 | PostgreSQL unavailable (OperationalError). Falling back to SQLite at datasets\sentinel_ai.db.
 2026-07-14 12:23:32 | INFO     | database.connection:_build_sqlite_engine:95 | Using SQLite fallback database at datasets\sentinel_ai.db
+2026-07-17 20:55:54 | WARNING  | database.connection:_create_engine:74 | PostgreSQL unavailable (OperationalError). Falling back to SQLite at datasets\sentinel_ai.db.
+2026-07-17 20:55:54 | INFO     | database.connection:_build_sqlite_engine:95 | Using SQLite fallback database at datasets\sentinel_ai.db
+2026-07-17 20:57:58 | WARNING  | database.connection:_create_engine:74 | PostgreSQL unavailable (OperationalError). Falling back to SQLite at datasets\sentinel_ai.db.
+2026-07-17 20:57:58 | INFO     | database.connection:_build_sqlite_engine:95 | Using SQLite fallback database at datasets\sentinel_ai.db
+2026-07-17 20:59:19 | WARNING  | database.connection:_create_engine:74 | PostgreSQL unavailable (OperationalError). Falling back to SQLite at datasets\sentinel_ai.db.
+2026-07-17 20:59:19 | INFO     | database.connection:_build_sqlite_engine:95 | Using SQLite fallback database at datasets\sentinel_ai.db
+2026-07-17 21:01:19 | WARNING  | database.connection:_create_engine:74 | PostgreSQL unavailable (OperationalError). Falling back to SQLite at datasets\sentinel_ai.db.
+2026-07-17 21:01:19 | INFO     | database.connection:_build_sqlite_engine:95 | Using SQLite fallback database at datasets\sentinel_ai.db
+2026-07-17 21:02:01 | WARNING  | database.connection:_create_engine:74 | PostgreSQL unavailable (OperationalError). Falling back to SQLite at datasets\sentinel_ai.db.
+2026-07-17 21:02:01 | INFO     | database.connection:_build_sqlite_engine:95 | Using SQLite fallback database at datasets\sentinel_ai.db
+2026-07-17 21:04:59 | WARNING  | database.connection:_create_engine:74 | PostgreSQL unavailable (OperationalError). Falling back to SQLite at datasets\sentinel_ai.db.
+2026-07-17 21:04:59 | INFO     | database.connection:_build_sqlite_engine:95 | Using SQLite fallback database at datasets\sentinel_ai.db
+2026-07-17 21:05:27 | WARNING  | database.connection:_create_engine:74 | PostgreSQL unavailable (OperationalError). Falling back to SQLite at datasets\sentinel_ai.db.
+2026-07-17 21:05:27 | INFO     | database.connection:_build_sqlite_engine:95 | Using SQLite fallback database at datasets\sentinel_ai.db
+2026-07-17 21:08:01 | INFO     | database.connection:_create_engine:71 | PostgreSQL connection successful.
+2026-07-17 21:08:35 | INFO     | database.connection:_create_engine:71 | PostgreSQL connection successful.
+2026-07-17 21:11:01 | INFO     | database.connection:_create_engine:71 | PostgreSQL connection successful.
+2026-07-17 21:14:14 | INFO     | database.connection:_create_engine:71 | PostgreSQL connection successful.
+2026-07-17 21:14:39 | INFO     | database.connection:_create_engine:71 | PostgreSQL connection successful.
+2026-07-17 21:21:13 | INFO     | database.connection:_create_engine:71 | PostgreSQL connection successful.
+2026-07-17 21:21:34 | INFO     | database.connection:_create_engine:71 | PostgreSQL connection successful.

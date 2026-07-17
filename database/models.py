@@ -79,9 +79,11 @@ class User(Base):
     user_id = Column(String(36), primary_key=True, default=generate_uuid)
     username = Column(String(50), nullable=False, unique=True)
     email = Column(String(150), nullable=True)
+    password_hash = Column(String(255), nullable=True)
     role_id = Column(String(36), ForeignKey("roles.role_id"), nullable=False)
     officer_id = Column(String(36), ForeignKey("officers.officer_id"), nullable=True)
     district_id = Column(String(36), ForeignKey("districts.district_id"), nullable=True)
+    station_id = Column(String(36), ForeignKey("police_stations.station_id"), nullable=True)
     is_active = Column(Boolean, nullable=False, default=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
