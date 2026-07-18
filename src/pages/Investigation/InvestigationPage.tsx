@@ -42,21 +42,42 @@ function InvestigationPage() {
   const [aiInsight, setAiInsight] = useState<string>('')
   const [loading, setLoading] = useState(true)
   const [aiLoading, setAiLoading] = useState(false)
+  const [allFirs, setAllFirs] = useState<any[]>([])
+  const [chatInput, setChatInput] = useState('')
+  const [chatMessages, setChatMessages] = useState<{role: string, content: string}[]>([])
+  const [entitiesList, setEntitiesList] = useState<EntityItem[]>([
+    { type: 'accused', name: 'Ravi Kumar', age: 34, role: 'Primary Associate' },
+    { type: 'vehicle', regNo: 'KA01AB1234', typeDesc: 'White Swift • Seen at 12:15 PM' },
+    { type: 'victim', name: 'Suresh Babu', age: 43, status: 'Resident' }
+  ])
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [firsRes, evidenceRes, crimesRes] = await Promise.all([
+        const [firsRes, evidenceRes, crimesRes, entitiesRes] = await Promise.all([
           apiClient.get('/core/firs'),
           apiClient.get('/core/evidence'),
-          apiClient.get('/core/crimes')
+          apiClient.get('/core/crimes'),
+          apiClient.get('/core/entities')
         ])
         
         if (firsRes.data && firsRes.data.length > 0) {
+          setAllFirs(firsRes.data)
           setFirData(firsRes.data[0])
         }
         setEvidenceData(evidenceRes.data || [])
         setCrimesData(crimesRes.data || [])
+        
+        if (entitiesRes.data) {
+           const sus = entitiesRes.data.suspect;
+           const veh = entitiesRes.data.vehicle;
+           const vic = entitiesRes.data.victim;
+           const newEntities: EntityItem[] = [];
+           if (sus) newEntities.push({ type: 'accused', name: sus.full_name || 'Unknown', age: 30, role: sus.status || 'Suspect' });
+           if (veh) newEntities.push({ type: 'vehicle', regNo: veh.registration_number || 'Unknown', typeDesc: veh.vehicle_type || 'Vehicle' });
+           if (vic) newEntities.push({ type: 'victim', name: vic.full_name || 'Unknown', age: 30, status: vic.injured ? 'Injured' : 'Resident' });
+           if (newEntities.length > 0) setEntitiesList(newEntities);
+        }
       } catch (err) {
         console.error(err)
       } finally {
@@ -65,6 +86,21 @@ function InvestigationPage() {
     }
     fetchData()
   }, [])
+
+  useEffect(() => {
+    if (firData) {
+      setChatMessages([{
+        role: 'ai',
+        content: `I am your AI Investigation Assistant. I have loaded context for case ${firData.fir_number}. How can I assist you with this case today?`
+      }])
+    }
+  }, [firData])
+
+  const handleSendChat = () => {
+    if (!chatInput.trim()) return
+    setChatMessages(prev => [...prev, { role: 'user', content: chatInput }, { role: 'ai', content: 'Analyzing your request based on case context...' }])
+    setChatInput('')
+  }
 
   const caseData = firData ? {
     fir: firData.fir_number,
@@ -84,11 +120,7 @@ function InvestigationPage() {
     severity: 'Medium'
   }
 
-  const entitiesList: EntityItem[] = [
-    { type: 'accused', name: 'Ravi Kumar', age: 34, role: 'Primary Associate' },
-    { type: 'vehicle', regNo: 'KA01AB1234', typeDesc: 'White Swift • Seen at 12:15 PM' },
-    { type: 'victim', name: 'Suresh Babu', age: 43, status: 'Resident' }
-  ]
+
 
   const recommendations = [
     'Check CCTV at 3 nearby locations.',
@@ -99,7 +131,9 @@ function InvestigationPage() {
   ]
 
   const handleInspectEntity = (item: EntityItem) => {
-    navigate(`/crime-database/${caseData.fir}`)
+    if (item.type === 'accused') setActiveTab('Suspects')
+    else if (item.type === 'vehicle') setActiveTab('Vehicles')
+    else if (item.type === 'victim') setActiveTab('Victims')
   }
 
   const handleAskAI = async () => {
@@ -200,18 +234,48 @@ function InvestigationPage() {
   );
 
   const renderAIInsights = () => (
-    <div className="bg-[#111827] border border-[rgba(255,255,255,0.06)] rounded-xl p-8 animate-fade-in">
-      <div className="flex justify-between items-center mb-6">
-        <h3 className="text-sm font-bold text-white flex items-center gap-2">
-          <span className="h-2 w-2 rounded-full bg-blue-500 animate-pulse"></span>
-          Sentinel AI Report
-        </h3>
-        <button onClick={handleAskAI} disabled={aiLoading || !firData} className="text-xs bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-bold">
-          {aiLoading ? 'Generating...' : 'Generate New Insight'}
-        </button>
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 animate-fade-in">
+      <div className="bg-[#111827] border border-[rgba(255,255,255,0.06)] rounded-xl p-8 flex flex-col h-[500px]">
+        <div className="flex justify-between items-center mb-6">
+          <h3 className="text-sm font-bold text-white flex items-center gap-2">
+            <span className="h-2 w-2 rounded-full bg-blue-500 animate-pulse"></span>
+            Sentinel AI Report
+          </h3>
+          <button onClick={handleAskAI} disabled={aiLoading || !firData} className="text-xs bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-bold shrink-0">
+            {aiLoading ? 'Generating...' : 'Generate Insight'}
+          </button>
+        </div>
+        <div className="text-sm text-[#94A3B8] leading-relaxed whitespace-pre-wrap bg-[#0B1220] p-6 rounded-lg border border-[rgba(255,255,255,0.06)] flex-1 overflow-y-auto">
+          {aiInsight || 'No AI insights generated yet. Click "Generate Insight" to compile the case brief.'}
+        </div>
       </div>
-      <div className="text-sm text-[#94A3B8] leading-relaxed whitespace-pre-wrap bg-[#0B1220] p-6 rounded-lg border border-[rgba(255,255,255,0.06)]">
-        {aiInsight || 'No AI insights generated yet. Click "Generate New Insight" to compile the case brief.'}
+
+      <div className="bg-[#111827] border border-[rgba(255,255,255,0.06)] rounded-xl p-6 flex flex-col h-[500px]">
+        <h3 className="text-sm font-bold text-white mb-4 flex items-center gap-2 uppercase tracking-widest font-mono">
+          Interactive Case Assistant
+        </h3>
+        <div className="flex-1 bg-[#0B1220] rounded-lg border border-[rgba(255,255,255,0.04)] p-4 overflow-y-auto mb-4 space-y-4 flex flex-col custom-scrollbar">
+          {chatMessages.map((msg, idx) => (
+            <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+              <div className={`max-w-[85%] rounded-lg p-3 text-xs leading-relaxed ${msg.role === 'user' ? 'bg-blue-600 text-white' : 'bg-[#182235] text-[#94A3B8] border border-[rgba(255,255,255,0.05)]'}`}>
+                {msg.content}
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="flex gap-2 mt-auto">
+          <input 
+            type="text" 
+            value={chatInput}
+            onChange={(e) => setChatInput(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && handleSendChat()}
+            placeholder="Ask about this case..." 
+            className="flex-1 bg-[#0B1220] border border-[rgba(255,255,255,0.1)] text-white text-sm rounded-lg px-4 py-2 focus:outline-none focus:border-blue-500 transition-colors"
+          />
+          <button onClick={handleSendChat} className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg text-sm font-bold transition-colors">
+            Send
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -224,13 +288,33 @@ function InvestigationPage() {
     <div className="space-y-6 animate-fade-in select-none">
       
       {/* 1. Page Title Header */}
-      <div className="border-b border-[rgba(255,255,255,0.06)] pb-5 select-none">
-        <h1 className="text-3xl font-extrabold tracking-tight text-[#F8FAFC]">
-          Investigation Workspace
-        </h1>
-        <p className="text-xs uppercase tracking-widest text-[#94A3B8] font-mono mt-1">
-          Investigate FIRs, suspects, vehicles, evidence and AI-generated intelligence.
-        </p>
+      <div className="border-b border-[rgba(255,255,255,0.06)] pb-5 select-none flex justify-between items-start">
+        <div>
+          <h1 className="text-3xl font-extrabold tracking-tight text-[#F8FAFC]">
+            Investigation Workspace
+          </h1>
+          <p className="text-xs uppercase tracking-widest text-[#94A3B8] font-mono mt-1">
+            Investigate FIRs, suspects, vehicles, evidence and AI-generated intelligence.
+          </p>
+        </div>
+        
+        {allFirs.length > 0 && (
+          <div className="flex flex-col items-end">
+            <label className="text-[10px] uppercase font-mono tracking-widest text-[#94A3B8] mb-1">Active Case</label>
+            <select
+              className="bg-[#0B1220] border border-[rgba(255,255,255,0.1)] text-white text-sm font-bold rounded-lg px-4 py-2 focus:outline-none focus:border-blue-500 cursor-pointer"
+              value={firData?.fir_id || ''}
+              onChange={(e) => {
+                const selected = allFirs.find(f => f.fir_id === e.target.value)
+                if (selected) setFirData(selected)
+              }}
+            >
+              {allFirs.map(fir => (
+                <option key={fir.fir_id} value={fir.fir_id}>{fir.fir_number} - {fir.district_id}</option>
+              ))}
+            </select>
+          </div>
+        )}
       </div>
 
       {/* 2. Full-Width Global Input Bar */}
@@ -253,12 +337,13 @@ function InvestigationPage() {
           </div>
         </div>
       )}
-      {activeTab === 'TIMELINE' && renderTimeline()}
-      {activeTab === 'EVIDENCE' && renderEvidence()}
-      {activeTab === 'VICTIMS' && renderEntitiesGrid(entitiesList, 'victim')}
-      {activeTab === 'VEHICLES' && renderEntitiesGrid(entitiesList, 'vehicle')}
-      {activeTab === 'LINKED CASES' && renderLinkedCases()}
-      {activeTab === 'AI INSIGHTS' && renderAIInsights()}
+      {['TIMELINE', 'Timeline'].includes(activeTab) && renderTimeline()}
+      {['EVIDENCE', 'Evidence'].includes(activeTab) && renderEvidence()}
+      {['SUSPECTS', 'Suspects'].includes(activeTab) && renderEntitiesGrid(entitiesList, 'accused')}
+      {['VICTIMS', 'Victims'].includes(activeTab) && renderEntitiesGrid(entitiesList, 'victim')}
+      {['VEHICLES', 'Vehicles'].includes(activeTab) && renderEntitiesGrid(entitiesList, 'vehicle')}
+      {['LINKED CASES', 'Linked Cases'].includes(activeTab) && renderLinkedCases()}
+      {['AI INSIGHTS', 'AI Insights'].includes(activeTab) && renderAIInsights()}
 
     </div>
   )

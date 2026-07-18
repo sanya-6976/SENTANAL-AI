@@ -6,6 +6,7 @@ from database.connection import get_db
 from backend.auth.dependencies import get_current_active_user
 from backend.auth.models import CurrentUser
 from backend.core.service import core_service, orm_to_dict
+from database.models import Suspect, Vehicle, Victim
 
 core_router = APIRouter(prefix="/core", tags=["core"])
 
@@ -154,4 +155,16 @@ def get_evidence_by_id(
 ):
     """Retrieve a specific piece of evidence details."""
     return orm_to_dict(core_service.get_evidence_by_id(db=db, user=current_user, evidence_id=evidence_id))
+
+
+@core_router.get("/entities")
+def get_entities(db: Session = Depends(get_db)):
+    suspect = db.query(Suspect).first()
+    vehicle = db.query(Vehicle).first()
+    victim = db.query(Victim).first()
+    return {
+        "suspect": orm_to_dict(suspect),
+        "vehicle": orm_to_dict(vehicle),
+        "victim": orm_to_dict(victim)
+    }
 

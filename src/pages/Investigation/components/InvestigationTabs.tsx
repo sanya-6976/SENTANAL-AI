@@ -8,6 +8,7 @@ export function InvestigationTabs({ activeTab, setActiveTab }: TabsProps) {
     'Case Overview',
     'Timeline',
     'Evidence',
+    'Suspects',
     'Victims',
     'Vehicles',
     'Linked Cases',
