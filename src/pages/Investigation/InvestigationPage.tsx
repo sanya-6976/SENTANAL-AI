@@ -43,6 +43,8 @@ function InvestigationPage() {
   const [loading, setLoading] = useState(true)
   const [aiLoading, setAiLoading] = useState(false)
   const [allFirs, setAllFirs] = useState<any[]>([])
+  const [firSearchText, setFirSearchText] = useState('')
+  const [showFirDropdown, setShowFirDropdown] = useState(false)
   const [chatInput, setChatInput] = useState('')
   const [chatMessages, setChatMessages] = useState<{role: string, content: string}[]>([])
   const [entitiesList, setEntitiesList] = useState<EntityItem[]>([
@@ -64,6 +66,7 @@ function InvestigationPage() {
         if (firsRes.data && firsRes.data.length > 0) {
           setAllFirs(firsRes.data)
           setFirData(firsRes.data[0])
+          setFirSearchText(firsRes.data[0].fir_number)
         }
         setEvidenceData(evidenceRes.data || [])
         setCrimesData(crimesRes.data || [])
@@ -299,20 +302,52 @@ function InvestigationPage() {
         </div>
         
         {allFirs.length > 0 && (
-          <div className="flex flex-col items-end">
+          <div className="flex flex-col items-end relative z-50">
             <label className="text-[10px] uppercase font-mono tracking-widest text-[#94A3B8] mb-1">Active Case</label>
-            <select
-              className="bg-[#0B1220] border border-[rgba(255,255,255,0.1)] text-white text-sm font-bold rounded-lg px-4 py-2 focus:outline-none focus:border-blue-500 cursor-pointer"
-              value={firData?.fir_id || ''}
-              onChange={(e) => {
-                const selected = allFirs.find(f => f.fir_id === e.target.value)
-                if (selected) setFirData(selected)
-              }}
-            >
-              {allFirs.map(fir => (
-                <option key={fir.fir_id} value={fir.fir_id}>{fir.fir_number} - {fir.district_id}</option>
-              ))}
-            </select>
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Search FIR or District..."
+                value={firSearchText}
+                onChange={(e) => {
+                  setFirSearchText(e.target.value)
+                  setShowFirDropdown(true)
+                }}
+                onFocus={() => setShowFirDropdown(true)}
+                onBlur={() => setTimeout(() => setShowFirDropdown(false), 200)}
+                className="bg-[#0B1220] border border-[rgba(255,255,255,0.1)] text-white text-sm font-bold rounded-lg px-4 py-2 focus:outline-none focus:border-blue-500 w-64 transition-colors"
+              />
+              {showFirDropdown && (
+                <div className="absolute top-full mt-1 right-0 w-full bg-[#111827] border border-[rgba(255,255,255,0.1)] rounded-lg shadow-xl z-50 max-h-64 overflow-y-auto custom-scrollbar">
+                  {allFirs
+                    .filter(f => 
+                      (f.fir_number && f.fir_number.toLowerCase().includes(firSearchText.toLowerCase())) || 
+                      (f.district_id && f.district_id.toLowerCase().includes(firSearchText.toLowerCase()))
+                    )
+                    .map(fir => (
+                      <div 
+                        key={fir.fir_id}
+                        className="px-4 py-3 hover:bg-[#182235] cursor-pointer text-sm text-white border-b border-[rgba(255,255,255,0.04)] last:border-0 transition-colors"
+                        onClick={() => {
+                          setFirData(fir)
+                          setFirSearchText(fir.fir_number)
+                          setShowFirDropdown(false)
+                        }}
+                      >
+                        <div className="font-bold text-[#2563EB]">{fir.fir_number}</div>
+                        <div className="text-xs text-[#94A3B8] mt-0.5">{fir.district_id}</div>
+                      </div>
+                    ))
+                  }
+                  {allFirs.filter(f => 
+                    (f.fir_number && f.fir_number.toLowerCase().includes(firSearchText.toLowerCase())) || 
+                    (f.district_id && f.district_id.toLowerCase().includes(firSearchText.toLowerCase()))
+                  ).length === 0 && (
+                    <div className="px-4 py-3 text-sm text-[#94A3B8] text-center">No matching cases found</div>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         )}
       </div>
