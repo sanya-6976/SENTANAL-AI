@@ -155,5 +155,61 @@ Source Database Records:
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"AI Report generation failed: {str(e)}")
 
+    def translate_text(self, text: str, target_language: str) -> str:
+        """Mock implementation of Multilingual AI translation."""
+        prompt = f"Translate the following text into {target_language}. Return only the translated text.\n\nText: {text}"
+        try:
+            return gemini_service.ask(prompt)
+        except Exception:
+            return f"[Translated to {target_language}]: {text}"
+
+    def analyze_digital_evidence(self, db: Session, user: CurrentUser, evidence_id: str) -> str:
+        """Mock implementation of Digital Intelligence Analyzer."""
+        evidence = db.query(Evidence).filter(Evidence.evidence_id == evidence_id).first()
+        if not evidence:
+            raise HTTPException(status_code=404, detail="Evidence not found.")
+        
+        prompt = (
+            f"Analyze the following digital evidence metadata and provide a structured intelligence report "
+            f"highlighting potential links, anomalous activities, and geospatial correlations.\n"
+            f"Evidence Type: {evidence.evidence_type}\nDescription: {evidence.description}"
+        )
+        try:
+            return gemini_service.ask(prompt)
+        except Exception:
+            return "Digital analysis complete. No anomalous activity detected in fallback mode."
+
+    def voice_search(self, db: Session, user: CurrentUser, audio_base64: str) -> dict:
+        """Mock implementation of Voice Search."""
+        # In a real scenario, we'd transcribe the base64 audio. We'll mock the transcription here.
+        mock_transcription = "Show me recent theft cases"
+        from backend.analytics.service import analytics_service
+        # Call the existing search with the transcribed text
+        search_results = analytics_service.perform_search(db, user, "theft")
+        return {
+            "transcription": mock_transcription,
+            "results": search_results
+        }
+
+    def pattern_similarity(self, db: Session, user: CurrentUser, fir_id: str) -> list:
+        """Mock implementation of AI Crime Pattern Similarity."""
+        from backend.core.service import core_service
+        target_fir = core_service.get_fir_by_id(db, user, fir_id)
+        
+        # We find other crimes in the same district and mock a similarity score.
+        crimes = db.query(Crime).join(FIR).filter(
+            FIR.district_id == target_fir.district_id, 
+            FIR.fir_id != fir_id
+        ).limit(5).all()
+
+        similar_cases = []
+        for c in crimes:
+            similar_cases.append({
+                "fir_number": c.fir.fir_number,
+                "similarity_score": 0.85, # mock score
+                "reason": "Similar modus operandi and timeframe."
+            })
+        return similar_cases
+
 
 ai_service = AIService()

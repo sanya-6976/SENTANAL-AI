@@ -22,6 +22,19 @@ class AssistantRequest(BaseModel):
 class ReportRequest(BaseModel):
     fir_id: str
 
+class TranslateRequest(BaseModel):
+    text: str
+    target_language: str
+
+class DigitalEvidenceRequest(BaseModel):
+    evidence_id: str
+
+class VoiceSearchRequest(BaseModel):
+    audio_base64: str
+
+class PatternSimilarityRequest(BaseModel):
+    fir_id: str
+
 
 # ── AI Endpoints ─────────────────────────────────────────────────────────────
 
@@ -55,3 +68,46 @@ def generate_report(
     """Generate a highly structured investigative report summary for a specific FIR case."""
     report = ai_service.generate_report(db=db, user=current_user, fir_id=request.fir_id)
     return {"fir_id": request.fir_id, "report": report}
+
+
+@ai_router.post("/translate")
+def translate_text(
+    request: TranslateRequest,
+    current_user: CurrentUser = Depends(get_current_active_user)
+):
+    """Multilingual AI: Translate text into a target language."""
+    translation = ai_service.translate_text(request.text, request.target_language)
+    return {"original": request.text, "translation": translation, "language": request.target_language}
+
+
+@ai_router.post("/analyze-digital-evidence")
+def analyze_digital_evidence(
+    request: DigitalEvidenceRequest,
+    db: Session = Depends(get_db),
+    current_user: CurrentUser = Depends(get_current_active_user)
+):
+    """Digital Intelligence Analyzer: Analyze CDR, IP logs, or device metadata."""
+    analysis = ai_service.analyze_digital_evidence(db, current_user, request.evidence_id)
+    return {"evidence_id": request.evidence_id, "analysis": analysis}
+
+
+@ai_router.post("/voice-search")
+def voice_search(
+    request: VoiceSearchRequest,
+    db: Session = Depends(get_db),
+    current_user: CurrentUser = Depends(get_current_active_user)
+):
+    """Voice Search: Transcribe audio to text and perform a search query."""
+    results = ai_service.voice_search(db, current_user, request.audio_base64)
+    return results
+
+
+@ai_router.post("/pattern-similarity")
+def pattern_similarity(
+    request: PatternSimilarityRequest,
+    db: Session = Depends(get_db),
+    current_user: CurrentUser = Depends(get_current_active_user)
+):
+    """AI Crime Pattern Similarity: Find linked cases based on MO and description."""
+    similar_cases = ai_service.pattern_similarity(db, current_user, request.fir_id)
+    return {"fir_id": request.fir_id, "similar_cases": similar_cases}

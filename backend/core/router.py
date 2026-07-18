@@ -27,6 +27,10 @@ class FIRCreateRequest(BaseModel):
     location: str
     description: str
 
+class DiaryEntryRequest(BaseModel):
+    content: str
+    fir_id: str | None = None
+
 # ── FIR Endpoints ────────────────────────────────────────────────────────────
 
 @core_router.get("/firs")
@@ -239,4 +243,59 @@ def get_entities(fir_id: Optional[str] = None, db: Session = Depends(get_db)):
         "vehicle": orm_to_dict(vehicle) if vehicle else None,
         "victim": orm_to_dict(victim) if victim else None
     }
+
+
+# ── Diary Endpoints ──────────────────────────────────────────────────────────
+
+@core_router.post("/diary")
+def create_diary_entry(
+    request: DiaryEntryRequest,
+    db: Session = Depends(get_db),
+    current_user: CurrentUser = Depends(get_current_active_user)
+):
+    """Officer Investigation Diary: Add a new diary entry, stored as an ActivityLog."""
+    from database.models import ActivityLog
+    
+    log = ActivityLog(
+        user_id=current_user.user_id,
+        entity_type="DIARY_ENTRY",
+        entity_id=request.fir_id, # Optional link to FIR
+        action="CREATE_DIARY",
+        details={"content": request.content}
+    )
+    db.add(log)
+    db.commit()
+    db.refresh(log)
+    
+    # We could trigger AI summarization here, but for now we just return the saved log.
+    return {"message": "Diary entry saved.", "log_id": log.activity_log_id}
+
+
+@core_router.get("/diary")
+def get_diary_entries(
+    fir_id: str | None = None,
+    db: Session = Depends(get_db),
+    current_user: CurrentUser = Depends(get_current_active_user)
+):
+    """Officer Investigation Diary: Retrieve past diary entries."""
+    from database.models import ActivityLog
+    
+    query = db.query(ActivityLog).filter(
+        ActivityLog.user_id == current_user.user_id,
+        ActivityLog.entity_type == "DIARY_ENTRY"
+    )
+    
+    if fir_id:
+        query = query.filter(ActivityLog.entity_id == fir_id)
+        
+    logs = query.order_by(ActivityLog.timestamp.desc()).all()
+    return [
+        {
+            "log_id": log.activity_log_id,
+            "timestamp": log.timestamp,
+            "fir_id": log.entity_id,
+            "content": log.details.get("content", "") if log.details else ""
+        }
+        for log in logs
+    ]
 

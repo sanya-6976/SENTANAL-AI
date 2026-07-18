@@ -253,6 +253,44 @@ class AnalyticsService:
 
         return {"nodes": nodes, "edges": edges}
 
+    def get_full_graph_data(self, db: Session, user: CurrentUser) -> Dict[str, Any]:
+        """Generate a full multi-entity Neo4j style graph for investigations."""
+        # Nodes and edges containers
+        nodes = []
+        edges = []
+
+        # Get Crimes in scope
+        crimes_q = db.query(Crime).join(FIR)
+        if user.role == Roles.DISTRICT_SUPERINTENDENT:
+            crimes_q = crimes_q.filter(FIR.district_id == user.district_id)
+        elif user.role in (Roles.STATION_HOUSE_OFFICER, Roles.INVESTIGATING_OFFICER):
+            crimes_q = crimes_q.filter(FIR.station_id == user.station_id)
+        crimes = crimes_q.limit(50).all() # Limit to prevent huge graphs
+
+        for crime in crimes:
+            nodes.append({"id": f"crime_{crime.crime_id}", "label": "Crime", "title": crime.crime_description})
+            
+            # Map FIR
+            nodes.append({"id": f"fir_{crime.fir.fir_id}", "label": "FIR", "title": crime.fir.fir_number})
+            edges.append({"source": f"crime_{crime.crime_id}", "target": f"fir_{crime.fir.fir_id}", "relationship": "REGISTERED_AS"})
+
+            # Map Suspects
+            for cs in crime.suspects:
+                if cs.suspect:
+                    nodes.append({"id": f"suspect_{cs.suspect.suspect_id}", "label": "Suspect", "title": cs.suspect.full_name})
+                    edges.append({"source": f"suspect_{cs.suspect.suspect_id}", "target": f"crime_{crime.crime_id}", "relationship": "INVOLVED_IN"})
+
+            # Map Vehicles
+            for cv in crime.vehicles:
+                if cv.vehicle:
+                    nodes.append({"id": f"vehicle_{cv.vehicle.vehicle_id}", "label": "Vehicle", "title": cv.vehicle.registration_number})
+                    edges.append({"source": f"vehicle_{cv.vehicle.vehicle_id}", "target": f"crime_{crime.crime_id}", "relationship": "USED_IN"})
+                    
+        # Remove duplicate nodes
+        unique_nodes = {node["id"]: node for node in nodes}.values()
+        
+        return {"nodes": list(unique_nodes), "edges": edges}
+
     # ── Search Analytics ─────────────────────────────────────────────────────
 
     def perform_search(self, db: Session, user: CurrentUser, search_text: str) -> Dict[str, Any]:

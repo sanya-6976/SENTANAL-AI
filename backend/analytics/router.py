@@ -85,6 +85,14 @@ def get_network_suspects(
     """Retrieve suspect associate graph nodes and edges for network visualizations."""
     return analytics_service.get_network_suspects(db=db, user=current_user)
 
+@analytics_router.get("/network/graph-data")
+def get_graph_data(
+    db: Session = Depends(get_db),
+    current_user: CurrentUser = Depends(get_current_active_user),
+):
+    """Retrieve full Neo4j-style graph representation of Crimes, Suspects, Vehicles, and Victims."""
+    return analytics_service.get_full_graph_data(db=db, user=current_user)
+
 
 # ── Search Analytics Endpoints ───────────────────────────────────────────────
 
