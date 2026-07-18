@@ -7,6 +7,7 @@ import {
   ExtractionSummary
 } from './components'
 import type { ExtractedFormData } from './components'
+import apiClient from '../../api/client'
 
 function OCRReviewPage() {
   const navigate = useNavigate()
@@ -58,8 +59,24 @@ function OCRReviewPage() {
     alert('[SYSTEM NOTICE] Form fields enabled. Focus inputs to correct values.')
   }
 
-  const handleSave = () => {
-    alert(`[DATABASE CALL] FIR ${formData.firNumber} successfully saved to the Karnataka State Crime Database!`)
+  const [showSaveDialog, setShowSaveDialog] = useState(false)
+  const [isSaving, setIsSaving] = useState(false)
+
+  const handleSave = async () => {
+    try {
+      setIsSaving(true)
+      await apiClient.post('/core/firs', formData)
+      setShowSaveDialog(true)
+    } catch (err) {
+      console.error(err)
+      alert("Failed to save FIR. Please try again.")
+    } finally {
+      setIsSaving(false)
+    }
+  }
+
+  const handleDialogClose = () => {
+    setShowSaveDialog(false)
     navigate('/crime-database')
   }
 
@@ -124,15 +141,36 @@ function OCRReviewPage() {
 
             <button
               onClick={handleSave}
-              className="w-full sm:w-auto px-5 py-3 bg-[#2563EB] hover:bg-[#1D4ED8] text-white rounded-lg text-[10px] tracking-widest font-bold uppercase transition-all duration-150 cursor-pointer flex items-center justify-center gap-2 outline-none hover:shadow-[0_2px_12px_rgba(37,99,235,0.25)]"
+              disabled={isSaving}
+              className="w-full sm:w-auto px-5 py-3 bg-[#2563EB] hover:bg-[#1D4ED8] disabled:opacity-50 text-white rounded-lg text-[10px] tracking-widest font-bold uppercase transition-all duration-150 cursor-pointer flex items-center justify-center gap-2 outline-none hover:shadow-[0_2px_12px_rgba(37,99,235,0.25)]"
             >
               <Database className="h-3.5 w-3.5" />
-              <span>Save to Crime Database</span>
+              <span>{isSaving ? 'Saving...' : 'Save to Crime Database'}</span>
             </button>
           </div>
         </div>
 
       </div>
+
+      {showSaveDialog && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm animate-fade-in">
+          <div className="bg-[#111827] border border-[rgba(255,255,255,0.1)] rounded-xl p-8 max-w-sm w-full shadow-2xl flex flex-col items-center text-center">
+            <div className="h-16 w-16 bg-green-500/10 rounded-full flex items-center justify-center mb-4 border border-green-500/20">
+              <Database className="h-8 w-8 text-green-500" />
+            </div>
+            <h3 className="text-xl font-bold text-white mb-2">Saved Successfully</h3>
+            <p className="text-sm text-[#94A3B8] mb-6">
+              FIR {formData.firNumber} has been successfully parsed and saved into the Crime Database.
+            </p>
+            <button
+              onClick={handleDialogClose}
+              className="w-full py-3 bg-[#2563EB] hover:bg-[#1D4ED8] text-white rounded-lg text-xs font-bold uppercase tracking-wider transition-colors"
+            >
+              Continue to Database
+            </button>
+          </div>
+        </div>
+      )}
 
     </div>
   )

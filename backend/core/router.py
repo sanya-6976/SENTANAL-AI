@@ -6,9 +6,26 @@ from database.connection import get_db
 from backend.auth.dependencies import get_current_active_user
 from backend.auth.models import CurrentUser
 from backend.core.service import core_service, orm_to_dict
-from database.models import Suspect, Vehicle, Victim
+from pydantic import BaseModel
+from database.models import Suspect, Vehicle, Victim, District, PoliceStation, Officer, FIR
+from sqlalchemy import func
 
 core_router = APIRouter(prefix="/core", tags=["core"])
+
+class FIRCreateRequest(BaseModel):
+    firNumber: str
+    crimeType: str
+    date: str
+    time: str
+    district: str
+    policeStation: str
+    officer: str
+    victimName: str
+    accusedName: str
+    vehicleNumber: str
+    weaponUsed: str
+    location: str
+    description: str
 
 # ── FIR Endpoints ────────────────────────────────────────────────────────────
 
@@ -22,17 +39,56 @@ def get_firs(
     current_user: CurrentUser = Depends(get_current_active_user),
 ):
     """Retrieve list of FIR cases filtered by current user's geographical scope."""
-    return orm_to_dict(
-        core_service.get_firs(
-            db=db,
-            user=current_user,
-            station_id=station_id,
-            district_id=district_id,
-            status=status,
-            severity=severity
-        )
+    firs = core_service.get_firs(
+        db=db,
+        user=current_user,
+        station_id=station_id,
+        district_id=district_id,
+        status=status,
+        severity=severity
     )
+    result = []
+    for fir in firs:
+        fir_dict = orm_to_dict(fir)
+        fir_dict["district_name"] = fir.district.district_name if getattr(fir, "district", None) else None
+        fir_dict["station_name"] = fir.station.station_name if getattr(fir, "station", None) else None
+        fir_dict["officer_name"] = fir.investigating_officer.full_name if getattr(fir, "investigating_officer", None) else None
+        result.append(fir_dict)
+    return result
 
+@core_router.post("/firs")
+def create_fir(
+    payload: FIRCreateRequest,
+    db: Session = Depends(get_db),
+    current_user: CurrentUser = Depends(get_current_active_user)
+):
+    district = db.query(District).filter(District.district_name == payload.district).first()
+    if not district:
+        district = db.query(District).first()
+    
+    station = db.query(PoliceStation).filter(PoliceStation.station_name == payload.policeStation).first()
+    if not station:
+        station = db.query(PoliceStation).first()
+        
+    officer = db.query(Officer).filter(Officer.full_name == payload.officer).first()
+    if not officer:
+        officer = db.query(Officer).first()
+
+    new_fir = FIR(
+        fir_number=payload.firNumber,
+        fir_date=func.now(),
+        station_id=station.station_id if station else current_user.station_id,
+        district_id=district.district_id if district else current_user.district_id,
+        complainant_name=payload.victimName,
+        complaint_details=payload.description,
+        investigating_officer_id=officer.officer_id if officer else current_user.officer_id,
+        status="Investigating",
+        severity="High"
+    )
+    db.add(new_fir)
+    db.commit()
+    db.refresh(new_fir)
+    return {"message": "FIR saved successfully", "fir_id": new_fir.fir_id}
 
 @core_router.get("/firs/{fir_id}")
 def get_fir_by_id(
@@ -158,13 +214,29 @@ def get_evidence_by_id(
 
 
 @core_router.get("/entities")
-def get_entities(db: Session = Depends(get_db)):
-    suspect = db.query(Suspect).first()
-    vehicle = db.query(Vehicle).first()
-    victim = db.query(Victim).first()
+def get_entities(fir_id: Optional[str] = None, db: Session = Depends(get_db)):
+    from database.models import Crime, CrimeSuspect, CrimeVehicle, CrimeVictim
+
+    if not fir_id:
+        suspect = db.query(Suspect).first()
+        vehicle = db.query(Vehicle).first()
+        victim = db.query(Victim).first()
+    else:
+        crime = db.query(Crime).filter(Crime.fir_id == fir_id).first()
+        if crime:
+            cs = db.query(CrimeSuspect).filter(CrimeSuspect.crime_id == crime.crime_id).first()
+            cv = db.query(CrimeVehicle).filter(CrimeVehicle.crime_id == crime.crime_id).first()
+            c_vic = db.query(CrimeVictim).filter(CrimeVictim.crime_id == crime.crime_id).first()
+
+            suspect = cs.suspect if cs else None
+            vehicle = cv.vehicle if cv else None
+            victim = c_vic.victim if c_vic else None
+        else:
+            suspect, vehicle, victim = None, None, None
+
     return {
-        "suspect": orm_to_dict(suspect),
-        "vehicle": orm_to_dict(vehicle),
-        "victim": orm_to_dict(victim)
+        "suspect": orm_to_dict(suspect) if suspect else None,
+        "vehicle": orm_to_dict(vehicle) if vehicle else None,
+        "victim": orm_to_dict(victim) if victim else None
     }
 

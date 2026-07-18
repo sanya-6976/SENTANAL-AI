@@ -56,11 +56,10 @@ function InvestigationPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [firsRes, evidenceRes, crimesRes, entitiesRes] = await Promise.all([
+        const [firsRes, evidenceRes, crimesRes] = await Promise.all([
           apiClient.get('/core/firs'),
           apiClient.get('/core/evidence'),
-          apiClient.get('/core/crimes'),
-          apiClient.get('/core/entities')
+          apiClient.get('/core/crimes')
         ])
         
         if (firsRes.data && firsRes.data.length > 0) {
@@ -70,17 +69,7 @@ function InvestigationPage() {
         }
         setEvidenceData(evidenceRes.data || [])
         setCrimesData(crimesRes.data || [])
-        
-        if (entitiesRes.data) {
-           const sus = entitiesRes.data.suspect;
-           const veh = entitiesRes.data.vehicle;
-           const vic = entitiesRes.data.victim;
-           const newEntities: EntityItem[] = [];
-           if (sus) newEntities.push({ type: 'accused', name: sus.full_name || 'Unknown', age: 30, role: sus.status || 'Suspect' });
-           if (veh) newEntities.push({ type: 'vehicle', regNo: veh.registration_number || 'Unknown', typeDesc: veh.vehicle_type || 'Vehicle' });
-           if (vic) newEntities.push({ type: 'victim', name: vic.full_name || 'Unknown', age: 30, status: vic.injured ? 'Injured' : 'Resident' });
-           if (newEntities.length > 0) setEntitiesList(newEntities);
-        }
+
       } catch (err) {
         console.error(err)
       } finally {
@@ -96,6 +85,27 @@ function InvestigationPage() {
         role: 'ai',
         content: `I am your AI Investigation Assistant. I have loaded context for case ${firData.fir_number}. How can I assist you with this case today?`
       }])
+
+      // Fetch entities for this specific FIR
+      const fetchEntitiesForFir = async () => {
+        try {
+          const entitiesRes = await apiClient.get(`/core/entities?fir_id=${firData.fir_id}`)
+          if (entitiesRes.data) {
+             const sus = entitiesRes.data.suspect;
+             const veh = entitiesRes.data.vehicle;
+             const vic = entitiesRes.data.victim;
+             const newEntities: EntityItem[] = [];
+             if (sus) newEntities.push({ type: 'accused', name: sus.full_name || 'Unknown', age: 30, role: sus.status || 'Suspect' });
+             if (veh) newEntities.push({ type: 'vehicle', regNo: veh.registration_number || 'Unknown', typeDesc: veh.vehicle_type || 'Vehicle' });
+             if (vic) newEntities.push({ type: 'victim', name: vic.full_name || 'Unknown', age: 30, status: vic.injured ? 'Injured' : 'Resident' });
+             setEntitiesList(newEntities.length > 0 ? newEntities : []);
+          }
+        } catch (err) {
+          console.error("Failed to fetch entities for FIR", err)
+          setEntitiesList([])
+        }
+      }
+      fetchEntitiesForFir()
     }
   }, [firData])
 
@@ -108,9 +118,9 @@ function InvestigationPage() {
   const caseData = firData ? {
     fir: firData.fir_number,
     caseType: 'Criminal Offense', // Derived conceptually
-    district: firData.district_id || 'Unknown',
-    station: firData.station_id || 'Unknown',
-    officer: firData.investigating_officer_id || 'Unassigned',
+    district: firData.district_name || firData.district_id || 'Unknown',
+    station: firData.station_name || firData.station_id || 'Unknown',
+    officer: firData.officer_name || firData.investigating_officer_id || 'Unassigned',
     status: firData.status || 'Under Investigation',
     severity: firData.severity || 'Medium'
   } : {
@@ -335,7 +345,7 @@ function InvestigationPage() {
                         }}
                       >
                         <div className="font-bold text-[#2563EB]">{fir.fir_number}</div>
-                        <div className="text-xs text-[#94A3B8] mt-0.5">{fir.district_id}</div>
+                        <div className="text-xs text-[#94A3B8] mt-0.5">{fir.district_name || fir.district_id}</div>
                       </div>
                     ))
                   }

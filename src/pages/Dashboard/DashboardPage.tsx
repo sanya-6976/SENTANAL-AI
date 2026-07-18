@@ -123,15 +123,47 @@ function DashboardPage() {
         ]);
 
         setStats(statsRes.data);
-        setCrimeTrendData(trendRes.data);
-        setCategoryData(categoryRes.data);
-        setDistrictIntelligence(districtRes.data);
-        setRecentCases(firRes.data);
-        console.log("Stats:", statsRes.data);
-        console.log("Trend:", trendRes.data);
-        console.log("Category:", categoryRes.data);
-        console.log("District:", districtRes.data);
-        console.log("FIR:", firRes.data);
+        
+        const mappedTrend = trendRes.data.map((t: any) => {
+          const date = new Date(t.month);
+          return {
+            name: date.toLocaleString('default', { month: 'short' }) + " '" + date.getFullYear().toString().substring(2),
+            Crimes: t.crime_count
+          };
+        });
+        setCrimeTrendData(mappedTrend);
+
+        const categoryColors = ["#2563EB", "#EF4444", "#F59E0B", "#10B981", "#8B5CF6", "#EC4899"];
+        const mappedCategories = categoryRes.data.map((c: any, index: number) => ({
+          name: c.category_name,
+          value: c.crime_count,
+          color: categoryColors[index % categoryColors.length]
+        }));
+        setCategoryData(mappedCategories);
+
+        const mappedDistricts = districtRes.data.map((d: any) => {
+          const count = d.crime_count || 0;
+          let status = "LOW RISK";
+          let color = "#22C55E"; // Green
+          if (count > 20) { status = "HIGH RISK"; color = "#EF4444"; }
+          else if (count > 5) { status = "MEDIUM RISK"; color = "#F59E0B"; }
+          
+          return {
+            name: d.district_name,
+            status: status,
+            color: color
+          };
+        });
+        setDistrictIntelligence(mappedDistricts);
+
+        const mappedFirs = firRes.data.map((f: any) => ({
+          fir: f.fir_number,
+          type: "Criminal Offense",
+          district: f.district_name || f.district_id || 'Unknown',
+          severity: f.severity || "Medium",
+          status: f.status || "Investigating"
+        }));
+        setRecentCases(mappedFirs);
       } catch (err) {
         console.error(err);
       } finally {
