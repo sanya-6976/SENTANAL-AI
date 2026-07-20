@@ -33,21 +33,31 @@ class DatasetPipeline:
             path.unlink()
 
         now = datetime.now().replace(microsecond=0)
+        first_names = ["Aarav", "Ananya", "Vikram", "Meera", "Rohan", "Kavya", "Arjun", "Nandini", "Prakash", "Shruthi", "Siddharth", "Deepa", "Manoj", "Pooja", "Kiran", "Aishwarya", "Rahul", "Divya", "Harish", "Lakshmi"]
+        last_names = ["Shetty", "Gowda", "Patil", "Reddy", "Kulkarni", "Bhat", "Hegde", "Nayak", "Desai", "Murthy", "Naik", "Joshi", "Sharma", "Rao", "Kumar"]
+        districts = ["Bengaluru Urban", "Mysuru", "Dharwad", "Dakshina Kannada", "Belagavi", "Shivamogga", "Kalaburagi", "Tumakuru", "Udupi", "Kodagu"]
+        crime_types = ["Cyber Crime", "Financial Fraud", "Murder", "Assault", "Robbery", "Burglary", "Kidnapping", "Drug Trafficking", "Missing Person", "Vehicle Theft", "Mobile Theft", "Chain Snatching", "Online Scam", "Identity Theft"]
+        banks = ["State Bank of India", "HDFC Bank", "ICICI Bank", "Axis Bank", "Canara Bank", "Punjab National Bank", "Bank of Baroda", "Union Bank", "Indian Bank", "Kotak Mahindra", "IDFC FIRST", "Federal Bank"]
+        account_types = ["Savings", "Current", "Salary", "Business", "Joint"]
+        vehicle_brands = ["Maruti", "Hyundai", "Honda", "Toyota", "Tata", "Mahindra", "Kia", "MG", "Skoda", "Volkswagen"]
+        vehicle_types = ["Bike", "Scooter", "Car", "SUV", "Truck", "Auto"]
+        evidence_types = ["CCTV Footage", "Fingerprints", "DNA Sample", "Blood Sample", "Weapon", "Laptop", "Mobile Phone", "SIM Card", "Hard Disk", "USB Drive", "Bank Statements", "Photographs", "Audio Recording", "Vehicle"]
+        device_brands = ["Samsung", "Apple", "Xiaomi", "OnePlus", "Vivo", "Oppo", "Realme", "Google Pixel", "Motorola", "Dell", "HP", "Lenovo", "Asus"]
         persons = []
         for index in range(1, 101):
             persons.append({
-                "person_id": f"PER{index:05d}", "first_name": f"Person{index}",
-                "last_name": "Synthetic", "gender": "Other",
-                "date_of_birth": f"{1970 + index % 30:04d}-01-01", "age": 30 + index % 35,
-                "mobile_number": f"9{index:09d}", "aadhaar_number": f"{index:012d}",
-                "pan_number": f"SYN{index:04d}P", "district": "Central",
+                "person_id": f"PER{index:05d}", "first_name": first_names[(index - 1) % len(first_names)],
+                "last_name": last_names[(index * 3) % len(last_names)], "gender": ["Male", "Female", "Other"][index % 3],
+                "date_of_birth": f"{1965 + (index * 7) % 38:04d}-{1 + index % 12:02d}-{1 + index % 27:02d}", "age": 18 + (index * 11) % 57,
+                "mobile_number": f"{9 + index % 2}{self.random.randint(100000000, 999999999)}", "aadhaar_number": f"{self.random.randint(100000000000, 999999999999)}",
+                "pan_number": f"{chr(65 + index % 26)}{chr(65 + (index * 3) % 26)}{chr(65 + (index * 5) % 26)}{index:04d}P", "district": districts[(index - 1) % len(districts)],
             })
         cases = []
         for index in range(1, 31):
             incident = now - timedelta(days=180 - index)
             cases.append({"case_id": f"CAS{index:05d}", "case_number": f"CASE/{index:05d}",
-                          "incident_datetime": incident.isoformat(), "crime_type": "Theft",
-                          "status": "Under Investigation"})
+                          "incident_datetime": incident.isoformat(), "crime_type": crime_types[(index * 5) % len(crime_types)],
+                          "status": ["Registered", "Under Investigation", "Charge Sheet Filed", "Pending Trial"][index % 4]})
         persons_by_case = []
         for index, case in enumerate(cases, 1):
             for offset, role in enumerate(("Complainant", "Suspect", "Witness")):
@@ -59,21 +69,23 @@ class DatasetPipeline:
         for index, case in enumerate(cases, 1):
             registered = datetime.fromisoformat(case["incident_datetime"]) + timedelta(days=2)
             firms.append({"fir_id": f"FIR{index:05d}", "case_id": case["case_id"], "complainant_id": persons[(index) % 100]["person_id"],
-                          "registration_datetime": registered.isoformat(), "fir_number": f"FIR/{index:05d}", "police_station": "Central"})
+                          "registration_datetime": registered.isoformat(), "fir_number": f"{districts[index % len(districts)][:3].upper()}/{2024 + index % 2}/{index:05d}", "police_station": ["Cubbon Park", "Vijayanagar", "Devaraja", "Mangaluru East", "Hubballi North", "Belagavi Camp", "Shivamogga Town", "Udupi Town"][index % 8]})
 
         phones = [{"phone_id": f"PHN{index:05d}", "person_id": person["person_id"], "mobile_number": person["mobile_number"],
-                   "imei": f"IMEI{index:014d}", "imsi": f"IMSI{index:014d}", "provider": "Synthetic Telecom",
-                   "sim_type": "Prepaid", "connection_type": "4G", "activation_date": "2020-01-01", "status": "Active", "is_primary": "True"}
+                   "imei": f"{self.random.randint(100000000000000, 999999999999999)}", "imsi": f"404{self.random.randint(100000000000000, 999999999999999)}", "provider": ["Airtel", "Jio", "Vi", "BSNL"][index % 4],
+                   "sim_type": ["Prepaid", "Postpaid"][index % 2], "connection_type": ["4G", "5G", "VoLTE"][index % 3], "activation_date": (now - timedelta(days=self.random.randint(30, 1800))).date().isoformat(), "status": ["Active", "Active", "Suspended"][index % 3], "is_primary": "True"}
                   for index, person in enumerate(persons, 1)]
-        vehicles = [{"vehicle_id": f"VEH{index:05d}", "person_id": persons[index % 100]["person_id"], "registration_number": f"SYN-{index:04d}", "vehicle_type": "Car"} for index in range(1, 51)]
-        accounts = [{"account_id": f"ACC{index:05d}", "person_id": persons[index % 100]["person_id"], "account_number": f"ACCT{index:012d}", "bank_name": "Synthetic Bank", "account_type": "Savings"} for index in range(1, 81)]
-        transactions = [{"transaction_id": f"TXN{index:06d}", "account_id": accounts[index % 80]["account_id"], "transaction_datetime": (now - timedelta(days=index % 60)).isoformat(), "amount": f"{100 + index * 13.5:.2f}", "transaction_type": "Credit"} for index in range(1, 201)]
-        evidence = [{"evidence_id": f"EVD{index:05d}", "fir_id": fir["fir_id"], "case_id": fir["case_id"], "evidence_type": "Digital", "collected_datetime": fir["registration_datetime"]} for index, fir in enumerate(firms, 1)]
+        vehicles = [{"vehicle_id": f"VEH{index:05d}", "person_id": persons[index % 100]["person_id"], "registration_number": f"KA-{1 + index % 57:02d}-{chr(65 + index % 26)}-{self.random.randint(1000, 9999)}", "vehicle_type": f"{vehicle_types[index % len(vehicle_types)]} ({vehicle_brands[index % len(vehicle_brands)]})"} for index in range(1, 51)]
+        accounts = [{"account_id": f"ACC{index:05d}", "person_id": persons[index % 100]["person_id"], "account_number": f"{self.random.randint(10000000000, 99999999999)}", "bank_name": banks[index % len(banks)], "account_type": account_types[index % len(account_types)]} for index in range(1, 81)]
+        transaction_types = ["UPI", "NEFT", "RTGS", "IMPS", "Cash Withdrawal", "ATM", "Debit Card", "Credit Card", "Wallet"]
+        transactions = [{"transaction_id": f"TXN{index:06d}", "account_id": accounts[index % 80]["account_id"], "transaction_datetime": (now - timedelta(days=self.random.randint(0, 180), minutes=self.random.randint(0, 1439))).isoformat(), "amount": f"{self.random.uniform(250, 250000):.2f}", "transaction_type": transaction_types[index % len(transaction_types)]} for index in range(1, 201)]
+        evidence = [{"evidence_id": f"EVD{index:05d}", "fir_id": fir["fir_id"], "case_id": fir["case_id"], "evidence_type": evidence_types[index % len(evidence_types)], "collected_datetime": fir["registration_datetime"]} for index, fir in enumerate(firms, 1)]
         arrests = [{"arrest_id": f"ARR{index:05d}", "fir_id": fir["fir_id"], "case_id": fir["case_id"], "suspect_id": persons_by_case_ids[fir["case_id"]], "arrest_datetime": (datetime.fromisoformat(fir["registration_datetime"]) + timedelta(days=3)).isoformat()} for index, fir in enumerate(firms, 1)]
         chargesheets = [{"chargesheet_id": f"CHG{index:05d}", "fir_id": fir["fir_id"], "case_id": fir["case_id"], "suspect_id": persons_by_case_ids[fir["case_id"]], "filing_date": (datetime.fromisoformat(fir["registration_datetime"]) + timedelta(days=10)).date().isoformat()} for index, fir in enumerate(firms, 1)]
         court = [{"court_case_id": f"CRT{index:05d}", "chargesheet_id": chargesheets[index-1]["chargesheet_id"], "case_id": fir["case_id"], "hearing_date": (datetime.fromisoformat(fir["registration_datetime"]) + timedelta(days=20)).date().isoformat()} for index, fir in enumerate(firms, 1)]
-        diary = [{"diary_id": f"DIA{index:05d}", "case_id": case["case_id"], "entry_datetime": (datetime.fromisoformat(case["incident_datetime"]) + timedelta(days=5)).isoformat(), "entry_text": "Investigation activity recorded."} for index, case in enumerate(cases, 1)]
-        devices = [{"device_id": f"DEV{index:05d}", "person_id": persons[index % 100]["person_id"], "device_type": "Mobile", "device_identifier": f"DEVICE{index:08d}"} for index in range(1, 81)]
+        diary_actions = ["Witness statement recorded", "CCTV footage reviewed", "Call records requested", "Digital evidence submitted", "Suspect address verified", "Bank statement obtained", "Forensic report received"]
+        diary = [{"diary_id": f"DIA{index:05d}", "case_id": case["case_id"], "entry_datetime": (datetime.fromisoformat(case["incident_datetime"]) + timedelta(days=5 + index % 12)).isoformat(), "entry_text": f"{diary_actions[index % len(diary_actions)]}; field note {index:04d} recorded by {first_names[index % len(first_names)]} {last_names[index % len(last_names)]}."} for index, case in enumerate(cases, 1)]
+        devices = [{"device_id": f"DEV{index:05d}", "person_id": persons[index % 100]["person_id"], "device_type": f"{['Mobile', 'Laptop', 'Tablet'][index % 3]} ({device_brands[index % len(device_brands)]})", "device_identifier": f"DEVICE{self.random.randint(10000000, 99999999)}"} for index in range(1, 81)]
         def communication(name, key, count):
             rows = []
             for index in range(1, count + 1):
