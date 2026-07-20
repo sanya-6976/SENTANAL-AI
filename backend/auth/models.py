@@ -50,6 +50,8 @@ class CurrentUser(BaseModel):
 class LoginRequest(BaseModel):
     username: str
     password: str
+    rank: str
+    district: str
 
 
 class TokenResponse(BaseModel):

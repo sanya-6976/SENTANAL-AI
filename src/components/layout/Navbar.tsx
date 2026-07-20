@@ -1,6 +1,15 @@
-import { Bell } from 'lucide-react'
+import { Bell, LogOut } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
+import { clearSession } from '../../utils/session'
 
 function Navbar() {
+  const navigate = useNavigate()
+
+  const handleLogout = () => {
+    clearSession()
+    navigate('/login')
+  }
+
   return (
     <header className="bg-[#111827] border-b border-[rgba(255,255,255,0.06)] h-[69px] px-6 flex items-center justify-between select-none shrink-0">
       {/* Page Title */}
@@ -25,11 +34,18 @@ function Navbar() {
 
         {/* Profile Card avatar metadata */}
         <div className="flex items-center gap-3">
-          <div className="flex flex-col text-right">
+          <div className="flex flex-col items-end text-right">
             <span className="text-xs font-bold text-white tracking-wide">DCP Anjan</span>
             <span className="text-[8px] font-mono tracking-widest text-[#94A3B8] uppercase font-bold mt-0.5">
               Karnataka Police
             </span>
+            <button 
+              onClick={handleLogout}
+              className="mt-1 flex items-center gap-1.5 text-[9px] font-mono uppercase tracking-widest text-[#EF4444] hover:text-[#FCA5A5] transition-colors cursor-pointer"
+            >
+              <LogOut className="h-2.5 w-2.5" />
+              <span>Log out</span>
+            </button>
           </div>
           
           <div className="h-9 w-9 rounded-full bg-[#2563EB]/10 border border-[#2563EB]/40 flex items-center justify-center text-white text-xs font-bold select-none cursor-pointer hover:border-[#2563EB]/70 transition-all duration-200">

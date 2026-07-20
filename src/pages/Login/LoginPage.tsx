@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Mail, Lock, Eye, EyeOff, ShieldCheck, Check } from 'lucide-react'
+import { Mail, Lock, Eye, EyeOff, ShieldCheck, Check, MapPin, BadgeIcon } from 'lucide-react'
 import kspLogo from '../../assets/ksp-logo.jpg'
 import loginBg from '../../assets/login_bg.png'
 import { login } from "../../api/auth.api";
@@ -11,6 +11,8 @@ function LoginPage() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const [rank, setRank] = useState('')
+  const [district, setDistrict] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [rememberMe, setRememberMe] = useState(false)
   const [error, setError] = useState('')
@@ -96,8 +98,8 @@ function LoginPage() {
     const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!username || !password) {
-      setError("Please enter your username and password.");
+    if (!username || !password || !rank || !district) {
+      setError("Please complete all verification fields.");
       return;
     }
 
@@ -108,6 +110,8 @@ function LoginPage() {
       const response = await login({
         username,
         password,
+        rank,
+        district
       });
 
       saveSession(
@@ -264,6 +268,46 @@ function LoginPage() {
                   >
                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
+                </div>
+              </div>
+
+              {/* Rank */}
+              <div className="space-y-1.5">
+                <label className="block text-[9.5px] font-mono uppercase tracking-wider text-[#94A3B8]">
+                  Officer Rank Verification
+                </label>
+                <div className="relative group">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#94A3B8]/60 group-focus-within:text-[#38BDF8] transition-colors">
+                    <BadgeIcon className="h-4 w-4" />
+                  </div>
+                  <input
+                    type="text"
+                    value={rank}
+                    onChange={(e) => setRank(e.target.value)}
+                    className="w-full bg-[#050816]/70 border border-[rgba(80,150,255,0.2)] focus:border-[#38BDF8] focus:ring-1 focus:ring-[#38BDF8] rounded-xl pl-10 pr-4 py-3.5 text-xs font-semibold text-white placeholder-slate-600 outline-none transition-all duration-150"
+                    placeholder="e.g. Inspector, Sub-Inspector"
+                    required
+                  />
+                </div>
+              </div>
+
+              {/* District */}
+              <div className="space-y-1.5">
+                <label className="block text-[9.5px] font-mono uppercase tracking-wider text-[#94A3B8]">
+                  Assigned District
+                </label>
+                <div className="relative group">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#94A3B8]/60 group-focus-within:text-[#38BDF8] transition-colors">
+                    <MapPin className="h-4 w-4" />
+                  </div>
+                  <input
+                    type="text"
+                    value={district}
+                    onChange={(e) => setDistrict(e.target.value)}
+                    className="w-full bg-[#050816]/70 border border-[rgba(80,150,255,0.2)] focus:border-[#38BDF8] focus:ring-1 focus:ring-[#38BDF8] rounded-xl pl-10 pr-4 py-3.5 text-xs font-semibold text-white placeholder-slate-600 outline-none transition-all duration-150"
+                    placeholder="e.g. Bengaluru Urban"
+                    required
+                  />
                 </div>
               </div>
 

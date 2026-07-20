@@ -1,10 +1,14 @@
 import { useState, useEffect, useMemo } from 'react'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
+import { Sparkles, Loader2, X } from 'lucide-react'
 import {
   NetworkToolbar,
   GraphCanvas,
   NodeCard
 } from './components'
 import { getSuspectNetwork } from '../../api/analytics.api'
+import { askAIAssistant } from '../../api/ai.api'
 import { mockNodes } from './data/MockGraphData'
 
 interface SuspectProfile {
@@ -36,6 +40,10 @@ function CriminalNetworkPage() {
   const [links, setLinks] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+
+  // AI Insights State
+  const [aiInsight, setAiInsight] = useState<string | null>(null)
+  const [isLoadingAI, setIsLoadingAI] = useState(false)
 
   useEffect(() => {
     const loadGraph = async () => {
@@ -193,8 +201,24 @@ function CriminalNetworkPage() {
     alert(`[SYSTEM CALL] Exporting relational link matrix for ${activeProfile.name} in PDF/JSON formats...`)
   }
 
-  const handleRightPanelAction = (actionName: string) => {
-    alert(`[SYSTEM CALL] Triggering Executive Action:\n- Target Accused: ${activeProfile.name}\n- Operation: ${actionName}`)
+  const handleRightPanelAction = async (actionName: string) => {
+    if (actionName === 'Ask AI Assistant') {
+      setIsLoadingAI(true)
+      setAiInsight(null)
+      try {
+        const res = await askAIAssistant({
+          question: `Analyze suspect ${activeProfile.name} (Age: ${activeProfile.age}, Location: ${activeProfile.district}, Status: ${activeProfile.status}, Risk Score: ${activeProfile.riskScore}, FIRs: ${activeProfile.firs}, Associates: ${activeProfile.associates}) and provide a comprehensive investigative intelligence report.`
+        })
+        setAiInsight(res.response)
+      } catch (err) {
+        console.error("AI Assistant Error:", err)
+        setAiInsight("Failed to generate AI insights.")
+      } finally {
+        setIsLoadingAI(false)
+      }
+    } else {
+      alert(`[SYSTEM CALL] Triggering Executive Action:\n- Target Accused: ${activeProfile.name}\n- Operation: ${actionName}`)
+    }
   }
 
   if (loading) {
@@ -261,6 +285,51 @@ function CriminalNetworkPage() {
         </div>
 
       </div>
+
+      {/* 4. Horizontal AI Insights Panel */}
+      {(isLoadingAI || aiInsight) && (
+        <div className="bg-[#111827] border border-[#2563EB]/30 rounded-xl p-6 shadow-[0_0_20px_rgba(37,99,235,0.1)] animate-fade-in relative mt-6">
+          {!isLoadingAI && (
+            <button 
+              onClick={() => setAiInsight(null)}
+              className="absolute top-4 right-4 text-[#94A3B8] hover:text-white transition-colors"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          )}
+          
+          <div className="flex items-center gap-3 mb-4 border-b border-[rgba(255,255,255,0.06)] pb-4">
+            <div className="h-10 w-10 rounded-lg bg-[#2563EB]/20 border border-[#2563EB]/40 flex items-center justify-center text-[#2563EB]">
+              <Sparkles className="h-5 w-5" />
+            </div>
+            <div>
+              <h3 className="text-lg font-extrabold text-white tracking-wide">
+                AI Intelligence Brief
+              </h3>
+              <p className="text-[#94A3B8] text-xs font-mono uppercase tracking-widest mt-0.5">
+                Target Profile: {activeProfile.name}
+              </p>
+            </div>
+          </div>
+
+          <div className="text-sm text-[#E2E8F0] leading-relaxed">
+            {isLoadingAI ? (
+              <div className="flex flex-col items-center justify-center py-8 gap-3 text-[#94A3B8]">
+                <Loader2 className="h-8 w-8 animate-spin text-[#2563EB]" />
+                <span className="font-mono text-xs uppercase tracking-widest animate-pulse">
+                  Synthesizing operational intelligence...
+                </span>
+              </div>
+            ) : (
+              <div className="prose prose-invert prose-sm max-w-none prose-headings:text-[#F8FAFC] prose-headings:font-extrabold prose-a:text-[#2563EB] prose-strong:text-white prose-li:marker:text-[#2563EB]">
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                  {aiInsight || ''}
+                </ReactMarkdown>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
     </div>
   )

@@ -7,7 +7,9 @@ import { ENDPOINTS } from "./endpoints";
 
 export interface LoginRequest {
   username: string;
-  password: string;
+  password?: string;
+  rank: string;
+  district: string;
 }
 
 /* ============================

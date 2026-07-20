@@ -48,6 +48,21 @@ def login(request: LoginRequest, db: Session = Depends(get_db)) -> LoginResponse
         if not db_user.password_hash or not verify_password(request.password, db_user.password_hash):
             raise InvalidCredentialsError("Invalid username or password")
 
+        # 3. Verify rank and district
+        if db_user.officer and request.rank:
+            if db_user.officer.rank.lower() != request.rank.strip().lower():
+                raise InvalidCredentialsError("Invalid rank or district verification")
+
+        district_name = None
+        if db_user.district:
+            district_name = db_user.district.district_name
+        elif db_user.officer and db_user.officer.district:
+            district_name = db_user.officer.district.district_name
+            
+        if district_name and request.district:
+            if district_name.lower() != request.district.strip().lower():
+                raise InvalidCredentialsError("Invalid rank or district verification")
+
         # 3. Check if user is active using ORM User model contract
         if not db_user.is_active:
             raise InactiveUserError("User account is inactive")
