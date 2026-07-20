@@ -116,6 +116,7 @@ class DatasetPipeline:
                 persons_by_case.append({"relationship_id": f"REL{len(persons_by_case)+1:06d}",
                                         "case_id": case["case_id"], "person_id": persons[(index + offset) % 100]["person_id"],
                                         "role": role, "assigned_date": (datetime.fromisoformat(case["incident_datetime"]) + timedelta(days=self.random.randint(0, 14))).date().isoformat(), "status": ["Active", "Transferred", "Closed"][index % 3]})
+        self.random.shuffle(persons_by_case)
         persons_by_case_ids = {row["case_id"]: row["person_id"] for row in persons_by_case if row["role"] == "Suspect"}
         firms = []
         for index, case in enumerate(cases, 1):
