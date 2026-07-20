@@ -82,7 +82,7 @@ CREATE TABLE officers (
     badge_number VARCHAR(30) NOT NULL UNIQUE,
     rank VARCHAR(50) NOT NULL,
     designation VARCHAR(100),
-    police_station_id UUID REFERENCES police_stations(station_id),
+    station_id UUID REFERENCES police_stations(station_id),
     district_id UUID REFERENCES districts(district_id),
     phone VARCHAR(20),
     email VARCHAR(100),

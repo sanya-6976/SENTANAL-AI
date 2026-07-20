@@ -44,6 +44,24 @@ python -m etl.pipeline
    - `etl.log` contains the full trace.
    - `error.log` isolates any failures.
 
+## Sprint 5 Demo: Final Data Delivery Layer
+
+Sprint 5 packages the data module into reusable export bundles for the rest of Sentinel AI.
+
+### Execution Command
+
+Run the delivery layer against a populated database:
+
+```bash
+python scripts/generate_sprint5_delivery.py
+```
+
+### Expected Output
+
+1. `reports/sprint5/` contains JSON, CSV, and Markdown artifacts for dashboard analytics, district analytics, GIS, trends, AI, backend views, Neo4j exports, and query optimization guidance.
+2. `reports/sprint5/sprint5_delivery_report.md` summarizes the delivered bundles.
+3. The output is designed to be consumed directly by the frontend, backend, AI, and Neo4j integration workstreams.
+
 ## Recovery Mode Demonstration
 
 If you intentionally corrupt a dataset (e.g., delete a required `district_id` in `datasets/raw/police_stations/police_stations.csv`), running the pipeline will:
