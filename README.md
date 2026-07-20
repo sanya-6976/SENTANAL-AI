@@ -162,6 +162,21 @@ The CSV schemas contain the following field groups:
 - Communication timestamps are valid and bounded by the generated execution context.
 - Generated files are written with UTF-8 encoding and header rows.
 
+### Historical coverage
+
+The synthetic records are distributed across multiple years rather than being limited to the current calendar year:
+
+| Dataset group | Coverage in the current baseline |
+|---|---|
+| Cases | Approximately 2016–2025 |
+| Case-person assignments | Incident-relative historical dates |
+| Arrests | Dates derived from each FIR and case timeline |
+| Chargesheets | Dates derived from each arrest and FIR timeline |
+| CDR records | Approximately 2016–2026 |
+| WhatsApp messages | Approximately 2016–2026 |
+
+All timestamps remain linked to their parent case and are generated without changing identifiers or relationships.
+
 ---
 
 ## 4. Synthetic Data Pipeline
@@ -432,7 +447,7 @@ NEO4J_PASSWORD=change_me
 | `NEO4J_USERNAME` | Neo4j username |
 | `NEO4J_PASSWORD` | Neo4j password |
 
-Credentials are loaded at runtime and must remain outside version control.
+Credentials are loaded at runtime and must remain outside version control. The README contains placeholders only; never add real passwords, API keys, connection strings, tokens, or `.env` files to Git.
 
 ---
 
@@ -446,7 +461,7 @@ The data engineering execution produces:
 - Neo4j nodes and relationships when configured.
 - Runtime logs when logging is enabled by the host environment.
 
-The current synthetic baseline contains 1,460 records across the 18 CSV files.
+The current synthetic baseline contains 1,460 records across the 18 CSV files, with historical variation across cases, legal events, case-person assignments, CDRs, and WhatsApp messages.
 
 ---
 
