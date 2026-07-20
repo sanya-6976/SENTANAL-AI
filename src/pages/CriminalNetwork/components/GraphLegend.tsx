@@ -4,6 +4,8 @@ export function GraphLegend() {
     { label: 'Crime', color: 'bg-[#F97316]' }, // Orange
     { label: 'Vehicle', color: 'bg-[#10B981]' }, // Green
     { label: 'Phone', color: 'bg-[#8B5CF6]' }, // Purple
+    { label: 'Officer', color: 'bg-[#EC4899]' }, // Pink
+    { label: 'Evidence', color: 'bg-[#14B8A6]' }, // Teal
     { label: 'Location', color: 'bg-[#64748B]' }, // Gray
     { label: 'High Risk', color: 'bg-[#EF4444] animate-pulse' } // Red
   ]

@@ -1,12 +1,25 @@
-import { useState, useMemo } from 'react'
-import { User, FileText, Car, Phone, MapPin, AlertTriangle, Users, Building, ShieldAlert } from 'lucide-react'
+import { useState, useEffect, useMemo } from 'react'
+import {
+  User,
+  FileText,
+  Car,
+  Phone,
+  MapPin,
+  AlertTriangle,
+  Users,
+  Building,
+  ShieldAlert,
+  Shield,
+  ClipboardCheck
+} from 'lucide-react'
 import { mockNodes, mockLinks } from '../data/MockGraphData'
 import type { GraphNode, GraphLink } from '../data/MockGraphData'
 import GraphLegend from './GraphLegend'
 
 interface GraphCanvasProps {
   searchQuery: string
-  onSelectSuspect: (name: string) => void
+  selectedNodeId: string
+  onSelectNode: (id: string) => void
   onResetTrigger: number
   onCenterTrigger: number
   onExpandTrigger: number
@@ -16,7 +29,8 @@ interface GraphCanvasProps {
 
 export function GraphCanvas({
   searchQuery,
-  onSelectSuspect,
+  selectedNodeId,
+  onSelectNode,
   onResetTrigger,
   onCenterTrigger,
   onExpandTrigger,
@@ -31,7 +45,7 @@ export function GraphCanvas({
   const [translateY, setTranslateY] = useState(0)
 
   // Sync toolbar actions
-  useMemo(() => {
+  useEffect(() => {
     if (onResetTrigger > 0) {
       setZoom(1.0)
       setTranslateX(0)
@@ -39,14 +53,14 @@ export function GraphCanvas({
     }
   }, [onResetTrigger])
 
-  useMemo(() => {
+  useEffect(() => {
     if (onCenterTrigger > 0) {
       setTranslateX(0)
       setTranslateY(0)
     }
   }, [onCenterTrigger])
 
-  useMemo(() => {
+  useEffect(() => {
     if (onExpandTrigger > 0) {
       setZoom((prev) => Math.min(prev + 0.25, 2.0))
     }
@@ -54,13 +68,18 @@ export function GraphCanvas({
 
   // Get matching node color
   const getNodeColor = (node: GraphNode) => {
-    if (node.isHighRisk) return 'bg-[#EF4444] border-[#EF4444]/40 shadow-[0_0_14px_rgba(239,68,68,0.3)]'
+    if (node.isHighRisk) return 'bg-[#EF4444] border-[#EF4444]/40 shadow-[0_0_14px_rgba(239,68,68,0.35)]'
+    if (node.id === selectedNodeId) return 'bg-[#2563EB] border-white shadow-[0_0_14px_rgba(37,99,235,0.45)]'
+    
     switch (node.type) {
       case 'suspect': return 'bg-[#2563EB] border-[#2563EB]/40' // Blue
       case 'associate': return 'bg-[#3b82f6] border-[#3b82f6]/40' // Light blue
       case 'crime': return 'bg-[#F97316] border-[#F97316]/40' // Orange
       case 'vehicle': return 'bg-[#10B981] border-[#10B981]/40' // Green
       case 'phone': return 'bg-[#8B5CF6] border-[#8B5CF6]/40' // Purple
+      case 'officer': return 'bg-[#EC4899] border-[#EC4899]/40' // Pink
+      case 'evidence': return 'bg-[#14B8A6] border-[#14B8A6]/40' // Teal
+      case 'location': return 'bg-[#64748B] border-[#64748B]/40' // Gray
       default: return 'bg-[#64748B] border-[#64748B]/40' // Gray
     }
   }
@@ -77,36 +96,34 @@ export function GraphCanvas({
       case 'location': return <MapPin {...props} />
       case 'weapon': return <ShieldAlert {...props} />
       case 'station': return <Building {...props} />
+      case 'officer': return <Shield {...props} />
+      case 'evidence': return <ClipboardCheck {...props} />
       default: return <AlertTriangle {...props} />
     }
   }
 
-  // Calculate connected nodes set on hover
+  // Highlight based on hover OR locked selection
+  const activeNodeId = hoveredNodeId || selectedNodeId
+
+  // Calculate connected nodes set
   const connectedNodeIds = useMemo(() => {
-    if (!hoveredNodeId) return new Set<string>()
-    const set = new Set<string>([hoveredNodeId])
+    if (!activeNodeId) return new Set<string>()
+    const set = new Set<string>([activeNodeId])
     links.forEach((link) => {
-      if (link.source === hoveredNodeId) set.add(link.target)
-      if (link.target === hoveredNodeId) set.add(link.source)
+      if (link.source === activeNodeId) set.add(link.target)
+      if (link.target === activeNodeId) set.add(link.source)
     })
     return set
-  }, [hoveredNodeId, links])
+  }, [activeNodeId, links])
 
   // Check if link is highlighted
   const isLinkHighlighted = (link: GraphLink) => {
-    if (!hoveredNodeId) return false
-    return link.source === hoveredNodeId || link.target === hoveredNodeId
-  }
-
-  // Handle clicking on node
-  const handleNodeClick = (node: GraphNode) => {
-    if (node.type === 'suspect' || node.type === 'associate') {
-      onSelectSuspect(node.id)
-    }
+    if (!activeNodeId) return false
+    return link.source === activeNodeId || link.target === activeNodeId
   }
 
   return (
-    <div className="relative w-full h-[540px] bg-[#0B1220] border border-[rgba(255,255,255,0.06)] rounded-xl overflow-hidden select-none animate-fade-in group shadow-inner">
+    <div className="relative w-full h-full bg-[#0B1220] border border-[rgba(255,255,255,0.06)] rounded-xl overflow-hidden select-none animate-fade-in group shadow-inner">
       
       {/* Background grids */}
       <div className="absolute inset-0 opacity-15 bg-[radial-gradient(circle_at_center,rgba(37,99,235,0.08)_0%,transparent_100%)] pointer-events-none" />
@@ -132,7 +149,7 @@ export function GraphCanvas({
               if (!sourceNode || !targetNode) return null
 
               const isHighlighted = isLinkHighlighted(link)
-              const isDimmed = hoveredNodeId !== null && !isHighlighted
+              const isDimmed = activeNodeId !== null && !isHighlighted
 
               return (
                 <line
@@ -146,7 +163,7 @@ export function GraphCanvas({
                   strokeDasharray={isHighlighted ? 'none' : '3 3'}
                   className="transition-all duration-200"
                   style={{
-                    opacity: isDimmed ? 0.15 : 1.0
+                    opacity: isDimmed ? 0.12 : 1.0
                   }}
                 />
               )
@@ -156,7 +173,8 @@ export function GraphCanvas({
           {/* 2. Nodes Layer */}
           {nodes.map((node) => {
             const isHovered = hoveredNodeId === node.id
-            const isConnected = hoveredNodeId === null || connectedNodeIds.has(node.id)
+            const isSelected = selectedNodeId === node.id
+            const isConnected = activeNodeId === null || connectedNodeIds.has(node.id)
             const isSearchMatch = searchQuery.trim() !== '' && node.label.toLowerCase().includes(searchQuery.toLowerCase())
             const colorClass = getNodeColor(node)
 
@@ -165,7 +183,7 @@ export function GraphCanvas({
                 key={node.id}
                 onMouseEnter={() => setHoveredNodeId(node.id)}
                 onMouseLeave={() => setHoveredNodeId(null)}
-                onClick={() => handleNodeClick(node)}
+                onClick={() => onSelectNode(node.id)}
                 className={`absolute shrink-0 flex flex-col items-center cursor-pointer select-none transition-all duration-200 z-10 ${
                   isConnected ? 'opacity-100 scale-100' : 'opacity-25 scale-90'
                 }`}
@@ -177,8 +195,8 @@ export function GraphCanvas({
               >
                 {/* Visual node sphere */}
                 <div
-                  className={`h-8 w-8 rounded-full border-2 flex items-center justify-center transition-all ${colorClass} ${
-                    isHovered ? 'ring-4 ring-[#2563EB]/30 scale-110 border-white' : 'border-white/10'
+                  className={`h-8.5 w-8.5 rounded-full border-2 flex items-center justify-center transition-all ${colorClass} ${
+                    isHovered || isSelected ? 'ring-4 ring-[#2563EB]/35 scale-110 border-white' : 'border-white/10'
                   } ${
                     isSearchMatch ? 'ring-4 ring-[#EF4444]/65 animate-pulse border-[#EF4444]' : ''
                   }`}
@@ -187,7 +205,9 @@ export function GraphCanvas({
                 </div>
 
                 {/* Node Label tag */}
-                <span className="mt-1 text-[8.5px] font-mono font-bold tracking-wide text-white bg-[#111827]/90 px-1.5 py-0.5 rounded border border-white/5 shadow-md max-w-[110px] truncate text-center">
+                <span className={`mt-1 text-[8.5px] font-mono font-bold tracking-wide bg-[#111827]/90 px-1.5 py-0.5 rounded border shadow-md max-w-[110px] truncate text-center transition-colors ${
+                  isSelected ? 'text-white border-[#2563EB]' : 'text-[#94A3B8] border-white/5'
+                }`}>
                   {node.label}
                 </span>
               </div>
@@ -199,7 +219,7 @@ export function GraphCanvas({
 
       {/* Floating graph status tags */}
       <div className="absolute top-4 right-4 text-[8px] font-mono uppercase tracking-widest text-[#2563EB] bg-[#111827]/80 border border-white/5 px-2.5 py-1 rounded">
-        MAP MATRIX // 22 NODES MAPPED
+        MAP MATRIX // {nodes.length} NODES MAPPED
       </div>
 
       {/* Embedded Bottom Left Legend */}
@@ -208,4 +228,5 @@ export function GraphCanvas({
     </div>
   )
 }
+
 export default GraphCanvas

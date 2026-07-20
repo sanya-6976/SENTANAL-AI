@@ -1,13 +1,20 @@
 import { useState, useEffect, useMemo } from 'react'
+<<<<<<< Updated upstream
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { Sparkles, Loader2, X } from 'lucide-react'
+=======
+import { useNavigate } from 'react-router-dom'
+import PageLoader from '../../components/ui/PageLoader'
+>>>>>>> Stashed changes
 import {
-  NetworkToolbar,
   GraphCanvas,
-  NodeCard
+  NodeCard,
+  InvestigationFilters,
+  RelationshipTimeline
 } from './components'
 import { getSuspectNetwork } from '../../api/analytics.api'
+<<<<<<< Updated upstream
 import { askAIAssistant } from '../../api/ai.api'
 import { mockNodes } from './data/MockGraphData'
 
@@ -24,26 +31,41 @@ interface SuspectProfile {
   locations: number
   arrests: number
 }
+=======
+import { mockNodes, mockLinks, mockEntityProfiles } from './data/MockGraphData'
+>>>>>>> Stashed changes
 
 function CriminalNetworkPage() {
-  const [search, setSearch] = useState('')
-  
-  // Selected Suspect state
-  const [selectedSuspect, setSelectedSuspect] = useState<string>('Rahul Kumar')
+  const navigate = useNavigate()
 
-  // Toolbar Action Triggers (incremental counters to notify canvas)
-  const [resetTrigger, setResetTrigger] = useState(0)
-  const [centerTrigger, setCenterTrigger] = useState(0)
-  const [expandTrigger, setExpandTrigger] = useState(0)
+  // Filter States
+  const [searchQuery, setSearchQuery] = useState('')
+  const [selectedCase, setSelectedCase] = useState('all')
+  const [selectedCrimeType, setSelectedCrimeType] = useState('all')
+  const [selectedDistrict, setSelectedDistrict] = useState('all')
+  const [relationshipDepth, setRelationshipDepth] = useState('2')
+  const [startDate, setStartDate] = useState('')
+  const [endDate, setEndDate] = useState('')
 
+  // Selected Entity State
+  const [selectedNodeId, setSelectedNodeId] = useState<string>('Rahul Kumar')
+
+  // Graph Canvas State
   const [nodes, setNodes] = useState<any[]>([])
   const [links, setLinks] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
+<<<<<<< Updated upstream
   // AI Insights State
   const [aiInsight, setAiInsight] = useState<string | null>(null)
   const [isLoadingAI, setIsLoadingAI] = useState(false)
+=======
+  // Toolbar state triggers
+  const [resetTrigger, setResetTrigger] = useState(0)
+  const [centerTrigger, setCenterTrigger] = useState(0)
+  const [expandTrigger, setExpandTrigger] = useState(0)
+>>>>>>> Stashed changes
 
   useEffect(() => {
     const loadGraph = async () => {
@@ -54,52 +76,58 @@ function CriminalNetworkPage() {
         const rawNodes = Array.isArray(data?.nodes) ? data.nodes : []
         const rawEdges = Array.isArray(data?.edges) ? data.edges : []
 
-        // Coordinate Mapping: if matches mock node, use x/y. Otherwise compute circular layout coordinates.
-        const numNodes = rawNodes.length
-        const centerX = 50
-        const centerY = 50
-        const radius = 32
+        // Merge raw API nodes with our detailed mockNodes to ensure all forensic nodes exist
+        const mergedNodesMap = new Map()
+        
+        // Load mock nodes first
+        mockNodes.forEach(node => {
+          mergedNodesMap.set(node.id.toLowerCase(), node)
+        })
 
-        const mappedNodes = rawNodes.map((node: any, index: number) => {
-          const mockNode = mockNodes.find(n => n.id.toLowerCase() === node.id.toLowerCase() || n.label.toLowerCase() === node.label.toLowerCase())
-          let x = mockNode?.x
-          let y = mockNode?.y
+        // Merge API nodes
+        rawNodes.forEach((node: any) => {
+          const key = node.id.toLowerCase()
+          if (!mergedNodesMap.has(key)) {
+            // Coordinate mapping for new API nodes
+            const numNodes = mergedNodesMap.size
+            const angle = (numNodes * 0.4) * 2 * Math.PI
+            const radius = 35
+            const x = 50 + radius * Math.cos(angle)
+            const y = 50 + radius * Math.sin(angle)
 
-          if (x === undefined || y === undefined) {
-            if (index === 0) {
-              x = centerX
-              y = centerY
-            } else {
-              const angle = ((index - 1) / (numNodes - 1)) * 2 * Math.PI
-              x = centerX + radius * Math.cos(angle)
-              y = centerY + radius * Math.sin(angle)
-            }
-          }
-
-          return {
-            id: node.id,
-            label: node.label,
-            type: node.type || (node.id === 'Rahul Kumar' ? 'suspect' : 'associate'),
-            x: Math.max(5, Math.min(95, x)),
-            y: Math.max(5, Math.min(95, y)),
-            isHighRisk: node.status === 'Active' || node.isHighRisk
+            mergedNodesMap.set(key, {
+              id: node.id,
+              label: node.label || node.id,
+              type: node.type || 'suspect',
+              x: Math.max(8, Math.min(92, x)),
+              y: Math.max(8, Math.min(92, y)),
+              isHighRisk: node.status === 'Active' || node.isHighRisk
+            })
           }
         })
 
-        const mappedLinks = rawEdges.map((edge: any) => ({
-          source: edge.source,
-          target: edge.target
-        }))
+        const mergedLinksMap = new Map()
+        mockLinks.forEach(link => {
+          mergedLinksMap.set(`${link.source}->${link.target}`, link)
+        })
+        rawEdges.forEach((edge: any) => {
+          const key = `${edge.source}->${edge.target}`
+          if (!mergedLinksMap.has(key)) {
+            mergedLinksMap.set(key, {
+              source: edge.source,
+              target: edge.target
+            })
+          }
+        })
 
-        setNodes(mappedNodes)
-        setLinks(mappedLinks)
+        setNodes(Array.from(mergedNodesMap.values()))
+        setLinks(Array.from(mergedLinksMap.values()))
 
-        if (mappedNodes.length > 0 && !mappedNodes.some(n => n.id === 'Rahul Kumar')) {
-          setSelectedSuspect(mappedNodes[0].id)
-        }
       } catch (err) {
         console.error(err)
-        setError('Unable to load criminal suspect network.')
+        // Fallback gracefully to detailed mock nodes
+        setNodes(mockNodes)
+        setLinks(mockLinks)
       } finally {
         setLoading(false)
       }
@@ -107,88 +135,78 @@ function CriminalNetworkPage() {
     loadGraph()
   }, [])
 
-  // Suspects profiles database
-  const suspectsDb: Record<string, SuspectProfile> = {
-    'Rahul Kumar': {
-      name: 'Rahul Kumar',
-      age: 34,
-      district: 'Bengaluru Urban',
-      status: 'Under Investigation',
-      riskScore: 92,
-      firs: 8,
-      associates: 5,
-      vehicles: 2,
-      phones: 3,
-      locations: 6,
-      arrests: 2
-    },
-    'Amit Singh': {
-      name: 'Amit Singh',
-      age: 40,
-      district: 'Hubballi Rural',
-      status: 'Pending Trial',
-      riskScore: 78,
-      firs: 4,
-      associates: 3,
-      vehicles: 1,
-      phones: 2,
-      locations: 3,
-      arrests: 1
-    },
-    'Vikram Malhotra': {
-      name: 'Vikram Malhotra',
-      age: 29,
-      district: 'Mysuru Central',
-      status: 'Under Investigation',
-      riskScore: 65,
-      firs: 2,
-      associates: 2,
-      vehicles: 1,
-      phones: 1,
-      locations: 2,
-      arrests: 0
-    },
-    'Kiran Gowda': {
-      name: 'Kiran Gowda',
-      age: 31,
-      district: 'Bengaluru Urban',
-      status: 'Active Alert',
-      riskScore: 84,
-      firs: 5,
-      associates: 4,
-      vehicles: 0,
-      phones: 3,
-      locations: 4,
-      arrests: 1
-    }
-  }
-
-  // Get active selected suspect profile
+  // Retrieve active selected node profile details
   const activeProfile = useMemo(() => {
-    if (suspectsDb[selectedSuspect]) {
-      return suspectsDb[selectedSuspect]
-    }
-    const matchedNode = nodes.find(n => n.id === selectedSuspect)
-    return {
-      name: matchedNode?.label || selectedSuspect,
-      age: 32,
-      district: 'Bengaluru Urban',
-      status: matchedNode?.isHighRisk ? 'Active Alert' : 'Under Investigation',
-      riskScore: matchedNode?.isHighRisk ? 90 : 65,
-      firs: 3,
-      associates: 2,
-      vehicles: 1,
-      phones: 1,
-      locations: 2,
-      arrests: 0
-    }
-  }, [selectedSuspect, nodes])
+    const profile = mockEntityProfiles[selectedNodeId]
+    if (profile) return profile
 
-  // Action Handlers
-  const handleToolbarReset = () => {
-    setResetTrigger((prev) => prev + 1)
+    // Fallback if node profile not explicitly defined
+    const node = nodes.find(n => n.id === selectedNodeId)
+    return {
+      name: node?.label || selectedNodeId,
+      type: node?.type ? node.type.charAt(0).toUpperCase() + node.type.slice(1) : 'Suspect',
+      associatedCases: 'Burglary FIR-123456',
+      aliases: 'N/A',
+      linkedEvidence: 'N/A',
+      riskLevel: node?.isHighRisk ? 'High' : 'Medium' as 'High' | 'Medium' | 'Low',
+      status: 'Active',
+      notes: 'Forensic relationship mapping record loaded in memory.'
+    }
+  }, [selectedNodeId, nodes])
+
+  // Filter nodes & links dynamically for local UI visualization
+  const filteredNodes = useMemo(() => {
+    let result = nodes
+
+    // Filter by case
+    if (selectedCase !== 'all') {
+      result = result.filter(n => {
+        if (n.id === selectedCase) return true
+        const p = mockEntityProfiles[n.id]
+        return p?.associatedCases.includes(selectedCase)
+      })
+    }
+
+    // Filter by crime type
+    if (selectedCrimeType !== 'all') {
+      result = result.filter(n => {
+        if (n.type === 'crime' && n.id.toLowerCase().includes(selectedCrimeType.replace('_', ' '))) return true
+        const p = mockEntityProfiles[n.id]
+        return p?.associatedCases.toLowerCase().includes(selectedCrimeType.replace('_', ' '))
+      })
+    }
+
+    // Filter by district location
+    if (selectedDistrict !== 'all') {
+      result = result.filter(n => {
+        if (n.type === 'location' && n.id.toLowerCase() === selectedDistrict.toLowerCase()) return true
+        const p = mockEntityProfiles[n.id]
+        return p?.notes.toLowerCase().includes(selectedDistrict.toLowerCase()) ||
+               p?.associatedCases.toLowerCase().includes(selectedDistrict.toLowerCase())
+      })
+    }
+
+    return result
+  }, [nodes, selectedCase, selectedCrimeType, selectedDistrict])
+
+  // Ensure links only connect active filtered nodes
+  const filteredLinks = useMemo(() => {
+    const nodeIds = new Set(filteredNodes.map(n => n.id))
+    return links.filter(l => nodeIds.has(l.source) && nodeIds.has(l.target))
+  }, [links, filteredNodes])
+
+  // Click Action Handlers
+  const handleNodeAction = (actionName: string) => {
+    if (actionName === 'Open Investigation Workspace') {
+      navigate('/investigation')
+    } else if (actionName === 'Compare Similar Crimes') {
+      navigate('/crime-database')
+    } else {
+      alert(`[OPERATION SUCCESS] Triggering action for ${activeProfile.name}:\n- Execution: ${actionName}\n- Secure credentials signed.`)
+    }
   }
 
+<<<<<<< Updated upstream
   const handleToolbarCenter = () => {
     setCenterTrigger((prev) => prev + 1)
   }
@@ -220,13 +238,14 @@ function CriminalNetworkPage() {
       alert(`[SYSTEM CALL] Triggering Executive Action:\n- Target Accused: ${activeProfile.name}\n- Operation: ${actionName}`)
     }
   }
+=======
+  const handleGraphReset = () => setResetTrigger(prev => prev + 1)
+  const handleGraphCenter = () => setCenterTrigger(prev => prev + 1)
+  const handleGraphExpand = () => setExpandTrigger(prev => prev + 1)
+>>>>>>> Stashed changes
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px] text-[#94A3B8] font-mono text-sm tracking-widest">
-        Loading suspect network...
-      </div>
-    )
+    return <PageLoader message="Loading suspect network..." />
   }
 
   if (error) {
@@ -239,53 +258,80 @@ function CriminalNetworkPage() {
 
   return (
     <div className="space-y-6 animate-fade-in select-none">
-      
-      {/* 1. Page Header Panel */}
-      <div className="border-b border-[rgba(255,255,255,0.06)] pb-5 select-none">
-        <h1 className="text-3xl font-extrabold tracking-tight text-[#F8FAFC]">
-          Criminal Network Analysis
-        </h1>
-        <p className="text-xs uppercase tracking-widest text-[#94A3B8] font-mono mt-1">
-          Visualize relationships between suspects, crimes, vehicles and associated entities.
-        </p>
-      </div>
 
-      {/* 2. Top Network search and controls Toolbar */}
-      <NetworkToolbar
-        searchQuery={search}
-        onSearchChange={setSearch}
-        onReset={handleToolbarReset}
-        onCenter={handleToolbarCenter}
-        onExpand={handleToolbarExpand}
-        onExport={handleToolbarExport}
+      {/* 2. Top Investigation Filters Panel */}
+      <InvestigationFilters
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        selectedCase={selectedCase}
+        onCaseChange={setSelectedCase}
+        selectedCrimeType={selectedCrimeType}
+        onCrimeTypeChange={setSelectedCrimeType}
+        selectedDistrict={selectedDistrict}
+        onDistrictChange={setSelectedDistrict}
+        relationshipDepth={relationshipDepth}
+        onDepthChange={setRelationshipDepth}
+        startDate={startDate}
+        onStartDateChange={setStartDate}
+        endDate={endDate}
+        onEndDateChange={setEndDate}
       />
 
-      {/* 3. Grid Workspace layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-10 gap-6">
+      {/* 3. Graph Workspace Grid Row */}
+      <div className="grid grid-cols-1 lg:grid-cols-10 gap-6 items-stretch">
         
-        {/* Left canvas: Graph view (70% width on desktop -> col-span-7) */}
-        <div className="col-span-1 lg:col-span-7">
-          <GraphCanvas
-            searchQuery={search}
-            onSelectSuspect={setSelectedSuspect}
-            onResetTrigger={resetTrigger}
-            onCenterTrigger={centerTrigger}
-            onExpandTrigger={expandTrigger}
-            nodes={nodes}
-            links={links}
-          />
+        {/* Left column: Graph view (70% width on desktop -> col-span-7) */}
+        <div className="col-span-1 lg:col-span-7 space-y-4 h-full">
+          <div className="relative h-full">
+            <GraphCanvas
+              searchQuery={searchQuery}
+              selectedNodeId={selectedNodeId}
+              onSelectNode={setSelectedNodeId}
+              onResetTrigger={resetTrigger}
+              onCenterTrigger={centerTrigger}
+              onExpandTrigger={expandTrigger}
+              nodes={filteredNodes}
+              links={filteredLinks}
+            />
+
+            {/* Canvas overlay utility toolbar */}
+            <div className="absolute top-4 left-4 flex gap-2">
+              <button
+                onClick={handleGraphReset}
+                title="Reset Layout"
+                className="p-2 bg-[#111827]/90 hover:bg-[#182235] border border-[rgba(255,255,255,0.08)] text-[#94A3B8] hover:text-white rounded-lg transition-colors cursor-pointer outline-none"
+              >
+                Reset
+              </button>
+              <button
+                onClick={handleGraphCenter}
+                title="Center Graph"
+                className="p-2 bg-[#111827]/90 hover:bg-[#182235] border border-[rgba(255,255,255,0.08)] text-[#94A3B8] hover:text-white rounded-lg transition-colors cursor-pointer outline-none"
+              >
+                Center
+              </button>
+              <button
+                onClick={handleGraphExpand}
+                title="Expand Zoom"
+                className="p-2 bg-[#111827]/90 hover:bg-[#182235] border border-[rgba(255,255,255,0.08)] text-[#94A3B8] hover:text-white rounded-lg transition-colors cursor-pointer outline-none"
+              >
+                Zoom+
+              </button>
+            </div>
+          </div>
         </div>
 
-        {/* Right side: selected suspect information panel (30% width -> col-span-3) */}
-        <div className="col-span-1 lg:col-span-3">
+        {/* Right column: Selected Node Details (30% width -> col-span-3) */}
+        <div className="col-span-1 lg:col-span-3 h-full">
           <NodeCard
-            {...activeProfile}
-            onAction={handleRightPanelAction}
+            profile={activeProfile}
+            onAction={handleNodeAction}
           />
         </div>
 
       </div>
 
+<<<<<<< Updated upstream
       {/* 4. Horizontal AI Insights Panel */}
       {(isLoadingAI || aiInsight) && (
         <div className="bg-[#111827] border border-[#2563EB]/30 rounded-xl p-6 shadow-[0_0_20px_rgba(37,99,235,0.1)] animate-fade-in relative mt-6">
@@ -330,6 +376,13 @@ function CriminalNetworkPage() {
           </div>
         </div>
       )}
+=======
+      {/* 4. Horizontal Relationship Timeline (Full-Width Bottom) */}
+      <RelationshipTimeline
+        selectedEntityName={activeProfile.name}
+        selectedEntityType={activeProfile.type}
+      />
+>>>>>>> Stashed changes
 
     </div>
   )

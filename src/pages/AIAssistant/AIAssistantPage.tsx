@@ -5,7 +5,8 @@ import {
   SuggestionCards,
   ChatMessage,
   ChatInput,
-  QuickInsights
+  QuickInsights,
+  VoiceInvestigationPanel
 } from './components'
 import {
   recentConversations,
@@ -192,7 +193,10 @@ function AIAssistantPage() {
         </p>
       </div>
 
-      {/* 2. Responsive Side-by-Side Flex Layout */}
+      {/* 2. Voice Search Investigation Panel */}
+      <VoiceInvestigationPanel onCommandSubmitted={handleSendMessage} />
+
+      {/* 3. Responsive Side-by-Side Flex Layout */}
       <div className="flex flex-col lg:flex-row gap-6 w-full items-stretch min-h-[600px]">
         
         {/* Left Side: Recent Investigations Sidebar (25% on desktop -> w-72) */}

@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { FolderUp } from 'lucide-react'
 import {
   UploadCard,
   UploadedFilesList,
@@ -62,23 +61,6 @@ function ReportsPage() {
 
   return (
     <div className="space-y-6 animate-fade-in select-none">
-      
-      {/* 1. Page Header Panel with Document Upload Icon */}
-      <div className="border-b border-[rgba(255,255,255,0.06)] pb-5 select-none flex items-center justify-between">
-        <div>
-          <div className="flex items-center gap-3">
-            <div className="p-1.5 bg-[#2563EB]/10 rounded-lg border border-[#2563EB]/25 text-[#2563EB] shrink-0">
-              <FolderUp className="h-5.5 w-5.5 stroke-1.5" />
-            </div>
-            <h1 className="text-3xl font-extrabold tracking-tight text-[#F8FAFC]">
-              FIR Upload & Evidence Ingestion
-            </h1>
-          </div>
-          <p className="text-xs uppercase tracking-widest text-[#94A3B8] font-mono mt-1 pl-10.5">
-            Upload FIR documents and supporting evidence for AI-assisted processing.
-          </p>
-        </div>
-      </div>
 
       {/* 2. Responsive 70/30 Split Grid Workspace */}
       <div className="grid grid-cols-1 lg:grid-cols-10 gap-6 items-start">

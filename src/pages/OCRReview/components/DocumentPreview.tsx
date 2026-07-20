@@ -1,4 +1,4 @@
-import { Eye, Download, CheckCircle2 } from 'lucide-react'
+import { Eye, Download, FileText, Clock, FileCheck } from 'lucide-react'
 
 interface PreviewProps {
   fileName: string
@@ -10,104 +10,110 @@ interface PreviewProps {
 
 export function DocumentPreview({ fileName, uploadTime, docType, onView, onDownload }: PreviewProps) {
   return (
-    <div className="bg-[#111827] border border-[rgba(255,255,255,0.06)] rounded-xl p-5 shadow-sm space-y-5 select-none animate-fade-in">
-      
-      {/* Title */}
-      <div className="border-b border-[rgba(255,255,255,0.06)] pb-3">
-        <h2 className="text-xs font-extrabold text-white tracking-widest uppercase font-mono">
-          Uploaded Document Preview
-        </h2>
-      </div>
-
-      {/* Styled Scanned Document Visual Placeholder */}
-      <div className="relative border border-[rgba(255,255,255,0.06)] bg-[#0B1220] rounded-xl p-4 flex flex-col items-center justify-center text-center h-[260px] overflow-hidden group shadow-inner">
-        {/* Mock Scanned Document Shape with Yellow Bounding Boxes */}
-        <div className="w-[140px] h-[190px] bg-slate-900 border border-slate-700/65 rounded shadow-lg p-2.5 relative flex flex-col justify-between select-none">
-          {/* Header Lines */}
-          <div className="space-y-1.5">
-            <div className="h-1.5 w-12 bg-slate-700 rounded" />
-            <div className="h-1 w-20 bg-slate-800 rounded" />
+    <div className="group flex h-full flex-col bg-[#111827] border border-[rgba(255,255,255,0.06)] rounded-3xl p-5 shadow-sm select-none animate-fade-in">
+      <div className="flex flex-col gap-4 border-b border-[rgba(255,255,255,0.06)] pb-4">
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div className="h-10 w-10 rounded-2xl bg-[#0F172A] border border-[rgba(255,255,255,0.05)] flex items-center justify-center">
+              <FileText className="h-5 w-5 text-[#2563EB]" />
+            </div>
+            <div>
+              <h2 className="text-sm font-extrabold text-white tracking-[0.18em] uppercase font-mono">
+                Uploaded FIR Preview
+              </h2>
+              <p className="mt-1 text-[10px] text-[#94A3B8] uppercase tracking-widest">
+                Review scanned FIR document before verification
+              </p>
+            </div>
           </div>
 
-          {/* Yellow Highlight OCR Bounding Box overlays */}
-          <div className="absolute top-[45px] left-3 right-3 h-4 border border-yellow-500/50 bg-yellow-500/10 rounded animate-pulse" />
-          <div className="absolute top-[70px] left-3 right-6 h-3 border border-yellow-500/50 bg-yellow-500/10 rounded animate-pulse" />
-          <div className="absolute top-[90px] left-3 right-4 h-3.5 border border-yellow-500/40 bg-yellow-500/5 rounded" />
-          <div className="absolute top-[115px] left-3 right-3 h-3 border border-yellow-500/40 bg-yellow-500/5 rounded" />
-
-          {/* Body Lines */}
-          <div className="space-y-2 mt-4">
-            <div className="h-1.5 w-full bg-slate-800 rounded" />
-            <div className="h-1.5 w-[85%] bg-slate-800 rounded" />
-            <div className="h-1.5 w-[90%] bg-slate-800 rounded" />
-          </div>
-
-          {/* Footer stamp */}
-          <div className="flex justify-between items-center mt-3 pt-2 border-t border-slate-800">
-            <div className="h-1 w-6 bg-slate-800 rounded" />
-            <div className="h-2 w-6 rounded bg-[#2563EB]/40 border border-[#2563EB]/45 shrink-0" />
-          </div>
-        </div>
-
-        {/* Hover inspect glass icon */}
-        <div className="absolute inset-0 bg-[#0B1220]/75 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-150">
-          <div className="h-9 w-9 rounded-full bg-[#2563EB] text-white flex items-center justify-center shadow-lg">
-            <Eye className="h-4.5 w-4.5" />
-          </div>
-        </div>
-      </div>
-
-      {/* Document metadata info table */}
-      <div className="grid grid-cols-1 gap-2.5 font-sans text-xs border-b border-[rgba(255,255,255,0.04)] pb-4">
-        
-        {/* Name */}
-        <div className="flex justify-between items-center">
-          <span className="text-[#94A3B8] font-semibold">File Name</span>
-          <span className="text-white font-bold font-mono">{fileName}</span>
-        </div>
-
-        {/* Upload Time */}
-        <div className="flex justify-between items-center">
-          <span className="text-[#94A3B8] font-semibold">Upload Time</span>
-          <span className="text-white font-bold">{uploadTime}</span>
-        </div>
-
-        {/* Doc Type */}
-        <div className="flex justify-between items-center">
-          <span className="text-[#94A3B8] font-semibold">Document Type</span>
-          <span className="text-[#94A3B8]/60 font-bold">{docType}</span>
-        </div>
-
-        {/* Status Badge */}
-        <div className="flex justify-between items-center">
-          <span className="text-[#94A3B8] font-semibold">OCR Status</span>
-          <span className="px-2.5 py-0.5 border border-[#10B981]/20 bg-[#10B981]/10 text-[#10B981] text-[8px] font-mono tracking-wider font-extrabold rounded-full uppercase flex items-center gap-1.5">
-            <CheckCircle2 className="h-2.5 w-2.5" />
-            <span>Completed</span>
+          <span className="inline-flex items-center gap-1 rounded-full border border-[#94A3B8]/15 bg-white/5 px-3 py-1 text-[8px] font-mono uppercase tracking-widest text-[#94A3B8]">
+            <span>Enterprise Scan</span>
           </span>
         </div>
-
       </div>
 
-      {/* Button controls */}
-      <div className="grid grid-cols-2 gap-3">
+      <div className="relative mt-5 overflow-hidden rounded-[28px] border border-[rgba(255,255,255,0.06)] bg-[#0B1220] p-5 shadow-inner">
+        <div className="mx-auto flex h-[280px] max-w-[280px] flex-col justify-between rounded-3xl border border-slate-700/50 bg-slate-950 p-4 shadow-lg">
+          <div className="space-y-2">
+            <div className="h-1.5 w-14 rounded-full bg-slate-800" />
+            <div className="h-1 w-20 rounded-full bg-slate-800" />
+          </div>
+
+          <div className="space-y-2">
+            <div className="h-3 w-full rounded-full bg-slate-800" />
+            <div className="h-3 w-5/6 rounded-full bg-slate-800" />
+            <div className="h-3 w-11/12 rounded-full bg-slate-800" />
+            <div className="h-3 w-3/4 rounded-full bg-slate-800" />
+            <div className="h-3 w-4/5 rounded-full bg-slate-800" />
+          </div>
+
+          <div className="flex items-center justify-between rounded-2xl border-t border-slate-800 pt-3 text-[10px] text-[#94A3B8]">
+            <span className="inline-flex h-2.5 w-10 rounded-full bg-slate-800" />
+            <span className="inline-flex h-2.5 w-8 rounded-full bg-[#2563EB]/40" />
+          </div>
+        </div>
+
+        <div className="pointer-events-none absolute inset-0 rounded-[28px] bg-[radial-gradient(circle_at_top,_rgba(37,99,235,0.18),_transparent_28%)]" />
+        <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[#2563EB]/15 text-[#FFFFFF] shadow-xl backdrop-blur-sm">
+            <Eye className="h-5 w-5" />
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-5 grid gap-3 text-xs text-[#94A3B8]">
+        <div className="rounded-2xl border border-[rgba(255,255,255,0.06)] bg-[#0B1220] p-4 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-2">
+            <FileText className="h-4 w-4 text-[#2563EB]" />
+            <div>
+              <p className="text-[9px] uppercase tracking-widest text-[#94A3B8]">File Name</p>
+              <p className="text-sm font-semibold text-white">{fileName}</p>
+            </div>
+          </div>
+          <span className="text-[10px] font-mono text-[#F8FAFC]">Document</span>
+        </div>
+
+        <div className="rounded-2xl border border-[rgba(255,255,255,0.06)] bg-[#0B1220] p-4 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-2">
+            <Clock className="h-4 w-4 text-[#38BDF8]" />
+            <div>
+              <p className="text-[9px] uppercase tracking-widest text-[#94A3B8]">Upload Time</p>
+              <p className="text-sm font-semibold text-white">{uploadTime}</p>
+            </div>
+          </div>
+          <span className="text-[10px] font-mono text-[#F8FAFC]">Timestamp</span>
+        </div>
+
+        <div className="rounded-2xl border border-[rgba(255,255,255,0.06)] bg-[#0B1220] p-4 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-2">
+            <FileCheck className="h-4 w-4 text-[#10B981]" />
+            <div>
+              <p className="text-[9px] uppercase tracking-widest text-[#94A3B8]">Document Type</p>
+              <p className="text-sm font-semibold text-white">{docType}</p>
+            </div>
+          </div>
+          <span className="text-[10px] font-mono text-[#F8FAFC]">Verified</span>
+        </div>
+      </div>
+
+      <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
         <button
           onClick={onView}
-          className="flex items-center justify-center gap-2 bg-[#0B1220] border border-[rgba(255,255,255,0.06)] hover:border-[#2563EB]/40 text-white font-bold text-[10px] tracking-widest uppercase py-3 rounded-lg transition-all duration-150 cursor-pointer outline-none hover:bg-[#182235]/40"
+          className="flex h-12 items-center justify-center gap-2 rounded-2xl border border-[rgba(255,255,255,0.08)] bg-[#0B1220] px-4 text-[10px] font-bold uppercase tracking-widest text-white transition duration-150 hover:border-[#2563EB]/40 hover:bg-[#182235]"
         >
-          <Eye className="h-3.5 w-3.5 text-[#2563EB]" />
+          <Eye className="h-4 w-4 text-[#2563EB]" />
           <span>View Full</span>
         </button>
 
         <button
           onClick={onDownload}
-          className="flex items-center justify-center gap-2 bg-[#0B1220] border border-[rgba(255,255,255,0.06)] hover:border-[#2563EB]/40 text-white font-bold text-[10px] tracking-widest uppercase py-3 rounded-lg transition-all duration-150 cursor-pointer outline-none hover:bg-[#182235]/40"
+          className="flex h-12 items-center justify-center gap-2 rounded-2xl border border-[rgba(255,255,255,0.08)] bg-[#0B1220] px-4 text-[10px] font-bold uppercase tracking-widest text-white transition duration-150 hover:border-[#2563EB]/40 hover:bg-[#182235]"
         >
-          <Download className="h-3.5 w-3.5 text-[#2563EB]" />
+          <Download className="h-4 w-4 text-[#2563EB]" />
           <span>Download</span>
         </button>
       </div>
-
     </div>
   )
 }

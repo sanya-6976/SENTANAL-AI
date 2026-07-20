@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useSearchParams } from 'react-router-dom'
+import PageLoader from '../../components/ui/PageLoader'
 import {
   GlobalSearch,
   InvestigationTabs,
   CaseOverviewCard,
   EntityCard,
-  AIRecommendationCard
+  AIRecommendationCard,
+  OfficerDiary
 } from './components'
 import apiClient from '../../api/client'
 
@@ -32,9 +34,10 @@ interface EntityVictim {
 type EntityItem = EntityAccused | EntityVehicle | EntityVictim
 
 function InvestigationPage() {
-  const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
   const [search, setSearch] = useState('')
-  const [activeTab, setActiveTab] = useState('Case Overview')
+  const initialTab = searchParams.get('diary') === 'true' ? 'Investigation Diary' : 'Case Overview'
+  const [activeTab, setActiveTab] = useState(initialTab)
 
   const [firData, setFirData] = useState<any>(null)
   const [evidenceData, setEvidenceData] = useState<any[]>([])
@@ -42,9 +45,8 @@ function InvestigationPage() {
   const [aiInsight, setAiInsight] = useState<string>('')
   const [loading, setLoading] = useState(true)
   const [aiLoading, setAiLoading] = useState(false)
-  const [allFirs, setAllFirs] = useState<any[]>([])
-  const [firSearchText, setFirSearchText] = useState('')
-  const [showFirDropdown, setShowFirDropdown] = useState(false)
+  const [, setAllFirs] = useState<any[]>([])
+  const [, setFirSearchText] = useState('')
   const [chatInput, setChatInput] = useState('')
   const [chatMessages, setChatMessages] = useState<{role: string, content: string}[]>([])
   const [entitiesList, setEntitiesList] = useState<EntityItem[]>([
@@ -169,7 +171,7 @@ function InvestigationPage() {
     <div className="bg-[#111827] border border-[rgba(255,255,255,0.06)] rounded-xl p-8 animate-fade-in">
       <h3 className="text-sm font-bold text-white mb-4">Case Timeline</h3>
       <div className="space-y-4">
-        {crimesData.slice(0, 5).map((crime, i) => (
+        {crimesData.slice(0, 5).map((crime) => (
           <div key={crime.crime_id} className="flex gap-4 border-l-2 border-[#2563EB]/40 pl-4 py-2">
             <div className="text-xs text-[#94A3B8] font-mono min-w-[120px]">
               {new Date(crime.reported_at).toLocaleString()}
@@ -294,75 +296,13 @@ function InvestigationPage() {
   );
 
   if (loading) {
-    return <div className="text-white text-center py-20 animate-pulse">Loading Workspace...</div>
+    return <PageLoader message="Loading workspace..." />
   }
 
   return (
     <div className="space-y-6 animate-fade-in select-none">
       
-      {/* 1. Page Title Header */}
-      <div className="border-b border-[rgba(255,255,255,0.06)] pb-5 select-none flex justify-between items-start">
-        <div>
-          <h1 className="text-3xl font-extrabold tracking-tight text-[#F8FAFC]">
-            Investigation Workspace
-          </h1>
-          <p className="text-xs uppercase tracking-widest text-[#94A3B8] font-mono mt-1">
-            Investigate FIRs, suspects, vehicles, evidence and AI-generated intelligence.
-          </p>
-        </div>
-        
-        {allFirs.length > 0 && (
-          <div className="flex flex-col items-end relative z-50">
-            <label className="text-[10px] uppercase font-mono tracking-widest text-[#94A3B8] mb-1">Active Case</label>
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Search FIR or District..."
-                value={firSearchText}
-                onChange={(e) => {
-                  setFirSearchText(e.target.value)
-                  setShowFirDropdown(true)
-                }}
-                onFocus={() => setShowFirDropdown(true)}
-                onBlur={() => setTimeout(() => setShowFirDropdown(false), 200)}
-                className="bg-[#0B1220] border border-[rgba(255,255,255,0.1)] text-white text-sm font-bold rounded-lg px-4 py-2 focus:outline-none focus:border-blue-500 w-64 transition-colors"
-              />
-              {showFirDropdown && (
-                <div className="absolute top-full mt-1 right-0 w-full bg-[#111827] border border-[rgba(255,255,255,0.1)] rounded-lg shadow-xl z-50 max-h-64 overflow-y-auto custom-scrollbar">
-                  {allFirs
-                    .filter(f => 
-                      (f.fir_number && f.fir_number.toLowerCase().includes(firSearchText.toLowerCase())) || 
-                      (f.district_id && f.district_id.toLowerCase().includes(firSearchText.toLowerCase()))
-                    )
-                    .map(fir => (
-                      <div 
-                        key={fir.fir_id}
-                        className="px-4 py-3 hover:bg-[#182235] cursor-pointer text-sm text-white border-b border-[rgba(255,255,255,0.04)] last:border-0 transition-colors"
-                        onClick={() => {
-                          setFirData(fir)
-                          setFirSearchText(fir.fir_number)
-                          setShowFirDropdown(false)
-                        }}
-                      >
-                        <div className="font-bold text-[#2563EB]">{fir.fir_number}</div>
-                        <div className="text-xs text-[#94A3B8] mt-0.5">{fir.district_name || fir.district_id}</div>
-                      </div>
-                    ))
-                  }
-                  {allFirs.filter(f => 
-                    (f.fir_number && f.fir_number.toLowerCase().includes(firSearchText.toLowerCase())) || 
-                    (f.district_id && f.district_id.toLowerCase().includes(firSearchText.toLowerCase()))
-                  ).length === 0 && (
-                    <div className="px-4 py-3 text-sm text-[#94A3B8] text-center">No matching cases found</div>
-                  )}
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* 2. Full-Width Global Input Bar */}
+      {/* 1. Full-Width Global Input Bar */}
       <GlobalSearch value={search} onChange={setSearch} />
 
       {/* 3. Navigation tabs panel */}
@@ -389,6 +329,12 @@ function InvestigationPage() {
       {['VEHICLES', 'Vehicles'].includes(activeTab) && renderEntitiesGrid(entitiesList, 'vehicle')}
       {['LINKED CASES', 'Linked Cases'].includes(activeTab) && renderLinkedCases()}
       {['AI INSIGHTS', 'AI Insights'].includes(activeTab) && renderAIInsights()}
+      {activeTab === 'Investigation Diary' && (
+        <OfficerDiary
+          firNumber={firData?.fir_number || 'FIR-2024-119'}
+          officerName={firData?.officer_name || 'Inspector Ramesh'}
+        />
+      )}
 
     </div>
   )

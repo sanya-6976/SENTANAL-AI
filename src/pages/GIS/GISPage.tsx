@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import MapToolbar from './components/MapToolbar'
 import GISMap from './components/GISMap'
-import LayerPanel from './components/LayerPanel'
 import FilterPanel from './components/FilterPanel'
 
 function GISPage() {
@@ -13,7 +12,7 @@ function GISPage() {
   const [points, setPoints] = useState(true)
   const [stations, setStations] = useState(true)
   const [boundary, setBoundary] = useState(true)
-  const [traffic, setTraffic] = useState(false)
+  const [traffic] = useState(false)
 
   // Filters Selection state
   const [dateRange, setDateRange] = useState('All Dates')
@@ -34,16 +33,6 @@ function GISPage() {
 
   return (
     <div className="space-y-6 animate-fade-in select-none">
-      
-      {/* 1. Page Header Panel */}
-      <div className="border-b border-[rgba(255,255,255,0.06)] pb-5 select-none">
-        <h1 className="text-3xl font-extrabold tracking-tight text-[#F8FAFC]">
-          GIS Intelligence
-        </h1>
-        <p className="text-xs uppercase tracking-widest text-[#94A3B8] font-mono mt-1">
-          Visualize crime hotspots, police stations and district-level crime activity across Karnataka.
-        </p>
-      </div>
 
       {/* 2. Top Toolbar (Search and switches) */}
       <MapToolbar
@@ -77,22 +66,7 @@ function GISPage() {
         </div>
 
         {/* Right Side: Control Panels Card (20% on desktop, cols 1) */}
-        <div className="col-span-1 bg-[#111827] border border-[rgba(255,255,255,0.06)] rounded-xl p-5 shadow-sm space-y-6 self-start">
-          {/* Layer Checks section */}
-          <LayerPanel
-            heatmap={heatmap}
-            setHeatmap={setHeatmap}
-            points={points}
-            setPoints={setPoints}
-            stations={stations}
-            setStations={setStations}
-            boundary={boundary}
-            setBoundary={setBoundary}
-            traffic={traffic}
-            setTraffic={setTraffic}
-          />
-
-          {/* Filtering selection section */}
+        <div className="col-span-1 bg-[#111827] border border-[rgba(255,255,255,0.06)] rounded-xl p-5 shadow-sm self-start min-h-[480px] h-full flex flex-col">
           <FilterPanel
             dateRange={dateRange}
             setDateRange={setDateRange}

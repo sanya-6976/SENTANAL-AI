@@ -67,7 +67,7 @@ export function FilterPanel({
   ]
 
   return (
-    <div className="space-y-4 select-none">
+    <div className="flex h-full min-h-0 flex-col select-none">
       <div className="text-[10px] font-mono tracking-widest text-[#94A3B8] font-bold uppercase border-b border-[rgba(255,255,255,0.06)] pb-2 mb-3">
         Filters
       </div>
@@ -169,10 +169,12 @@ export function FilterPanel({
           </div>
         </div>
 
-        {/* Apply Filters Button */}
+      </div>
+
+      <div className="mt-8 pt-4 border-t border-[rgba(255,255,255,0.06)]">
         <button
           onClick={onApplyFilters}
-          className="w-full bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold text-[10px] tracking-widest uppercase py-3 rounded-lg transition-all duration-150 cursor-pointer outline-none focus:ring-1 focus:ring-[#2563EB] hover:shadow-[0_4px_16px_rgba(37,99,235,0.25)] select-none pt-3 mt-2"
+          className="w-full bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold text-[10px] tracking-widest uppercase py-3 rounded-lg transition-all duration-150 cursor-pointer outline-none focus:ring-1 focus:ring-[#2563EB] hover:shadow-[0_4px_16px_rgba(37,99,235,0.25)] select-none"
         >
           Apply Filters
         </button>

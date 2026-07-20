@@ -1,13 +1,11 @@
 import { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { Scan, ArrowLeft, Pencil, Database } from 'lucide-react'
+import { Database } from 'lucide-react'
 import {
   DocumentPreview,
-  ExtractedForm,
-  ExtractionSummary
+  ExtractedForm
 } from './components'
 import type { ExtractedFormData } from './components'
-import apiClient from '../../api/client'
 
 function OCRReviewPage() {
   const navigate = useNavigate()
@@ -49,31 +47,7 @@ function OCRReviewPage() {
     alert('[SYSTEM SECURE DOWNLOAD] Exporting encrypted local copy of FIR_1254.pdf...')
   }
 
-  // Bottom action bar controls
-  const handleReject = () => {
-    alert('[SYSTEM ALERT] OCR extraction rejected. Returning to Ingestion workspace...')
-    navigate('/reports')
-  }
-
-  const handleEdit = () => {
-    alert('[SYSTEM NOTICE] Form fields enabled. Focus inputs to correct values.')
-  }
-
   const [showSaveDialog, setShowSaveDialog] = useState(false)
-  const [isSaving, setIsSaving] = useState(false)
-
-  const handleSave = async () => {
-    try {
-      setIsSaving(true)
-      await apiClient.post('/core/firs', formData)
-      setShowSaveDialog(true)
-    } catch (err) {
-      console.error(err)
-      alert("Failed to save FIR. Please try again.")
-    } finally {
-      setIsSaving(false)
-    }
-  }
 
   const handleDialogClose = () => {
     setShowSaveDialog(false)
@@ -82,24 +56,9 @@ function OCRReviewPage() {
 
   return (
     <div className="space-y-6 animate-fade-in select-none">
-      
-      {/* 1. Page Header Panel */}
-      <div className="border-b border-[rgba(255,255,255,0.06)] pb-5 select-none">
-        <div className="flex items-center gap-3">
-          <div className="p-1.5 bg-[#2563EB]/10 rounded-lg border border-[#2563EB]/25 text-[#2563EB] shrink-0">
-            <Scan className="h-5.5 w-5.5 stroke-1.5" />
-          </div>
-          <h1 className="text-3xl font-extrabold tracking-tight text-[#F8FAFC]">
-            OCR Review & Verification
-          </h1>
-        </div>
-        <p className="text-xs uppercase tracking-widest text-[#94A3B8] font-mono mt-1 pl-10.5">
-          Review AI-extracted FIR information before adding it to the Crime Database.
-        </p>
-      </div>
 
       {/* 2. Responsive 40/60 Split Grid Workspace */}
-      <div className="grid grid-cols-1 lg:grid-cols-10 gap-6 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-10 gap-6 items-stretch">
         
         {/* Left Column (approximately 40% -> col-span-4) */}
         <div className="col-span-1 lg:col-span-4">
@@ -118,36 +77,6 @@ function OCRReviewPage() {
             data={formData}
             onChange={handleFieldChange}
           />
-          
-          <ExtractionSummary />
-
-          {/* Action Buttons Row - Align right on desktop, stack on mobile */}
-          <div className="flex flex-col sm:flex-row items-center justify-end gap-3 pt-2 font-sans text-xs">
-            <button
-              onClick={handleReject}
-              className="w-full sm:w-auto px-5 py-3 bg-[#0B1220] border border-[rgba(255,255,255,0.06)] hover:border-white/10 text-[#94A3B8] hover:text-white rounded-lg text-[10px] tracking-widest font-bold uppercase transition-all duration-150 cursor-pointer flex items-center justify-center gap-2 outline-none"
-            >
-              <ArrowLeft className="h-3.5 w-3.5" />
-              <span>Back to Upload</span>
-            </button>
-
-            <button
-              onClick={handleEdit}
-              className="w-full sm:w-auto px-5 py-3 bg-[#111827] border border-[rgba(255,255,255,0.06)] hover:border-white/10 text-[#94A3B8] hover:text-white rounded-lg text-[10px] tracking-widest font-bold uppercase transition-all duration-150 cursor-pointer flex items-center justify-center gap-2 outline-none"
-            >
-              <Pencil className="h-3.5 w-3.5 text-[#2563EB]" />
-              <span>Edit Extracted Data</span>
-            </button>
-
-            <button
-              onClick={handleSave}
-              disabled={isSaving}
-              className="w-full sm:w-auto px-5 py-3 bg-[#2563EB] hover:bg-[#1D4ED8] disabled:opacity-50 text-white rounded-lg text-[10px] tracking-widest font-bold uppercase transition-all duration-150 cursor-pointer flex items-center justify-center gap-2 outline-none hover:shadow-[0_2px_12px_rgba(37,99,235,0.25)]"
-            >
-              <Database className="h-3.5 w-3.5" />
-              <span>{isSaving ? 'Saving...' : 'Save to Crime Database'}</span>
-            </button>
-          </div>
         </div>
 
       </div>

@@ -8,33 +8,40 @@ export function ExtractionSummary() {
   ]
 
   return (
-    <div className="bg-[#111827] border border-[rgba(255,255,255,0.06)] rounded-xl p-5 shadow-sm space-y-4 select-none animate-fade-in w-full">
-      
-      {/* Title */}
-      <div className="border-b border-[rgba(255,255,255,0.06)] pb-3">
-        <h2 className="text-xs font-extrabold text-white tracking-widest uppercase font-mono">
-          AI Extraction Summary
-        </h2>
+    <div className="bg-[#111827] border border-[rgba(255,255,255,0.06)] rounded-3xl p-5 shadow-sm select-none animate-fade-in w-full">
+      <div className="flex flex-col gap-4 border-b border-[rgba(255,255,255,0.06)] pb-4">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#0F172A] border border-[rgba(255,255,255,0.05)]">
+            <ListTodo className="h-5 w-5 text-[#2563EB]" />
+          </div>
+          <div>
+            <h2 className="text-sm font-extrabold text-white tracking-[0.18em] uppercase font-mono">
+              Verification Summary
+            </h2>
+            <p className="mt-1 text-[10px] text-[#94A3B8] uppercase tracking-widest">
+              Confidence and completeness of extracted FIR fields
+            </p>
+          </div>
+        </div>
       </div>
 
-      {/* Grid displays */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 font-sans text-xs">
+      <div className="grid gap-3 md:grid-cols-3">
         {stats.map((stat) => {
           const Icon = stat.icon
           return (
             <div
               key={stat.label}
-              className={`p-4 border rounded-xl flex items-center gap-3.5 shadow-sm ${stat.color}`}
+              className={`rounded-3xl border border-[rgba(255,255,255,0.06)] bg-[#0B1220] p-4 flex items-center gap-3 shadow-sm ${stat.color}`}
             >
-              <div className="h-8.5 w-8.5 rounded bg-black/15 flex items-center justify-center shrink-0">
+              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-black/15 border border-[rgba(255,255,255,0.06)]">
                 <Icon className="h-4.5 w-4.5" />
               </div>
 
               <div>
-                <span className="text-[9px] font-mono tracking-wider font-bold opacity-75 uppercase block">
+                <span className="text-[9px] font-mono tracking-wider font-bold uppercase text-[#94A3B8] block">
                   {stat.label}
                 </span>
-                <span className="text-white font-extrabold text-xs tracking-wide block mt-0.5">
+                <span className="text-white font-extrabold text-sm tracking-wide block mt-1">
                   {stat.value}
                 </span>
               </div>
@@ -42,7 +49,6 @@ export function ExtractionSummary() {
           )
         })}
       </div>
-
     </div>
   )
 }

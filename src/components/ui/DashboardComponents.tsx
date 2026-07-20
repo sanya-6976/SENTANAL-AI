@@ -1,53 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 
-export function PageHeader({ title, subtitle, role = 'SCRB Analyst' }: { title: string; subtitle: string; role?: string }) {
-  const [time, setTime] = useState(new Date())
-
-  useEffect(() => {
-    const timer = setInterval(() => setTime(new Date()), 1000)
-    return () => clearInterval(timer)
-  }, [])
-
-  const formatDate = (date: Date) => {
-    return date.toLocaleDateString('en-IN', {
-      day: 'numeric',
-      month: 'short',
-      year: 'numeric',
-    }).toUpperCase()
-  }
-
-  const formatTime = (date: Date) => {
-    return date.toLocaleTimeString('en-US', {
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: false,
-    })
-  }
-
-  return (
-    <div className="flex flex-col sm:flex-row justify-between sm:items-center border-b border-[rgba(255,255,255,0.08)] pb-5 mb-6 gap-4 select-none">
-      <div>
-        <h1 className="text-3xl font-extrabold tracking-tight text-[#F8FAFC]">{title}</h1>
-        <p className="text-xs uppercase tracking-widest text-[#94A3B8] font-mono mt-1">{subtitle}</p>
-        <p className="text-xs text-[#94A3B8]/80 mt-2 font-normal">Welcome back, DCP Anjan.</p>
-      </div>
-
-      <div className="flex items-center gap-6">
-        <div className="text-right font-mono">
-          <div className="text-[#F8FAFC] text-xs font-bold tracking-wider">{formatDate(time)}</div>
-          <div className="text-[#2563EB] text-[10px] font-bold tracking-widest mt-1 uppercase">{formatTime(time)}</div>
-        </div>
-
-        <div className="h-8 w-[1px] bg-[rgba(255,255,255,0.08)] hidden sm:block" />
-
-        <div className="flex items-center gap-2 bg-[#121826] border border-[#2563EB]/40 px-3.5 py-1.5 rounded-lg shadow-sm">
-          <span className="h-2 w-2 rounded-full bg-[#22C55E] animate-pulse" />
-          <span className="text-[10px] font-mono font-bold tracking-widest text-[#F8FAFC] uppercase">{role}</span>
-        </div>
-      </div>
-    </div>
-  )
+export function PageHeader(_props: { title?: string; subtitle?: string; role?: string }) {
+  // Page title & subtitle display exclusively inside the Navbar (Task 6), eliminating duplicated headers.
+  return null
 }
 
 export function DashboardCard({
@@ -64,15 +19,15 @@ export function DashboardCard({
   action?: React.ReactNode
 }) {
   return (
-    <div className={`bg-[#121826] border border-[rgba(255,255,255,0.08)] rounded-[16px] p-6 shadow-md transition-all duration-300 hover:border-[rgba(37,99,235,0.15)] hover:shadow-[0_4px_24px_rgba(0,0,0,0.4)] ${className}`}>
-      <div className="flex justify-between items-start mb-5 border-b border-[rgba(255,255,255,0.04)] pb-3">
-        <div>
+    <div className={`bg-[#121826] border border-[rgba(255,255,255,0.06)] rounded-xl p-5 shadow-md transition-all duration-300 hover:border-[rgba(37,99,235,0.2)] hover:shadow-[0_4px_24px_rgba(0,0,0,0.4)] flex h-full flex-col ${className}`}>
+      <div className="mb-4 flex min-h-[43px] shrink-0 items-start justify-between border-b border-[rgba(255,255,255,0.04)] pb-3">
+        <div className="min-w-0 pr-3">
           <h3 className="text-xs font-bold tracking-wider uppercase text-[#F8FAFC]">{title}</h3>
-          {subtitle && <p className="text-[9px] font-mono uppercase tracking-widest text-[#94A3B8] mt-1">{subtitle}</p>}
+          {subtitle && <p className="text-[9px] font-mono uppercase tracking-widest text-[#94A3B8] mt-0.5">{subtitle}</p>}
         </div>
-        {action && <div>{action}</div>}
+        {action && <div className="shrink-0">{action}</div>}
       </div>
-      <div className="relative">{children}</div>
+      <div className="relative flex min-h-0 flex-1 flex-col">{children}</div>
     </div>
   )
 }
@@ -142,79 +97,86 @@ export function KPICard({
   const preset = colorPresets[color]
 
   return (
-    <div className={`bg-gradient-to-br ${preset.gradient} border border-[rgba(255,255,255,0.06)] rounded-xl p-5 shadow-md transition-all duration-200 hover:scale-[1.02] ${preset.borderHover} hover:shadow-[0_8px_32px_rgba(0,0,0,0.55)] flex flex-col justify-between select-none relative overflow-hidden group`}>
-      {/* Top Header Row */}
-      <div className="flex justify-between items-center mb-4">
-        {/* 40x40 circular icon */}
-        <div className={`h-10 w-10 rounded-full flex items-center justify-center border ${preset.bgIcon} transition-transform duration-300 group-hover:scale-105`}>
-          <Icon className="h-4.5 w-4.5" />
+    <div className={`bg-gradient-to-br ${preset.gradient} border border-[rgba(255,255,255,0.06)] rounded-xl p-5 shadow-md transition-all duration-200 hover:scale-[1.02] ${preset.borderHover} hover:shadow-[0_8px_32px_rgba(0,0,0,0.55)] flex h-[168px] flex-col select-none relative overflow-hidden group`}>
+      <div className="mb-3 flex items-center justify-between gap-3">
+        <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full border ${preset.bgIcon} transition-transform duration-300 group-hover:scale-105`}>
+          <Icon className="h-4 w-4" />
         </div>
 
-        {/* Small trend badge */}
-        {trendBadge && (
-          <span className={`px-2 py-0.5 rounded text-[8px] font-mono font-bold tracking-wider border ${
+        {trendBadge ? (
+          <span className={`rounded border px-2 py-0.5 text-[8px] font-mono font-bold tracking-wider ${
             trendType === 'up' ? 'bg-[#22C55E]/10 border-[#22C55E]/20 text-[#22C55E]' :
             trendType === 'down' ? 'bg-[#EF4444]/10 border-[#EF4444]/20 text-[#EF4444]' :
             'bg-gray-500/10 border-gray-500/20 text-gray-400'
           }`}>
             {trendBadge}
           </span>
+        ) : (
+          <span className="h-[22px] w-[52px] shrink-0" aria-hidden="true" />
         )}
       </div>
 
-      {/* Numerical Data Field */}
-      <div>
-        <span className="text-[11px] font-mono uppercase tracking-wider text-[#94A3B8] font-bold">
-          {title}
-        </span>
-        <h4 className="text-[31px] font-bold text-[#F8FAFC] tracking-tight mt-1 leading-none">
-          {value}
-        </h4>
-        
-        {/* Comparison trend text */}
-        {(trend || trendLabel) && (
-          <div className="flex items-center gap-1.5 mt-3 text-[10px]">
-            {trend && onClickTrend ? (
-              <button
-                onClick={onClickTrend}
-                className={`font-semibold cursor-pointer underline hover:text-white transition-colors duration-150 ${preset.trendColor}`}
-              >
-                {trend}
-              </button>
-            ) : trend ? (
-              <span className={`font-semibold ${
-                trendType === 'up' ? 'text-[#22C55E]' :
-                trendType === 'down' ? 'text-[#EF4444]' :
-                preset.trendColor
-              }`}>
-                {trend}
-              </span>
-            ) : null}
-            
-            {trendLabel && (
-              <span className="text-[#94A3B8]/60 font-medium">
-                {trendLabel}
-              </span>
-            )}
-          </div>
-        )}
+      <div className="flex min-h-0 flex-1 flex-col">
+        <div className="space-y-1.5">
+          <span className="block truncate text-[10px] font-mono font-bold uppercase tracking-wider text-[#94A3B8]">
+            {title}
+          </span>
+          <h4 className="text-2xl font-extrabold leading-none tracking-tight text-[#F8FAFC] xl:text-3xl">
+            {value}
+          </h4>
+        </div>
+
+        <div className="mt-auto flex min-h-[24px] items-end gap-1.5 pt-3 text-[10px]">
+          {trend && onClickTrend ? (
+            <button
+              onClick={onClickTrend}
+              className={`font-semibold cursor-pointer underline transition-colors duration-150 hover:text-white ${preset.trendColor}`}
+            >
+              {trend}
+            </button>
+          ) : trend ? (
+            <span className={`font-semibold ${
+              trendType === 'up' ? 'text-[#22C55E]' :
+              trendType === 'down' ? 'text-[#EF4444]' :
+              preset.trendColor
+            }`}>
+              {trend}
+            </span>
+          ) : (
+            <span className="invisible font-semibold" aria-hidden="true">—</span>
+          )}
+
+          {trendLabel ? (
+            <span className="truncate font-medium text-[#94A3B8]/60">
+              {trendLabel}
+            </span>
+          ) : null}
+        </div>
       </div>
     </div>
   )
 }
 
-export function StatusBadge({ status }: { status: 'High' | 'Medium' | 'Low' | 'Solved' | 'Active' }) {
-  const styles = {
+export function StatusBadge({ status }: { status: 'High' | 'Medium' | 'Low' | 'Solved' | 'Active' | 'Operational' | 'Processing' | 'Completed' | 'Pending' | 'Verified' | 'Investigating' | 'Closed' }) {
+  const styles: Record<string, string> = {
     High: 'bg-[#EF4444]/10 border-[#EF4444]/30 text-[#EF4444]',
     Medium: 'bg-[#F59E0B]/10 border-[#F59E0B]/30 text-[#F59E0B]',
     Low: 'bg-[#22C55E]/10 border-[#22C55E]/30 text-[#22C55E]',
     Solved: 'bg-[#22C55E]/15 border-[#22C55E]/40 text-[#22C55E]',
     Active: 'bg-[#2563EB]/15 border-[#2563EB]/40 text-[#2563EB]',
+    Operational: 'bg-[#10B981]/15 border-[#10B981]/40 text-[#10B981]',
+    Processing: 'bg-[#38BDF8]/15 border-[#38BDF8]/40 text-[#38BDF8]',
+    Completed: 'bg-[#10B981]/15 border-[#10B981]/40 text-[#10B981]',
+    Pending: 'bg-[#F59E0B]/15 border-[#F59E0B]/40 text-[#F59E0B]',
+    Verified: 'bg-[#10B981]/15 border-[#10B981]/40 text-[#10B981]',
+    Investigating: 'bg-[#F59E0B]/15 border-[#F59E0B]/40 text-[#F59E0B]',
+    Closed: 'bg-slate-500/15 border-slate-500/40 text-slate-400',
   }
   
   return (
-    <span className={`px-2.5 py-0.5 rounded border text-[8px] font-mono font-bold tracking-widest uppercase ${styles[status]}`}>
-      {status}
+    <span className={`px-2.5 py-0.5 rounded border text-[8.5px] font-mono font-bold tracking-widest uppercase inline-flex items-center gap-1.5 ${styles[status] || styles['Active']}`}>
+      <span className="h-1 w-1 rounded-full bg-current animate-pulse" />
+      <span>{status}</span>
     </span>
   )
 }
@@ -281,3 +243,4 @@ export function SecondaryButton({ children, className = '', ...props }: ButtonPr
     </button>
   )
 }
+

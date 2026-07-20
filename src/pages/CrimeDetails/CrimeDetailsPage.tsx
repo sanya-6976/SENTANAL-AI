@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
+import PageLoader from '../../components/ui/PageLoader'
 import {
   CrimeHeader,
   CrimeTabs,
@@ -131,11 +132,7 @@ function CrimeDetailsPage() {
   }
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px] text-[#94A3B8] font-mono text-sm tracking-widest">
-        Loading case details...
-      </div>
-    )
+    return <PageLoader message="Loading case details..." />
   }
 
   if (error) {

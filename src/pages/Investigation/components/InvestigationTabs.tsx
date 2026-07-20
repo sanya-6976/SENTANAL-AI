@@ -12,7 +12,8 @@ export function InvestigationTabs({ activeTab, setActiveTab }: TabsProps) {
     'Victims',
     'Vehicles',
     'Linked Cases',
-    'AI Insights'
+    'AI Insights',
+    'Investigation Diary'
   ]
 
   return (

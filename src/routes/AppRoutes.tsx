@@ -2,7 +2,8 @@ import { Navigate, Route, Routes } from 'react-router-dom'
 import NotFoundPage from '../components/common/NotFoundPage'
 import AuthLayout from '../layouts/AuthLayout'
 import DashboardLayout from '../layouts/DashboardLayout'
-import AIAssistantPage from '../pages/AIAssistant/AIAssistantPage'
+import VoiceSearchPage from '../pages/VoiceSearch/VoiceSearchPage'
+import InvestigationDiaryPage from '../pages/InvestigationDiary/InvestigationDiaryPage'
 import AnalyticsPage from '../pages/Analytics/AnalyticsPage'
 import CrimeDatabasePage from '../pages/CrimeDatabase/CrimeDatabasePage'
 import CrimeDetailsPage from '../pages/CrimeDetails/CrimeDetailsPage'
@@ -15,6 +16,9 @@ import LoginPage from '../pages/Login/LoginPage'
 import ReportsPage from '../pages/Reports/ReportsPage'
 import SettingsPage from '../pages/Settings/SettingsPage'
 import OCRReviewPage from '../pages/OCRReview/OCRReviewPage'
+import DigitalIntelligenceHubPage from '../pages/DigitalIntelligenceHub/DigitalIntelligenceHubPage'
+import AICrimePatternSimilarityPage from '../pages/CrimePatternSimilarity/AICrimePatternSimilarityPage'
+import MultilingualAIPage from '../pages/MultilingualAI/MultilingualAIPage'
 
 function AppRoutes() {
   return (
@@ -33,10 +37,14 @@ function AppRoutes() {
         <Route path="/analytics" element={<AnalyticsPage />} />
         <Route path="/gis" element={<GISPage />} />
         <Route path="/investigation" element={<InvestigationPage />} />
+        <Route path="/investigation-diary" element={<InvestigationDiaryPage />} />
         <Route path="/criminal-network" element={<CriminalNetworkPage />} />
-        <Route path="/ai-assistant" element={<AIAssistantPage />} />
+        <Route path="/voice-search" element={<VoiceSearchPage />} />
+        <Route path="/multilingual-ai" element={<MultilingualAIPage />} />
         <Route path="/reports" element={<ReportsPage />} />
         <Route path="/ocr-review" element={<OCRReviewPage />} />
+        <Route path="/digital-intelligence" element={<DigitalIntelligenceHubPage />} />
+        <Route path="/crime-pattern-similarity" element={<AICrimePatternSimilarityPage />} />
         <Route path="/settings" element={<SettingsPage />} />
       </Route>
 
@@ -46,4 +54,3 @@ function AppRoutes() {
 }
 
 export default AppRoutes
-
