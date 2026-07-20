@@ -197,14 +197,21 @@ def get_evidence(
     current_user: CurrentUser = Depends(get_current_active_user),
 ):
     """Retrieve evidence items record filtered by user's jurisdiction."""
-    return orm_to_dict(
-        core_service.get_evidence(
-            db=db,
-            user=current_user,
-            evidence_type=evidence_type,
-            collected_by=collected_by
-        )
+    evidence_list = core_service.get_evidence(
+        db=db,
+        user=current_user,
+        evidence_type=evidence_type,
+        collected_by=collected_by
     )
+    result = []
+    for ev in evidence_list:
+        ev_dict = orm_to_dict(ev)
+        if hasattr(ev, 'crimes') and ev.crimes and ev.crimes[0].crime:
+            ev_dict["fir_id"] = ev.crimes[0].crime.fir_id
+        else:
+            ev_dict["fir_id"] = None
+        result.append(ev_dict)
+    return result
 
 
 @core_router.get("/evidence/{evidence_id}")

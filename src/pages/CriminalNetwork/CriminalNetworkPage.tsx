@@ -1,12 +1,9 @@
 import { useState, useEffect, useMemo } from 'react'
-<<<<<<< Updated upstream
+import { useNavigate } from 'react-router-dom'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { Sparkles, Loader2, X } from 'lucide-react'
-=======
-import { useNavigate } from 'react-router-dom'
 import PageLoader from '../../components/ui/PageLoader'
->>>>>>> Stashed changes
 import {
   GraphCanvas,
   NodeCard,
@@ -14,9 +11,8 @@ import {
   RelationshipTimeline
 } from './components'
 import { getSuspectNetwork } from '../../api/analytics.api'
-<<<<<<< Updated upstream
 import { askAIAssistant } from '../../api/ai.api'
-import { mockNodes } from './data/MockGraphData'
+import { mockNodes, mockLinks, mockEntityProfiles } from './data/MockGraphData'
 
 interface SuspectProfile {
   name: string
@@ -31,9 +27,6 @@ interface SuspectProfile {
   locations: number
   arrests: number
 }
-=======
-import { mockNodes, mockLinks, mockEntityProfiles } from './data/MockGraphData'
->>>>>>> Stashed changes
 
 function CriminalNetworkPage() {
   const navigate = useNavigate()
@@ -56,16 +49,14 @@ function CriminalNetworkPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-<<<<<<< Updated upstream
   // AI Insights State
   const [aiInsight, setAiInsight] = useState<string | null>(null)
   const [isLoadingAI, setIsLoadingAI] = useState(false)
-=======
+
   // Toolbar state triggers
   const [resetTrigger, setResetTrigger] = useState(0)
   const [centerTrigger, setCenterTrigger] = useState(0)
   const [expandTrigger, setExpandTrigger] = useState(0)
->>>>>>> Stashed changes
 
   useEffect(() => {
     const loadGraph = async () => {
@@ -206,18 +197,9 @@ function CriminalNetworkPage() {
     }
   }
 
-<<<<<<< Updated upstream
-  const handleToolbarCenter = () => {
-    setCenterTrigger((prev) => prev + 1)
-  }
-
-  const handleToolbarExpand = () => {
-    setExpandTrigger((prev) => prev + 1)
-  }
-
-  const handleToolbarExport = () => {
-    alert(`[SYSTEM CALL] Exporting relational link matrix for ${activeProfile.name} in PDF/JSON formats...`)
-  }
+  const handleGraphReset = () => setResetTrigger(prev => prev + 1)
+  const handleGraphCenter = () => setCenterTrigger(prev => prev + 1)
+  const handleGraphExpand = () => setExpandTrigger(prev => prev + 1)
 
   const handleRightPanelAction = async (actionName: string) => {
     if (actionName === 'Ask AI Assistant') {
@@ -238,11 +220,6 @@ function CriminalNetworkPage() {
       alert(`[SYSTEM CALL] Triggering Executive Action:\n- Target Accused: ${activeProfile.name}\n- Operation: ${actionName}`)
     }
   }
-=======
-  const handleGraphReset = () => setResetTrigger(prev => prev + 1)
-  const handleGraphCenter = () => setCenterTrigger(prev => prev + 1)
-  const handleGraphExpand = () => setExpandTrigger(prev => prev + 1)
->>>>>>> Stashed changes
 
   if (loading) {
     return <PageLoader message="Loading suspect network..." />
@@ -331,7 +308,6 @@ function CriminalNetworkPage() {
 
       </div>
 
-<<<<<<< Updated upstream
       {/* 4. Horizontal AI Insights Panel */}
       {(isLoadingAI || aiInsight) && (
         <div className="bg-[#111827] border border-[#2563EB]/30 rounded-xl p-6 shadow-[0_0_20px_rgba(37,99,235,0.1)] animate-fade-in relative mt-6">
@@ -376,13 +352,12 @@ function CriminalNetworkPage() {
           </div>
         </div>
       )}
-=======
-      {/* 4. Horizontal Relationship Timeline (Full-Width Bottom) */}
+
+      {/* 5. Horizontal Relationship Timeline (Full-Width Bottom) */}
       <RelationshipTimeline
         selectedEntityName={activeProfile.name}
         selectedEntityType={activeProfile.type}
       />
->>>>>>> Stashed changes
 
     </div>
   )

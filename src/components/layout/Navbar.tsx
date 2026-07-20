@@ -1,21 +1,8 @@
-<<<<<<< Updated upstream
-import { Bell, LogOut } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
-import { clearSession } from '../../utils/session'
-
-function Navbar() {
-  const navigate = useNavigate()
-
-  const handleLogout = () => {
-    clearSession()
-    navigate('/login')
-  }
-
-=======
 import { useState, useEffect } from 'react'
-import { Bell, Menu } from 'lucide-react'
-import { useLocation } from 'react-router-dom'
+import { Bell, Menu, LogOut } from 'lucide-react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { getHeaderForPath } from '../../config/pageHeaders'
+import { clearSession } from '../../utils/session'
 
 interface NavbarProps {
   onToggleSidebar: () => void
@@ -23,6 +10,7 @@ interface NavbarProps {
 
 function Navbar({ onToggleSidebar }: NavbarProps) {
   const location = useLocation()
+  const navigate = useNavigate()
   const header = getHeaderForPath(location.pathname)
   const [time, setTime] = useState(new Date())
 
@@ -30,6 +18,11 @@ function Navbar({ onToggleSidebar }: NavbarProps) {
     const timer = setInterval(() => setTime(new Date()), 1000)
     return () => clearInterval(timer)
   }, [])
+
+  const handleLogout = () => {
+    clearSession()
+    navigate('/login')
+  }
 
   const formatDate = (date: Date) => {
     return date.toLocaleDateString('en-IN', {
@@ -47,8 +40,6 @@ function Navbar({ onToggleSidebar }: NavbarProps) {
       hour12: false,
     })
   }
-
->>>>>>> Stashed changes
   return (
     <header className="bg-[#111827] border-b border-[rgba(255,255,255,0.06)] h-[69px] px-6 flex items-center justify-between select-none shrink-0 font-sans">
       
@@ -113,15 +104,9 @@ function Navbar({ onToggleSidebar }: NavbarProps) {
 
         {/* Officer Profile Metadata */}
         <div className="flex items-center gap-3">
-<<<<<<< Updated upstream
-          <div className="flex flex-col items-end text-right">
-            <span className="text-xs font-bold text-white tracking-wide">DCP Anjan</span>
-            <span className="text-[8px] font-mono tracking-widest text-[#94A3B8] uppercase font-bold mt-0.5">
-=======
-          <div className="hidden sm:flex flex-col text-right select-none">
+          <div className="hidden sm:flex flex-col items-end text-right select-none">
             <span className="text-xs font-bold text-white tracking-wide leading-none">DCP Anjan</span>
             <span className="text-[7.5px] font-mono tracking-widest text-[#94A3B8]/60 uppercase font-bold mt-1.5 leading-none">
->>>>>>> Stashed changes
               Karnataka Police
             </span>
             <button 

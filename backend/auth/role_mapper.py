@@ -4,6 +4,7 @@ from backend.auth.models import Roles
 
 DATABASE_ROLE_MAP = {
     "Super Admin": Roles.SYSTEM_ADMIN,
+    "System Administrator": Roles.SYSTEM_ADMIN,
     "Admin": Roles.STATE_ADMIN,
     "SP": Roles.DISTRICT_SUPERINTENDENT,
     "Inspector": Roles.STATION_HOUSE_OFFICER,

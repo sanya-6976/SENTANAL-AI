@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   FileText,
   Paperclip,
@@ -9,8 +9,10 @@ import {
   Phone,
   MapPin,
   ShieldCheck,
-  Briefcase
+  Briefcase,
+  Save
 } from 'lucide-react'
+import apiClient from '../../api/client'
 
 interface LinkedEvidenceItem {
   type: string
@@ -21,19 +23,109 @@ interface LinkedEvidenceItem {
 }
 
 export function InvestigationDiaryPage() {
-  const [selectedCase, setSelectedCase] = useState('FIR 45/2026')
-  const [notesInput, setNotesInput] = useState(
-    'Recorded witness statement from shopkeeper near ATM booth at 14:30 IST. Verified suspect vehicle registration (KA-04-MB-8921). Hash verification completed for seized SSD hard drive.'
-  )
+  const [firs, setFirs] = useState<any[]>([])
+  const [selectedFirId, setSelectedFirId] = useState('')
+  const [notesInput, setNotesInput] = useState('')
+  const [pastNotes, setPastNotes] = useState<any[]>([])
+  const [evidenceList, setEvidenceList] = useState<any[]>([])
+  const [isSaving, setIsSaving] = useState(false)
 
-  const linkedEvidence: LinkedEvidenceItem[] = [
-    { type: 'FIR Document', date: '14 Jul 2026', status: 'Verified', icon: FileText, color: 'text-[#2563EB]' },
-    { type: 'CCTV Footage', date: '15 Jul 2026', status: 'Parsed', icon: Video, color: 'text-[#38BDF8]' },
-    { type: 'Photographs', date: '16 Jul 2026', status: 'Cataloged', icon: Camera, color: 'text-[#F59E0B]' },
-    { type: 'Forensic Report', date: '18 Jul 2026', status: 'Attached', icon: FileSearch, color: 'text-[#10B981]' },
-    { type: 'Call Detail Record', date: '19 Jul 2026', status: 'Extracted', icon: Phone, color: 'text-[#8B5CF6]' },
-    { type: 'GPS History', date: '20 Jul 2026', status: 'Analyzed', icon: MapPin, color: 'text-[#EC4899]' }
+  useEffect(() => {
+    apiClient.get('/core/firs').then(res => {
+      setFirs(res.data)
+      if (res.data.length > 0) {
+        setSelectedFirId(res.data[0].fir_id)
+      }
+    }).catch(console.error)
+  }, [])
+
+  const fetchNotes = (firId: string) => {
+    apiClient.get(`/core/diary?fir_id=${firId}`).then(res => {
+      setPastNotes(res.data)
+    }).catch(console.error)
+  }
+
+  const fetchEvidence = (firId: string) => {
+    apiClient.get(`/core/evidence`).then(res => {
+      const allEv = res.data
+      const firEv = allEv.filter((e: any) => e.fir_id === firId)
+      setEvidenceList(firEv)
+    }).catch(console.error)
+  }
+
+  useEffect(() => {
+    if (selectedFirId) {
+      fetchNotes(selectedFirId)
+      fetchEvidence(selectedFirId)
+    }
+  }, [selectedFirId])
+
+  const handleSaveNote = async () => {
+    if (!notesInput.trim() || !selectedFirId) return
+    setIsSaving(true)
+    try {
+      await apiClient.post('/core/diary', {
+        content: notesInput,
+        fir_id: selectedFirId
+      })
+      setNotesInput('')
+      fetchNotes(selectedFirId)
+    } catch (error) {
+      console.error('Failed to save note', error)
+    } finally {
+      setIsSaving(false)
+    }
+  }
+
+  const selectedFirData = firs.find(f => f.fir_id === selectedFirId)
+
+  // Generate deterministic variations based on FIR ID for mock data
+  const getMockVariation = (id: string) => {
+    if (!id) return 0
+    let hash = 0
+    for (let i = 0; i < id.length; i++) hash = (hash << 5) - hash + id.charCodeAt(i)
+    return Math.abs(hash) % 3
+  }
+
+  const vIndex = getMockVariation(selectedFirId)
+
+  const aiNotesVariations = [
+    [
+      { title: 'Witness Evidence', color: 'text-[#10B981]', desc: 'Shopkeeper confirmed suspect presence at ATM booth (22:14 IST)' },
+      { title: 'Vehicle Details', color: 'text-[#38BDF8]', desc: 'Registration verified: KA-04-MB-8921 (Mahindra Scorpio)' },
+      { title: 'Digital Forensic Match', color: 'text-[#F59E0B]', desc: 'Extracted SHA-256 hash match for Kingston SSD drive' }
+    ],
+    [
+      { title: 'Cyber Trace', color: 'text-[#10B981]', desc: 'IP logs pinpointed to proxy server in Eastern Europe' },
+      { title: 'Financial Trail', color: 'text-[#38BDF8]', desc: 'Cryptocurrency transaction matched to known mixer service' },
+      { title: 'Victim Statement', color: 'text-[#F59E0B]', desc: 'Phishing email clicked at 09:30 AM via corporate network' }
+    ],
+    [
+      { title: 'Forensic Pathology', color: 'text-[#10B981]', desc: 'Blunt force trauma identified on cranial region' },
+      { title: 'Crime Scene DNA', color: 'text-[#38BDF8]', desc: 'Hair follicle DNA matches state offender database' },
+      { title: 'Surveillance Intel', color: 'text-[#F59E0B]', desc: 'Suspect spotted fleeing alleyway at 03:15 AM' }
+    ]
   ]
+
+  const summaryVariations = [
+    "Today's investigation focused on witness interviews, CCTV review and digital evidence collection. AI recommends verifying vehicle ownership (KA-04-MB-8921) and comparing recovered phone numbers with existing FIRs.",
+    "Analysis of digital footprints and financial ledgers conducted. AI suggests issuing subpoenas for the identified proxy servers and tracking the Bitcoin wallet outbound transactions.",
+    "Crime scene forensics team completed initial sweep. Recovered DNA and latent prints. AI recommends prioritizing database cross-referencing and interviewing neighbors in a 2-block radius."
+  ]
+
+  const stepsVariations = [
+    ['Issue Section 41A CrPC notice to suspect', 'Verify vehicle registration KA-04-MB-8921 ownership', 'Request bank ATM camera angle #2 footage', 'Cross-check recovered phone numbers'],
+    ['Subpoena ISP for IP logs related to phishing', 'Alert cyber cell for domain takedown', 'Interview bank manager regarding spoofed emails', 'Monitor identified crypto wallets'],
+    ['Expedite lab testing for collected DNA samples', 'Canvass neighborhood for additional witnesses', 'Check nearby business CCTV systems', 'Issue BOLO for suspect matching description']
+  ]
+
+  const getEvidenceIcon = (type: string) => {
+    if (type.includes('DOCUMENT')) return FileText
+    if (type.includes('DIGITAL')) return FileSearch
+    if (type.includes('PHYSICAL')) return Camera
+    if (type.includes('WITNESS')) return Phone
+    return Paperclip
+  }
 
   return (
     <div className="space-y-8 animate-fade-in select-none max-w-[1600px] mx-auto pb-12 font-sans">
@@ -55,13 +147,13 @@ export function InvestigationDiaryPage() {
 
           <div className="flex items-center gap-3 w-full md:w-auto">
             <select
-              value={selectedCase}
-              onChange={(e) => setSelectedCase(e.target.value)}
+              value={selectedFirId}
+              onChange={(e) => setSelectedFirId(e.target.value)}
               className="bg-[#080D1A] border border-[rgba(255,255,255,0.1)] text-white text-xs font-mono rounded-xl px-4 py-2.5 outline-none focus:border-[#10B981] w-full md:w-80 cursor-pointer"
             >
-              <option value="FIR 45/2026">FIR 45/2026 — Cyber Fraud (Bangalore City)</option>
-              <option value="FIR 88/2026">FIR 88/2026 — ATM Heist (Mysore Urban)</option>
-              <option value="FIR 102/2026">FIR 102/2026 — Jewellery Theft (Hubballi)</option>
+              {firs.map(f => (
+                <option key={f.fir_id} value={f.fir_id}>{f.fir_number} — {f.district_name || 'District'}</option>
+              ))}
             </select>
           </div>
         </div>
@@ -70,19 +162,19 @@ export function InvestigationDiaryPage() {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 font-mono text-xs pt-1">
           <div className="bg-[#080D1A] p-2.5 rounded-lg border border-[rgba(255,255,255,0.04)]">
             <span className="text-[9px] text-[#94A3B8] uppercase block font-bold">Linked FIR</span>
-            <span className="text-[#10B981] font-bold">{selectedCase}</span>
+            <span className="text-[#10B981] font-bold">{selectedFirData?.fir_number || '-'}</span>
           </div>
           <div className="bg-[#080D1A] p-2.5 rounded-lg border border-[rgba(255,255,255,0.04)]">
-            <span className="text-[9px] text-[#94A3B8] uppercase block font-bold">Offense Section</span>
-            <span className="text-white font-bold">IPC 420 / IT Act 66D</span>
+            <span className="text-[9px] text-[#94A3B8] uppercase block font-bold">Status</span>
+            <span className="text-white font-bold">{selectedFirData?.status || '-'}</span>
           </div>
           <div className="bg-[#080D1A] p-2.5 rounded-lg border border-[rgba(255,255,255,0.04)]">
             <span className="text-[9px] text-[#94A3B8] uppercase block font-bold">District Unit</span>
-            <span className="text-[#38BDF8] font-bold">Bangalore City (Cyber PS)</span>
+            <span className="text-[#38BDF8] font-bold">{selectedFirData?.district_name || '-'}</span>
           </div>
           <div className="bg-[#080D1A] p-2.5 rounded-lg border border-[rgba(255,255,255,0.04)]">
-            <span className="text-[9px] text-[#94A3B8] uppercase block font-bold">Investigating Officer</span>
-            <span className="text-white font-bold">DCP Anjan (KSP-SCRB)</span>
+            <span className="text-[9px] text-[#94A3B8] uppercase block font-bold">Station</span>
+            <span className="text-white font-bold">{selectedFirData?.station_name || '-'}</span>
           </div>
         </div>
       </div>
@@ -104,13 +196,35 @@ export function InvestigationDiaryPage() {
                 <span className="text-[10px] font-mono text-[#94A3B8]">Case Journal Entry</span>
               </div>
 
-              <textarea
-                value={notesInput}
-                onChange={(e) => setNotesInput(e.target.value)}
-                placeholder="Record daily field observation notes, witness statements, and evidence updates..."
-                rows={8}
-                className="w-full bg-[#080D1A] border border-[rgba(255,255,255,0.08)] rounded-xl p-4 text-xs text-white placeholder-[#94A3B8]/40 focus:outline-none focus:border-[#10B981] font-mono leading-relaxed resize-none"
-              />
+              <div className="flex flex-col gap-3">
+                <textarea
+                  value={notesInput}
+                  onChange={(e) => setNotesInput(e.target.value)}
+                  placeholder="Record daily field observation notes, witness statements, and evidence updates..."
+                  rows={4}
+                  className="w-full bg-[#080D1A] border border-[rgba(255,255,255,0.08)] rounded-xl p-4 text-xs text-white placeholder-[#94A3B8]/40 focus:outline-none focus:border-[#10B981] font-mono leading-relaxed resize-none"
+                />
+                <button
+                  onClick={handleSaveNote}
+                  disabled={isSaving || !notesInput.trim()}
+                  className="self-end flex items-center gap-2 bg-[#10B981] hover:bg-[#059669] text-white text-xs font-bold px-4 py-2 rounded-lg transition-all cursor-pointer shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <Save className="h-4 w-4" />
+                  {isSaving ? 'Saving...' : 'Save Entry'}
+                </button>
+              </div>
+
+              {pastNotes.length > 0 && (
+                <div className="mt-4 space-y-3 flex-1 overflow-y-auto max-h-48 custom-scrollbar border-t border-[rgba(255,255,255,0.06)] pt-4">
+                  <h4 className="text-[10px] text-[#94A3B8] uppercase font-bold tracking-wider font-mono">Historical Notes</h4>
+                  {pastNotes.map((note: any, idx) => (
+                    <div key={note.log_id || idx} className="bg-[#080D1A] p-3 rounded-xl border border-[rgba(255,255,255,0.04)] font-mono text-[11px] text-[#E2E8F0]">
+                      <div className="text-[9px] text-[#10B981] mb-1 font-bold">{new Date(note.timestamp).toLocaleString()}</div>
+                      <div>{note.content}</div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -130,20 +244,12 @@ export function InvestigationDiaryPage() {
               </div>
 
               <div className="space-y-2.5 font-mono text-xs">
-                <div className="bg-[#080D1A] p-3 rounded-xl border border-[rgba(255,255,255,0.04)]">
-                  <span className="text-[9.5px] uppercase text-[#10B981] font-bold block">Witness Evidence</span>
-                  <p className="text-white text-[11px] mt-0.5">Shopkeeper confirmed suspect presence at ATM booth (22:14 IST)</p>
-                </div>
-
-                <div className="bg-[#080D1A] p-3 rounded-xl border border-[rgba(255,255,255,0.04)]">
-                  <span className="text-[9.5px] uppercase text-[#38BDF8] font-bold block">Vehicle Details</span>
-                  <p className="text-white text-[11px] mt-0.5">Registration verified: KA-04-MB-8921 (Mahindra Scorpio)</p>
-                </div>
-
-                <div className="bg-[#080D1A] p-3 rounded-xl border border-[rgba(255,255,255,0.04)]">
-                  <span className="text-[9.5px] uppercase text-[#F59E0B] font-bold block">Digital Forensic Match</span>
-                  <p className="text-white text-[11px] mt-0.5">Extracted SHA-256 hash match for Kingston SSD drive</p>
-                </div>
+                {aiNotesVariations[vIndex].map((note, i) => (
+                  <div key={i} className="bg-[#080D1A] p-3 rounded-xl border border-[rgba(255,255,255,0.04)]">
+                    <span className={`text-[9.5px] uppercase ${note.color} font-bold block`}>{note.title}</span>
+                    <p className="text-white text-[11px] mt-0.5">{note.desc}</p>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
@@ -160,30 +266,35 @@ export function InvestigationDiaryPage() {
               Linked Case Evidence
             </h3>
           </div>
-          <span className="text-[10px] font-mono text-[#94A3B8]">6 Files Attached</span>
+          <span className="text-[10px] font-mono text-[#94A3B8]">{evidenceList.length} Files Attached</span>
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 font-mono text-xs select-none">
-          {linkedEvidence.map((item) => {
-            const EvIcon = item.icon
+          {evidenceList.map((item: any) => {
+            const EvIcon = getEvidenceIcon(item.evidence_type)
             return (
               <div
-                key={item.type}
+                key={item.evidence_id}
                 className="bg-[#080D1A] border border-[rgba(255,255,255,0.04)] rounded-xl p-3.5 space-y-2"
               >
                 <div className="flex items-center justify-between">
-                  <EvIcon className={`h-4 w-4 ${item.color}`} />
+                  <EvIcon className="h-4 w-4 text-[#38BDF8]" />
                   <span className="text-[9px] text-[#10B981] font-bold bg-[#10B981]/15 px-1.5 py-0.5 rounded">
-                    {item.status}
+                    VERIFIED
                   </span>
                 </div>
                 <div>
-                  <h4 className="text-xs font-bold text-white truncate">{item.type}</h4>
-                  <span className="text-[9px] text-[#94A3B8] block mt-0.5">{item.date}</span>
+                  <h4 className="text-xs font-bold text-white truncate" title={item.evidence_type}>{item.evidence_type}</h4>
+                  <span className="text-[9px] text-[#94A3B8] block mt-0.5 truncate" title={item.description}>{item.description || 'Logged'}</span>
                 </div>
               </div>
             )
           })}
+          {evidenceList.length === 0 && (
+            <div className="col-span-full text-center text-[#94A3B8] py-4 text-[11px]">
+              No evidence files linked to this FIR yet.
+            </div>
+          )}
         </div>
       </div>
 
@@ -207,7 +318,7 @@ export function InvestigationDiaryPage() {
               </div>
 
               <p className="font-mono text-xs text-[#E2E8F0] leading-relaxed bg-[#080D1A] p-4 rounded-xl border border-[rgba(255,255,255,0.04)]">
-                "Today's investigation focused on witness interviews, CCTV review and digital evidence collection. AI recommends verifying vehicle ownership (KA-04-MB-8921) and comparing recovered phone numbers with existing FIRs."
+                "{summaryVariations[vIndex]}"
               </p>
             </div>
           </div>
@@ -225,18 +336,13 @@ export function InvestigationDiaryPage() {
               </div>
 
               <div className="space-y-2 font-mono text-xs">
-                {[
-                  { text: 'Issue Section 41A CrPC notice to suspect Ramesh Kumar' },
-                  { text: 'Verify vehicle registration KA-04-MB-8921 ownership' },
-                  { text: 'Request bank ATM camera angle #2 footage extractions' },
-                  { text: 'Cross-check recovered phone numbers with CCTNS node' },
-                ].map((rec) => (
+                {stepsVariations[vIndex].map((rec, i) => (
                   <div
-                    key={rec.text}
+                    key={i}
                     className="bg-[#080D1A] border border-[rgba(255,255,255,0.04)] rounded-xl p-3 flex items-center gap-2.5 text-[#F8FAFC]"
                   >
                     <span className="text-[#10B981] font-bold text-xs">•</span>
-                    <span className="text-[11px] truncate">{rec.text}</span>
+                    <span className="text-[11px] truncate">{rec}</span>
                   </div>
                 ))}
               </div>

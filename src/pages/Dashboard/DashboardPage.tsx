@@ -285,7 +285,7 @@ function DashboardPage() {
       </section>
 
       {/* SECTION 3 & 4: Charts */}
-      <section className="grid grid-cols-1 items-stretch gap-5 lg:grid-cols-12 lg:[&>div]:h-[382px]">
+      <section className="grid grid-cols-1 items-stretch gap-5 lg:grid-cols-12 lg:[&>div]:h-[420px]">
         
         {/* Crime Trend Line Chart (8 Cols) */}
         <div className="flex flex-col lg:col-span-8">
@@ -372,8 +372,8 @@ function DashboardPage() {
                       data={categoryData}
                       cx="50%"
                       cy="50%"
-                      innerRadius={58}
-                      outerRadius={78}
+                      innerRadius={50}
+                      outerRadius={68}
                       paddingAngle={3}
                       dataKey="value"
                     >

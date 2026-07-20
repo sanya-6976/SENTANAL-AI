@@ -45,8 +45,8 @@ function InvestigationPage() {
   const [aiInsight, setAiInsight] = useState<string>('')
   const [loading, setLoading] = useState(true)
   const [aiLoading, setAiLoading] = useState(false)
-  const [, setAllFirs] = useState<any[]>([])
-  const [, setFirSearchText] = useState('')
+  const [allFirs, setAllFirs] = useState<any[]>([])
+  const [firSearchText, setFirSearchText] = useState('')
   const [chatInput, setChatInput] = useState('')
   const [chatMessages, setChatMessages] = useState<{role: string, content: string}[]>([])
   const [entitiesList, setEntitiesList] = useState<EntityItem[]>([
@@ -108,6 +108,9 @@ function InvestigationPage() {
         }
       }
       fetchEntitiesForFir()
+      
+      // Clear old AI insight for the new case
+      setAiInsight('')
     }
   }, [firData])
 
@@ -167,11 +170,14 @@ function InvestigationPage() {
   }
 
   // UI rendering blocks for each tab
+  const filteredCrimes = firData ? crimesData.filter(c => c.fir_id === firData.fir_id) : crimesData;
+  const filteredEvidence = firData ? evidenceData.filter(e => e.fir_id === firData.fir_id) : evidenceData;
+
   const renderTimeline = () => (
     <div className="bg-[#111827] border border-[rgba(255,255,255,0.06)] rounded-xl p-8 animate-fade-in">
       <h3 className="text-sm font-bold text-white mb-4">Case Timeline</h3>
       <div className="space-y-4">
-        {crimesData.slice(0, 5).map((crime) => (
+        {filteredCrimes.slice(0, 5).map((crime) => (
           <div key={crime.crime_id} className="flex gap-4 border-l-2 border-[#2563EB]/40 pl-4 py-2">
             <div className="text-xs text-[#94A3B8] font-mono min-w-[120px]">
               {new Date(crime.reported_at).toLocaleString()}
@@ -201,7 +207,7 @@ function InvestigationPage() {
     <div className="bg-[#111827] border border-[rgba(255,255,255,0.06)] rounded-xl p-8 animate-fade-in">
       <h3 className="text-sm font-bold text-white mb-4">Evidence Registry</h3>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {evidenceData.length > 0 ? evidenceData.map((ev) => (
+        {filteredEvidence.length > 0 ? filteredEvidence.map((ev) => (
           <div key={ev.evidence_id} className="bg-[#0B1220] border border-[rgba(255,255,255,0.06)] p-4 rounded-lg">
             <div className="text-xs text-[#2563EB] font-mono font-bold mb-1 uppercase">{ev.evidence_type}</div>
             <div className="text-sm text-white font-bold">{ev.description || 'No description provided'}</div>
@@ -235,7 +241,7 @@ function InvestigationPage() {
     <div className="bg-[#111827] border border-[rgba(255,255,255,0.06)] rounded-xl p-8 animate-fade-in">
       <h3 className="text-sm font-bold text-white mb-4">Linked Cases</h3>
       <div className="space-y-3">
-        {crimesData.slice(0,3).map((c, i) => (
+        {crimesData.filter(c => firData && c.fir_id !== firData.fir_id).slice(0,3).map((c, i) => (
           <div key={i} className="flex justify-between items-center bg-[#0B1220] p-4 rounded-lg border border-[rgba(255,255,255,0.06)] cursor-pointer hover:border-[#2563EB]/40">
             <div>
               <div className="text-sm text-white font-bold">{c.crime_description}</div>
@@ -303,7 +309,12 @@ function InvestigationPage() {
     <div className="space-y-6 animate-fade-in select-none">
       
       {/* 1. Full-Width Global Input Bar */}
-      <GlobalSearch value={search} onChange={setSearch} />
+      <GlobalSearch 
+        value={firSearchText} 
+        onChange={setFirSearchText} 
+        suggestions={allFirs}
+        onSelect={(item) => setFirData(item)}
+      />
 
       {/* 3. Navigation tabs panel */}
       <InvestigationTabs activeTab={activeTab} setActiveTab={setActiveTab} />
