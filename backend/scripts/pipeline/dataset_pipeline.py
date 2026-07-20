@@ -26,6 +26,58 @@ class DatasetPipeline:
             writer.writeheader()
             writer.writerows(rows)
 
+    def _randomize_identifiers(self, datasets: dict[str, list[dict]]) -> None:
+        primary_keys = {
+            "persons.csv": ("person_id", "PER"), "phones.csv": ("phone_id", "PHN"),
+            "vehicles.csv": ("vehicle_id", "VEH"), "bank_accounts.csv": ("account_id", "ACC"),
+            "transactions.csv": ("transaction_id", "TXN"), "cases.csv": ("case_id", "CAS"),
+            "case_person_relationships.csv": ("relationship_id", "REL"), "fir.csv": ("fir_id", "FIR"),
+            "evidence.csv": ("evidence_id", "EVD"), "arrests.csv": ("arrest_id", "ARR"),
+            "chargesheets.csv": ("chargesheet_id", "CHG"), "court_cases.csv": ("court_case_id", "CRT"),
+            "investigation_diary.csv": ("diary_id", "DIA"), "devices.csv": ("device_id", "DEV"),
+            "cdr.csv": ("cdr_id", "CDR"), "sms_records.csv": ("sms_id", "SMS"),
+            "whatsapp_messages.csv": ("message_id", "MES"), "emails.csv": ("email_id", "EMA"),
+        }
+        mappings = {}
+        for filename, (column, prefix) in primary_keys.items():
+            values = [row[column] for row in datasets[filename]]
+            replacements = set()
+            while len(replacements) < len(values):
+                replacements.add(f"{prefix}{self.random.randint(100000, 999999)}")
+            replacements = list(replacements)
+            self.random.shuffle(replacements)
+            mappings[column] = dict(zip(values, replacements))
+            for row, old_value in zip(datasets[filename], values):
+                row[column] = mappings[column][old_value]
+
+        foreign_keys = {
+            "person_id": "person_id", "caller_person_id": "person_id", "receiver_person_id": "person_id",
+            "sender_person_id": "person_id", "complainant_id": "person_id", "suspect_id": "person_id",
+            "account_id": "account_id", "case_id": "case_id", "fir_id": "fir_id",
+            "evidence_id": "evidence_id", "arrest_id": "arrest_id", "chargesheet_id": "chargesheet_id",
+            "phone_id": "phone_id", "vehicle_id": "vehicle_id", "device_id": "device_id",
+        }
+        for rows in datasets.values():
+            for row in rows:
+                for column, mapping_key in foreign_keys.items():
+                    if column in row and row[column] in mappings.get(mapping_key, {}):
+                        row[column] = mappings[mapping_key][row[column]]
+
+        case_numbers = set()
+        for row in datasets["cases.csv"]:
+            number = f"CASE/{self.random.randint(2020, 2026)}/{self.random.randint(10000, 99999)}"
+            while number in case_numbers:
+                number = f"CASE/{self.random.randint(2020, 2026)}/{self.random.randint(10000, 99999)}"
+            case_numbers.add(number)
+            row["case_number"] = number
+        fir_numbers = set()
+        for row in datasets["fir.csv"]:
+            number = f"FIR/{self.random.randint(2016, 2026)}/{self.random.randint(10000, 99999)}"
+            while number in fir_numbers:
+                number = f"FIR/{self.random.randint(2016, 2026)}/{self.random.randint(10000, 99999)}"
+            fir_numbers.add(number)
+            row["fir_number"] = number
+
     def run(self) -> dict[str, int]:
         started = time.perf_counter()
         self.generated_dir.mkdir(parents=True, exist_ok=True)
@@ -105,6 +157,7 @@ class DatasetPipeline:
                     "court_cases.csv": court, "investigation_diary.csv": diary, "devices.csv": devices,
                     "cdr.csv": communication("cdr", "cdr_id", 150), "sms_records.csv": communication("sms_records", "sms_id", 150),
                     "whatsapp_messages.csv": communication("whatsapp_messages", "message_id", 150), "emails.csv": communication("emails", "email_id", 100)}
+        self._randomize_identifiers(datasets)
         for name, rows in datasets.items():
             self._write(name, rows)
         elapsed = time.perf_counter() - started
