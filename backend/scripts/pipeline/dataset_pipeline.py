@@ -54,7 +54,7 @@ class DatasetPipeline:
             })
         cases = []
         for index in range(1, 31):
-            incident = now - timedelta(days=180 - index)
+            incident = now - timedelta(days=self.random.randint(30, 3650), hours=self.random.randint(0, 23), minutes=self.random.randint(0, 59))
             cases.append({"case_id": f"CAS{index:05d}", "case_number": f"CASE/{index:05d}",
                           "incident_datetime": incident.isoformat(), "crime_type": crime_types[(index * 5) % len(crime_types)],
                           "status": ["Registered", "Under Investigation", "Charge Sheet Filed", "Pending Trial"][index % 4]})
@@ -63,7 +63,7 @@ class DatasetPipeline:
             for offset, role in enumerate(("Complainant", "Suspect", "Witness")):
                 persons_by_case.append({"relationship_id": f"REL{len(persons_by_case)+1:06d}",
                                         "case_id": case["case_id"], "person_id": persons[(index + offset) % 100]["person_id"],
-                                        "role": role, "assigned_date": case["incident_datetime"][:10], "status": "Active"})
+                                        "role": role, "assigned_date": (datetime.fromisoformat(case["incident_datetime"]) + timedelta(days=self.random.randint(0, 14))).date().isoformat(), "status": ["Active", "Transferred", "Closed"][index % 3]})
         persons_by_case_ids = {row["case_id"]: row["person_id"] for row in persons_by_case if row["role"] == "Suspect"}
         firms = []
         for index, case in enumerate(cases, 1):
@@ -92,7 +92,9 @@ class DatasetPipeline:
                 case = cases[index % len(cases)]
                 sender = persons[index % 100]["person_id"]
                 receiver = persons[(index + 1) % 100]["person_id"]
-                row = {key: f"{key.upper()[:3]}{index:06d}", "sender_person_id": sender, "receiver_person_id": receiver, "case_id": case["case_id"], "message_datetime": (now - timedelta(days=index % 30)).isoformat()}
+                communication_time = datetime.fromisoformat(case["incident_datetime"]) + timedelta(days=self.random.randint(0, 120), hours=self.random.randint(0, 23), minutes=self.random.randint(0, 59))
+                communication_time = min(communication_time, now)
+                row = {key: f"{key.upper()[:3]}{index:06d}", "sender_person_id": sender, "receiver_person_id": receiver, "case_id": case["case_id"], "message_datetime": communication_time.isoformat()}
                 if name == "emails":
                     row["email_datetime"] = row.pop("message_datetime")
                 rows.append(row)
