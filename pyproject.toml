@@ -1,0 +1,89 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sentinel-ai-data"
+version = "0.1.0"
+description = "Data & Intelligence module for Sentinel AI — AI Powered Crime Intelligence Operating System"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.12"
+authors = [
+    {name = "Data & Intelligence Lead"},
+]
+
+dependencies = [
+    # ── Data Engineering ──
+    "pandas>=2.2.0",
+    "numpy>=1.26.0",
+    "openpyxl>=3.1.0",
+
+    # ── Database ──
+    "sqlalchemy>=2.0.0",
+    "psycopg2-binary>=2.9.9",
+    "alembic>=1.13.0",
+
+    # Backend authentication and API
+    "fastapi>=0.110.0",
+    "PyJWT>=2.8.0",
+    "pwdlib[argon2]>=0.2.0",
+
+    # ── Neo4j ──
+    "neo4j>=5.15.0",
+
+    # ── GIS ──
+    "geopandas>=0.14.0",
+    "shapely>=2.0.0",
+
+    # Document and image ingestion
+    "Pillow>=10.0.0",
+    "PyMuPDF>=1.23.0",
+    "pytesseract>=0.3.10",
+
+    # ── Visualization ──
+    "plotly>=5.18.0",
+
+    # ── Configuration ──
+    "python-dotenv>=1.0.0",
+    "pydantic>=2.5.0",
+    "pydantic-settings>=2.1.0",
+
+    # ── Utilities ──
+    "loguru>=0.7.0",
+    "tqdm>=4.66.0",
+]
+
+[project.optional-dependencies]
+ml = [
+    "scikit-learn>=1.4.0",
+    "xgboost>=2.0.0",
+    "torch>=2.1.0",
+]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-cov>=4.1.0",
+    "ruff>=0.1.0",
+    "mypy>=1.7.0",
+    "pre-commit>=3.6.0",
+]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W", "UP", "B", "SIM"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = "-v --tb=short"
+
+[tool.mypy]
+python_version = "3.12"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true

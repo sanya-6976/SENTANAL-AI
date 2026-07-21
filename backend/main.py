@@ -1,0 +1,60 @@
+from fastapi import FastAPI, APIRouter
+from fastapi.responses import JSONResponse
+
+from backend.auth.router import auth_router
+from backend.auth.exceptions import (
+    InvalidTokenError,
+    ExpiredTokenError,
+    InactiveUserError,
+    InsufficientPermissionError
+)
+
+from fastapi.middleware.cors import CORSMiddleware
+
+app = FastAPI(
+    title="Sentinel AI API Gateway",
+    description="Sentinel AI — Data Platform Backend Services",
+    version="1.0.0"
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Global Exception Handlers for Auth Exception mapping
+@app.exception_handler(InvalidTokenError)
+@app.exception_handler(ExpiredTokenError)
+def invalid_token_handler(request, exc):
+    return JSONResponse(status_code=401, content={"detail": str(exc)})
+
+
+@app.exception_handler(InactiveUserError)
+def inactive_user_handler(request, exc):
+    return JSONResponse(status_code=403, content={"detail": str(exc)})
+
+
+@app.exception_handler(InsufficientPermissionError)
+def insufficient_permission_handler(request, exc):
+    return JSONResponse(status_code=403, content={"detail": str(exc)})
+
+
+from backend.core.router import core_router
+from backend.analytics.router import analytics_router
+from backend.ai.router import ai_router
+
+api_router = APIRouter(prefix="/api/v1")
+api_router.include_router(auth_router)
+api_router.include_router(core_router)
+api_router.include_router(analytics_router)
+api_router.include_router(ai_router)
+
+app.include_router(api_router)
+
+
+@app.get("/")
+def read_root():
+    return {"status": "healthy", "service": "Sentinel AI API Gateway"}
