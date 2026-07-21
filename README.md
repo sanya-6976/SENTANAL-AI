@@ -6,8 +6,9 @@ Developed by: **Lina Aggarwal**
 
 # Overview
 The AI Module is the intelligence engine of Sentinel AI. It assists law enforcement officers by understanding natural language queries, retrieving relevant crime records, predicting crime hotspots, generating investigation reports, and providing AI-driven investigation insights.
+---
 
-
+---
 # AI Architecture
 
 Officer Query
@@ -33,8 +34,9 @@ Gemini AI
       │
       ▼
 Professional Response
+---
 
-
+---
 # Features
 
 ## OCR Pipeline
