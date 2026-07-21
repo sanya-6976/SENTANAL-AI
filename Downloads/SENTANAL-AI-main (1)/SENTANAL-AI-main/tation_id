@@ -1,0 +1,15 @@
+Binary file [35mbackend/auth/__pycache__/password.cpython-314.pyc[m matches
+Binary file [35mbackend/auth/__pycache__/router.cpython-314.pyc[m matches
+[35mbackend/auth/password.py[m[36m:[m[1;31mpassword_hash[mer = PasswordHash.recommended()
+[35mbackend/auth/password.py[m[36m:[m    return [1;31mpassword_hash[mer.hash(password)
+[35mbackend/auth/password.py[m[36m:[m    return [1;31mpassword_hash[mer.verify(password, hashed_password)
+[35mbackend/auth/router.py[m[36m:[m        if not db_user.[1;31mpassword_hash[m or not verify_password(request.password, db_user.[1;31mpassword_hash[m):
+[35mdocs/sprint1_design_document.md[m[36m:[m| 4 | `[1;31mpassword_hash[m` | VARCHAR(255) | NO | | `$2b$12$...` | Bcrypt hashed password |
+[35mmigrations/001_create_tables.sql[m[36m:[m    [1;31mpassword_hash[m VARCHAR(255) NOT NULL,
+[35mscripts/generate_synthetic_data.py[m[36m:[m            "[1;31mpassword_hash[m": hashlib.sha256(f"sentinel_{username}_{random.random()}".encode()).hexdigest(),
+[35mscripts/generate_synthetic_data.py[m[36m:[m    "user_id", "username", "email", "[1;31mpassword_hash[m", "officer_id",
+Binary file [35mtests/__pycache__/test_auth_integration.cpython-314-pytest-9.1.1.pyc[m matches
+[35mtests/test_auth_integration.py[m[36m:[mif not hasattr(User, "[1;31mpassword_hash[m"):
+[35mtests/test_auth_integration.py[m[36m:[m    User.[1;31mpassword_hash[m = Column("[1;31mpassword_hash[m", String(255), nullable=True)
+[35mtests/test_auth_integration.py[m[36m:[mdef test_[1;31mpassword_hash[ming_and_verification():
+[35mtests/test_auth_integration.py[m[36m:[m        [1;31mpassword_hash[m=hash_password(password_raw),
