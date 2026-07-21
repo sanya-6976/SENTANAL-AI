@@ -1,5 +1,5 @@
 # ============================================================
-# Sentinel AI — Data & Intelligence Module
+# Sentinel AI ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Data & Intelligence Module
 # Production Dependencies (compatible with Python 3.13)
 # ============================================================
 
@@ -15,6 +15,7 @@ alembic
 
 # Backend authentication and API
 fastapi
+python-multipart
 PyJWT
 pwdlib[argon2]
 
@@ -29,6 +30,10 @@ shapely
 Pillow
 PyMuPDF
 pytesseract
+easyocr
+rapidfuzz
+spacy
+google-genai
 
 # Visualization
 plotly
