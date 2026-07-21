@@ -22,15 +22,15 @@ export function EvidenceUploadPanel({ onEvidenceSelected, isProcessing }: Eviden
   const [isDragActive, setIsDragActive] = useState(false)
 
   const evidenceTypes = [
-    { label: 'Call Detail Records', icon: PhoneCall, color: 'text-[#2563EB]/80 bg-[#2563EB]/5 border-[#2563EB]/10' },
-    { label: 'GPS History', icon: MapPin, color: 'text-[#10B981]/80 bg-[#10B981]/5 border-[#10B981]/10' },
-    { label: 'IP Logs', icon: Globe, color: 'text-[#3B82F6]/80 bg-[#3B82F6]/5 border-[#3B82F6]/10' },
-    { label: 'Mobile Extraction Reports', icon: Smartphone, color: 'text-[#8B5CF6]/80 bg-[#8B5CF6]/5 border-[#8B5CF6]/10' },
-    { label: 'Chat Exports', icon: MessageSquare, color: 'text-[#EC4899]/80 bg-[#EC4899]/5 border-[#EC4899]/10' },
-    { label: 'Email Logs', icon: Mail, color: 'text-[#F59E0B]/80 bg-[#F59E0B]/5 border-[#F59E0B]/10' },
-    { label: 'Browser History', icon: Compass, color: 'text-[#14B8A6]/80 bg-[#14B8A6]/5 border-[#14B8A6]/10' },
-    { label: 'Screenshots', icon: Image, color: 'text-[#E2E8F0]/80 bg-[#E2E8F0]/5 border-[#E2E8F0]/10' },
-    { label: 'Cyber Forensic Reports', icon: FileText, color: 'text-[#EF4444]/80 bg-[#EF4444]/5 border-[#EF4444]/10' },
+    { label: 'Call Detail Records', icon: PhoneCall, color: 'text-[#2563EB]/90 bg-[#2563EB]/5 border-[#2563EB]/15' },
+    { label: 'GPS History', icon: MapPin, color: 'text-[#10B981]/90 bg-[#10B981]/5 border-[#10B981]/15' },
+    { label: 'IP Logs', icon: Globe, color: 'text-[#3B82F6]/90 bg-[#3B82F6]/5 border-[#3B82F6]/15' },
+    { label: 'Mobile Extraction Reports', icon: Smartphone, color: 'text-[#8B5CF6]/90 bg-[#8B5CF6]/5 border-[#8B5CF6]/15' },
+    { label: 'Chat Exports', icon: MessageSquare, color: 'text-[#EC4899]/90 bg-[#EC4899]/5 border-[#EC4899]/15' },
+    { label: 'Email Logs', icon: Mail, color: 'text-[#F59E0B]/90 bg-[#F59E0B]/5 border-[#F59E0B]/15' },
+    { label: 'Browser History', icon: Compass, color: 'text-[#14B8A6]/90 bg-[#14B8A6]/5 border-[#14B8A6]/15' },
+    { label: 'Screenshots', icon: Image, color: 'text-[#E2E8F0]/90 bg-[#E2E8F0]/5 border-[#E2E8F0]/10' },
+    { label: 'Cyber Forensic Reports', icon: FileText, color: 'text-[#EF4444]/90 bg-[#EF4444]/5 border-[#EF4444]/15' }
   ]
 
   const handleDrag = (e: React.DragEvent) => {
@@ -69,48 +69,46 @@ export function EvidenceUploadPanel({ onEvidenceSelected, isProcessing }: Eviden
   }
 
   return (
-    <div className="bg-[#121826] border border-[rgba(255,255,255,0.08)] rounded-[16px] p-6 shadow-md transition-all duration-300 hover:border-[rgba(37,99,235,0.15)] flex flex-col h-full justify-between">
+    <div className="flex h-full flex-col justify-between rounded-[24px] border border-white/10 bg-[#121826] p-6 shadow-[0_0_0_1px_rgba(255,255,255,0.02)] transition-all duration-300 hover:border-[#2563EB]/25">
       <div>
-        {/* Header section of Panel */}
-        <div className="flex justify-between items-start mb-5 border-b border-[rgba(255,255,255,0.04)] pb-3">
+        <div className="flex items-start justify-between border-b border-white/10 pb-4">
           <div>
-            <h3 className="text-xs font-bold tracking-wider uppercase text-[#F8FAFC]">Upload Evidence</h3>
-            <p className="text-[9px] font-mono uppercase tracking-widest text-[#94A3B8] mt-1">Legally Obtained Forensics Ingestion</p>
+            <h3 className="text-sm font-semibold uppercase tracking-[0.24em] text-[#F8FAFC]">Upload evidence</h3>
+            <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.24em] text-[#94A3B8]">Legally obtained forensic ingestion</p>
+          </div>
+          <div className="rounded-full border border-[#2563EB]/20 bg-[#2563EB]/10 px-2.5 py-1 text-[9px] font-semibold uppercase tracking-[0.2em] text-[#7FB0FF]">
+            Secure
           </div>
         </div>
 
-        {/* Drag & Drop Zone */}
         <div
           onDragEnter={handleDrag}
           onDragOver={handleDrag}
           onDragLeave={handleDrag}
           onDrop={handleDrop}
           onClick={triggerBrowse}
-          className={`border-2 border-dashed rounded-xl p-8 flex flex-col items-center justify-center text-center transition-all min-h-[180px] cursor-pointer group ${
+          className={`mt-5 flex min-h-[200px] cursor-pointer flex-col items-center justify-center rounded-[22px] border-2 border-dashed p-8 text-center transition-all ${
             isDragActive
-              ? 'border-[#2563EB] bg-[#2563EB]/5 shadow-[0_0_15px_rgba(37,99,235,0.1)]'
-              : 'border-[rgba(255,255,255,0.08)] hover:border-[#2563EB]/40 bg-[#0B1220]/40'
-          } ${isProcessing ? 'opacity-60 cursor-not-allowed' : ''}`}
+              ? 'border-[#2563EB] bg-[#2563EB]/10 shadow-[0_0_18px_rgba(37,99,235,0.12)]'
+              : 'border-white/10 bg-[#0B1220]/70 hover:border-[#2563EB]/35'
+          } ${isProcessing ? 'cursor-not-allowed opacity-70' : ''}`}
         >
-          <div className="h-12 w-12 rounded-full bg-[#2563EB]/10 border border-[#2563EB]/20 flex items-center justify-center text-[#2563EB] mb-3 group-hover:scale-105 transition-transform">
-            <UploadCloud className={`h-6 w-6 stroke-1.2 ${isProcessing ? 'animate-pulse' : ''}`} />
+          <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full border border-[#2563EB]/20 bg-[#2563EB]/10 text-[#2563EB] transition-transform group-hover:scale-105">
+            <UploadCloud className={`h-6 w-6 ${isProcessing ? 'animate-pulse' : ''}`} />
           </div>
 
-          <h4 className="text-white font-bold text-xs tracking-wide">
-            {isProcessing ? 'Processing Forensic File...' : 'Drag & Drop Evidence'}
+          <h4 className="text-sm font-semibold text-white">
+            {isProcessing ? 'Processing forensic file...' : 'Drag and drop evidence'}
           </h4>
-
-          <p className="text-[#94A3B8] text-[10px] mt-1 font-medium">
-            {isProcessing ? 'Sentinel AI is analyzing contents' : 'or browse supported files'}
+          <p className="mt-1 text-sm text-[#94A3B8]">
+            {isProcessing ? 'Sentinel AI is analyzing contents.' : 'or browse supported files from the secured evidence source.'}
           </p>
-
-          <p className="text-[#94A3B8]/30 text-[8px] font-mono tracking-wider uppercase mt-4">
-            Authorized Personnel Only • Encrypted Transit
+          <p className="mt-4 text-[9px] font-semibold uppercase tracking-[0.24em] text-[#94A3B8]/70">
+            Authorized personnel only • encrypted transit
           </p>
         </div>
       </div>
 
-      {/* Hidden file input */}
       <input
         type="file"
         ref={fileInputRef}
@@ -120,22 +118,21 @@ export function EvidenceUploadPanel({ onEvidenceSelected, isProcessing }: Eviden
         accept=".pdf,.csv,.xlsx,.txt,.log,.xml,.json,.zip,.tar,.db,.sqlite,.png,.jpg,.jpeg"
       />
 
-      {/* Supported Evidence Chips */}
       <div className="mt-6">
-        <h5 className="text-[9px] font-mono tracking-widest text-[#94A3B8] font-bold uppercase mb-3">
-          Supported Formats & Systems
+        <h5 className="mb-3 text-[9px] font-semibold uppercase tracking-[0.24em] text-[#94A3B8]">
+          Supported formats & systems
         </h5>
-        
-        <div className="grid grid-cols-3 gap-2">
+
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
           {evidenceTypes.map((type) => {
             const Icon = type.icon
             return (
               <div
                 key={type.label}
-                className={`flex items-center gap-1.5 p-2 rounded-lg border text-left transition-colors hover:bg-white/[0.02] ${type.color}`}
+                className={`flex items-center gap-2 rounded-xl border p-2.5 text-left transition-colors hover:bg-white/[0.02] ${type.color}`}
               >
                 <Icon className="h-3.5 w-3.5 shrink-0" />
-                <span className="text-[#94A3B8] font-medium text-[9px] truncate leading-tight select-none" title={type.label}>
+                <span className="text-[10px] font-medium leading-tight text-[#94A3B8]" title={type.label}>
                   {type.label}
                 </span>
               </div>

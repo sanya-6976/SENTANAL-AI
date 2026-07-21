@@ -7,10 +7,9 @@ import {
   TrendingUp,
   MapPinned,
   BellRing,
-  Search,
-  FileText,
-  Download,
-  ChevronRight
+  Mic,
+  ClipboardList,
+  Brain
 } from 'lucide-react'
 import PageLoader from '../../components/ui/PageLoader'
 import {
@@ -34,7 +33,6 @@ import {
 } from '../../components/ui/DashboardComponents'
 import apiClient from "../../api/client";
 import DashboardFooter from "../../components/layout/DashboardFooter";
-import FloatingQuickMenu from "../../components/ui/FloatingQuickMenu";
 
 // Status Badge Components
 interface StatusBadgeProps {
@@ -105,6 +103,7 @@ function DashboardPage() {
   const [districtIntelligence, setDistrictIntelligence] = useState<DistrictIntelligence[]>([]);
   const [recentCases, setRecentCases] = useState<RecentCase[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isAssistantExpanded, setIsAssistantExpanded] = useState(false);
 
   useEffect(() => {
     const loadDashboard = async () => {
@@ -536,53 +535,89 @@ function DashboardPage() {
         <div className="flex flex-col lg:col-span-3">
           <DashboardCard
             title="Quick Actions"
-            subtitle="Secure System Navigation Links"
-            className="h-full"
+            subtitle="Frequently Used Investigation Tools"
           >
-            <div className="mt-2 flex flex-1 min-h-0 flex-col gap-3 select-none">
-              <button
-                onClick={() => navigate("/crime-database")}
-                className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-lg text-left text-xs font-semibold text-white bg-[#111827] border border-[rgba(255,255,255,0.06)] hover:bg-[#182235] transition-all duration-200 cursor-pointer"
-              >
-                <div className="flex items-center gap-2.5">
-                  <Search className="h-4 w-4 text-[#60A5FA]" />
-                  <span>Search Crime / FIR</span>
-                </div>
-                <ChevronRight className="h-3.5 w-3.5 opacity-60" />
-              </button>
+            <div className="flex flex-col select-none">
+              {/* Collapsed State */}
+              {!isAssistantExpanded && (
+                <div className="flex flex-col items-center justify-center gap-3 py-12">
+                  {/* Police Badge */}
+                  <button
+                    onClick={() => setIsAssistantExpanded(true)}
+                    className="group relative flex h-16 w-16 items-center justify-center rounded-full border border-[#2563EB]/30 bg-[#0B1220] shadow-[0_8px_32px_rgba(37,99,235,0.25)] transition-all duration-300 hover:scale-105 hover:border-[#2563EB]/50 hover:shadow-[0_12px_40px_rgba(37,99,235,0.35)]"
+                  >
+                    <div className="absolute inset-0 rounded-full bg-[#2563EB]/10 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                    <Shield className="h-8 w-8 text-[#60A5FA]" />
+                  </button>
 
-              <button
-                onClick={() => navigate("/investigation")}
-                className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-lg text-left text-xs font-semibold text-white bg-[#111827] border border-[rgba(255,255,255,0.06)] hover:bg-[#182235] transition-all duration-200 cursor-pointer"
-              >
-                <div className="flex items-center gap-2.5">
-                  <FolderOpen className="h-4 w-4 text-[#60A5FA]" />
-                  <span>Open Investigation</span>
+                  {/* Tool Preview */}
+                  <div className="text-center space-y-1">
+                    <p className="text-[10px] text-[#94A3B8] font-medium">
+                      Voice Search • Diary • Digital Intelligence Hub
+                    </p>
+                    <p className="text-[9px] text-[#64748B]">
+                      Click the badge to expand
+                    </p>
+                  </div>
                 </div>
-                <ChevronRight className="h-3.5 w-3.5 opacity-60" />
-              </button>
+              )}
 
-              <button
-                onClick={() => navigate("/reports")}
-                className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-lg text-left text-xs font-semibold text-white bg-[#111827] border border-[rgba(255,255,255,0.06)] hover:bg-[#182235] transition-all duration-200 cursor-pointer"
+              {/* Expanded State */}
+              <div
+                className={`flex flex-col gap-3 transition-all duration-300 ease-in-out overflow-hidden ${
+                  isAssistantExpanded ? 'opacity-100 max-h-[320px] py-2' : 'opacity-0 max-h-0'
+                }`}
               >
-                <div className="flex items-center gap-2.5">
-                  <FileText className="h-4 w-4 text-[#60A5FA]" />
-                  <span>Generate Report</span>
-                </div>
-                <ChevronRight className="h-3.5 w-3.5 opacity-60" />
-              </button>
+                {/* Voice Search */}
+                <button
+                  onClick={() => navigate("/voice-search")}
+                  className="group w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left bg-[#0B1220] border border-[rgba(255,255,255,0.06)] hover:border-[#2563EB]/30 hover:bg-[#111827] transition-all duration-200 cursor-pointer"
+                >
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#2563EB]/10 border border-[#2563EB]/20">
+                    <Mic className="h-5 w-5 text-[#60A5FA]" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs font-semibold text-white">Voice Search</p>
+                    <p className="text-[10px] text-[#94A3B8]">Search crime records using voice commands</p>
+                  </div>
+                </button>
 
-              <button
-                onClick={() => alert('Exporting dashboard summary PDF...')}
-                className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-lg text-left text-xs font-semibold text-white bg-[#111827] border border-[rgba(255,255,255,0.06)] hover:bg-[#182235] transition-all duration-200 cursor-pointer"
-              >
-                <div className="flex items-center gap-2.5">
-                  <Download className="h-4 w-4 text-[#60A5FA]" />
-                  <span>Export Summary</span>
-                </div>
-                <ChevronRight className="h-3.5 w-3.5 opacity-60" />
-              </button>
+                {/* Officer Investigation Diary */}
+                <button
+                  onClick={() => navigate("/investigation-diary")}
+                  className="group w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left bg-[#0B1220] border border-[rgba(255,255,255,0.06)] hover:border-[#2563EB]/30 hover:bg-[#111827] transition-all duration-200 cursor-pointer"
+                >
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#2563EB]/10 border border-[#2563EB]/20">
+                    <ClipboardList className="h-5 w-5 text-[#60A5FA]" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs font-semibold text-white">Officer Investigation Diary</p>
+                    <p className="text-[10px] text-[#94A3B8]">View and manage officer investigation notes</p>
+                  </div>
+                </button>
+
+                {/* Digital Intelligence Hub */}
+                <button
+                  onClick={() => navigate("/digital-intelligence")}
+                  className="group w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left bg-[#0B1220] border border-[rgba(255,255,255,0.06)] hover:border-[#2563EB]/30 hover:bg-[#111827] transition-all duration-200 cursor-pointer"
+                >
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#2563EB]/10 border border-[#2563EB]/20">
+                    <Brain className="h-5 w-5 text-[#60A5FA]" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs font-semibold text-white">Digital Intelligence Hub</p>
+                    <p className="text-[10px] text-[#94A3B8]">Analyze uploaded digital evidence using Sentinel AI</p>
+                  </div>
+                </button>
+
+                {/* Close Button */}
+                <button
+                  onClick={() => setIsAssistantExpanded(false)}
+                  className="w-full px-4 py-2 rounded-xl border border-[rgba(255,255,255,0.06)] bg-[#111827] hover:bg-[#1E293B] text-[#94A3B8] hover:text-white text-[10px] font-semibold transition-all duration-200"
+                >
+                  Close
+                </button>
+              </div>
             </div>
           </DashboardCard>
         </div>
@@ -591,8 +626,6 @@ function DashboardPage() {
 
       {/* SECTION 8: Footer */}
       <DashboardFooter />
-
-      <FloatingQuickMenu />
 
     </div>
   )

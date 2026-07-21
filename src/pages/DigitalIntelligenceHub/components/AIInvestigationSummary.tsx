@@ -8,7 +8,7 @@ interface AIInvestigationSummaryProps {
 
 export function AIInvestigationSummary({ summary, confidenceScore, sourceCount }: AIInvestigationSummaryProps) {
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 flex flex-col h-full">
       {/* Sub-Header */}
       <div className="flex items-center justify-between border-b border-[rgba(255,255,255,0.06)] pb-2 select-none">
         <h4 className="text-xs font-bold tracking-wider uppercase text-[#F8FAFC]">
@@ -20,11 +20,11 @@ export function AIInvestigationSummary({ summary, confidenceScore, sourceCount }
       </div>
 
       {/* Summary Card */}
-      <div className="bg-[#121826] border border-[rgba(255,255,255,0.08)] rounded-[16px] p-6 shadow-md transition-all duration-300 hover:border-[rgba(37,99,235,0.15)]">
+      <div className="bg-[#121826] border border-[rgba(255,255,255,0.08)] rounded-[16px] p-6 shadow-md transition-all duration-300 hover:border-[rgba(37,99,235,0.15)] flex flex-col flex-1">
         {summary ? (
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 h-full">
             {/* Left 3/4 content */}
-            <div className="md:col-span-3 space-y-3.5">
+            <div className="md:col-span-3 space-y-3.5 flex flex-col justify-center">
               <div className="flex items-center gap-2 text-[#2563EB]">
                 <Brain className="h-4.5 w-4.5" />
                 <span className="text-[10px] font-mono font-bold tracking-wider uppercase">SENTINEL COGNITIVE CORE</span>
@@ -61,7 +61,7 @@ export function AIInvestigationSummary({ summary, confidenceScore, sourceCount }
             </div>
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center py-8 text-center select-none">
+          <div className="flex flex-col items-center justify-center py-8 text-center select-none flex-1">
             <Brain className="h-8 w-8 text-[#94A3B8]/30 mb-3 animate-pulse" />
             <h5 className="text-[11px] font-bold text-[#94A3B8]/60 uppercase tracking-wider">
               Awaiting Evidence Ingestion
