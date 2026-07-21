@@ -1,0 +1,74 @@
+[33m39faaff2[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m refs/heads/main@{Tue Jul 21 14:15:42 2026}: pull: Fast-forward
+[33m39faaff2[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m HEAD@{Tue Jul 21 14:15:42 2026}: pull: Fast-forward
+[33m5f35bf4b[m[33m ([m[1;31morigin/frontend[m[33m, [m[1;31morigin/data[m[33m, [m[1;31morigin/backend[m[33m, [m[1;31morigin/ai[m[33m)[m refs/remotes/origin/data@{Tue Jul 21 14:15:41 2026}: pull: forced-update
+[33m39faaff2[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m refs/remotes/origin/main@{Tue Jul 21 14:15:41 2026}: pull: fast-forward
+[33m25534b88[m refs/remotes/origin/main@{Tue Jul 21 14:04:11 2026}: update by push
+[33m25534b88[m refs/heads/main@{Tue Jul 21 14:03:48 2026}: pull --tags origin main: Merge made by the 'ort' strategy.
+[33m25534b88[m HEAD@{Tue Jul 21 14:03:48 2026}: pull --tags origin main: Merge made by the 'ort' strategy.
+[33mfaddeb47[m refs/heads/main@{Tue Jul 21 14:03:23 2026}: commit: Fix
+[33mfaddeb47[m HEAD@{Tue Jul 21 14:03:23 2026}: commit: Fix
+[33mcb3f7ccc[m refs/heads/main@{Tue Jul 21 14:01:56 2026}: reset: moving to cb3f7ccc6e5b0e42ec7698b851eb8f53b2800d96
+[33mcb3f7ccc[m HEAD@{Tue Jul 21 14:01:56 2026}: reset: moving to cb3f7ccc6e5b0e42ec7698b851eb8f53b2800d96
+[33m5f35bf4b[m[33m ([m[1;31morigin/frontend[m[33m, [m[1;31morigin/data[m[33m, [m[1;31morigin/backend[m[33m, [m[1;31morigin/ai[m[33m)[m refs/remotes/origin/ai@{Tue Jul 21 13:56:29 2026}: pull: forced-update
+[33m5f35bf4b[m[33m ([m[1;31morigin/frontend[m[33m, [m[1;31morigin/data[m[33m, [m[1;31morigin/backend[m[33m, [m[1;31morigin/ai[m[33m)[m refs/remotes/origin/backend@{Tue Jul 21 13:56:29 2026}: pull: forced-update
+[33m5f35bf4b[m[33m ([m[1;31morigin/frontend[m[33m, [m[1;31morigin/data[m[33m, [m[1;31morigin/backend[m[33m, [m[1;31morigin/ai[m[33m)[m refs/remotes/origin/frontend@{Tue Jul 21 13:56:29 2026}: pull: forced-update
+[33m5f35bf4b[m[33m ([m[1;31morigin/frontend[m[33m, [m[1;31morigin/data[m[33m, [m[1;31morigin/backend[m[33m, [m[1;31morigin/ai[m[33m)[m refs/remotes/origin/main@{Tue Jul 21 13:56:29 2026}: pull: forced-update
+[33m12b4c2f7[m refs/remotes/origin/main@{Mon Jul 20 23:12:38 2026}: update by push
+[33m12b4c2f7[m refs/heads/main@{Mon Jul 20 23:12:30 2026}: commit: Backend Readme
+[33m12b4c2f7[m HEAD@{Mon Jul 20 23:12:30 2026}: commit: Backend Readme
+[33mdd210f3d[m refs/remotes/origin/main@{Mon Jul 20 23:08:04 2026}: update by push
+[33mdd210f3d[m refs/heads/main@{Mon Jul 20 23:07:57 2026}: commit: fixed , database , investigataion workspace , analytics , Database and authentication , Officer Investigation Diary
+[33mdd210f3d[m HEAD@{Mon Jul 20 23:07:57 2026}: commit: fixed , database , investigataion workspace , analytics , Database and authentication , Officer Investigation Diary
+[33mf8221d12[m refs/heads/main@{Mon Jul 20 21:52:28 2026}: pull: Fast-forward
+[33mf8221d12[m HEAD@{Mon Jul 20 21:52:28 2026}: pull: Fast-forward
+[33md5165a3f[m[33m ([m[1;35mrefs/stash[m[33m)[m refs/stash@{Mon Jul 20 21:52:26 2026}: WIP on main: 9cf8020 Complete Sentinel AI data integration pipeline
+[33m9cf80207[m HEAD@{Mon Jul 20 21:52:26 2026}: reset: moving to HEAD
+[33mf8221d12[m refs/remotes/origin/main@{Mon Jul 20 21:49:05 2026}: pull: fast-forward
+[33ma3d2a917[m refs/remotes/origin/data@{Mon Jul 20 21:36:31 2026}: pull: fast-forward
+[33m58eb1160[m refs/remotes/origin/main@{Mon Jul 20 21:36:31 2026}: pull: fast-forward
+[33m9cf80207[m refs/heads/main@{Mon Jul 20 20:45:16 2026}: pull: Fast-forward
+[33m9cf80207[m HEAD@{Mon Jul 20 20:45:16 2026}: pull: Fast-forward
+[33m915ea60d[m refs/remotes/origin/data@{Mon Jul 20 20:45:15 2026}: pull: fast-forward
+[33m9cf80207[m refs/remotes/origin/main@{Mon Jul 20 20:45:15 2026}: pull: fast-forward
+[33mb1dd6250[m refs/remotes/origin/main@{Mon Jul 20 16:55:10 2026}: update by push
+[33mb1dd6250[m refs/heads/main@{Mon Jul 20 16:55:03 2026}: commit: Fixed Login / AI insights / Browser Optimization
+[33mb1dd6250[m HEAD@{Mon Jul 20 16:55:03 2026}: commit: Fixed Login / AI insights / Browser Optimization
+[33m22b6489c[m refs/remotes/origin/main@{Sat Jul 18 13:46:16 2026}: update by push
+[33m22b6489c[m refs/heads/main@{Sat Jul 18 13:46:06 2026}: commit: Configure 3-key fallback system for Gemini API
+[33m22b6489c[m HEAD@{Sat Jul 18 13:46:06 2026}: commit: Configure 3-key fallback system for Gemini API
+[33m9a64edcd[m refs/heads/main@{Sat Jul 18 13:44:54 2026}: reset: moving to 9a64edcdd2927278563af554d602c5a32c389d6e
+[33m9a64edcd[m HEAD@{Sat Jul 18 13:44:54 2026}: reset: moving to 9a64edcdd2927278563af554d602c5a32c389d6e
+[33m013f1df8[m refs/heads/main@{Sat Jul 18 13:43:41 2026}: commit: APi keys FIX
+[33m013f1df8[m HEAD@{Sat Jul 18 13:43:41 2026}: commit: APi keys FIX
+[33md72319da[m refs/heads/main@{Sat Jul 18 13:43:39 2026}: commit: APi keys fixed
+[33md72319da[m HEAD@{Sat Jul 18 13:43:39 2026}: commit: APi keys fixed
+[33m9a64edcd[m refs/remotes/origin/main@{Sat Jul 18 13:29:27 2026}: update by push
+[33m9a64edcd[m refs/heads/main@{Sat Jul 18 13:28:58 2026}: commit: misscelaneous
+[33m9a64edcd[m HEAD@{Sat Jul 18 13:28:58 2026}: commit: misscelaneous
+[33m112b8b10[m refs/heads/main@{Sat Jul 18 13:28:45 2026}: commit: All the backend Endpoints for the WOW features ready
+[33m112b8b10[m HEAD@{Sat Jul 18 13:28:45 2026}: commit: All the backend Endpoints for the WOW features ready
+[33mcd7b9974[m refs/remotes/origin/main@{Sat Jul 18 13:19:33 2026}: update by push
+[33mcd7b9974[m refs/heads/main@{Sat Jul 18 13:19:26 2026}: commit: fixed , ocr updation , Database viewing and Dashboard analytics
+[33mcd7b9974[m HEAD@{Sat Jul 18 13:19:26 2026}: commit: fixed , ocr updation , Database viewing and Dashboard analytics
+[33m41797959[m refs/remotes/origin/ai@{Sat Jul 18 12:56:59 2026}: pull: fast-forward
+[33mf2567190[m refs/remotes/origin/main@{Sat Jul 18 12:47:49 2026}: update by push
+[33mf2567190[m refs/heads/main@{Sat Jul 18 12:47:41 2026}: commit: Fix search in investigation workspace
+[33mf2567190[m HEAD@{Sat Jul 18 12:47:41 2026}: commit: Fix search in investigation workspace
+[33mb0967744[m refs/remotes/origin/main@{Sat Jul 18 12:43:25 2026}: update by push
+[33mb0967744[m refs/heads/main@{Sat Jul 18 12:43:21 2026}: pull --tags origin main: Merge made by the 'ort' strategy.
+[33m264b0a08[m refs/remotes/origin/main@{Sat Jul 18 12:43:21 2026}: pull --tags origin main: fast-forward
+[33mb0967744[m HEAD@{Sat Jul 18 12:43:21 2026}: pull --tags origin main: Merge made by the 'ort' strategy.
+[33m7140a562[m refs/heads/main@{Sat Jul 18 12:43:16 2026}: commit: Fixed Investigation workspace
+[33m7140a562[m HEAD@{Sat Jul 18 12:43:16 2026}: commit: Fixed Investigation workspace
+[33m3b83415d[m refs/remotes/origin/main@{Fri Jul 17 21:54:27 2026}: update by push
+[33m3b83415d[m refs/heads/main@{Fri Jul 17 21:53:33 2026}: commit: Integration Commit
+[33m3b83415d[m HEAD@{Fri Jul 17 21:53:33 2026}: commit: Integration Commit
+[33mcd7dca2c[m refs/heads/main@{Fri Jul 17 21:53:29 2026}: reset: moving to cd7dca2
+[33mcd7dca2c[m HEAD@{Fri Jul 17 21:53:29 2026}: reset: moving to cd7dca2
+[33m80d7c7e0[m refs/heads/main@{Fri Jul 17 21:44:49 2026}: commit: Rectifying error
+[33m80d7c7e0[m HEAD@{Fri Jul 17 21:44:49 2026}: commit: Rectifying error
+[33m23e18fd3[m refs/heads/main@{Fri Jul 17 21:38:00 2026}: commit: Integration Commit
+[33m23e18fd3[m HEAD@{Fri Jul 17 21:38:00 2026}: commit: Integration Commit
+[33mcd7dca2c[m refs/heads/main@{Fri Jul 17 20:53:09 2026}: clone: from https://github.com/sanya-6976/SENTANAL-AI
+[33mcd7dca2c[m refs/remotes/origin/HEAD@{Fri Jul 17 20:53:09 2026}: clone: from https://github.com/sanya-6976/SENTANAL-AI
+[33mcd7dca2c[m HEAD@{Fri Jul 17 20:53:09 2026}: clone: from https://github.com/sanya-6976/SENTANAL-AI
