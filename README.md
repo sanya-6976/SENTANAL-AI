@@ -142,11 +142,9 @@ Implemented Models:
 - Explainability Service
 - Modus Operandi Anomaly Detection
 
----
 
 # Project Structure
 
-```
 app/
 │
 ├── agents/
