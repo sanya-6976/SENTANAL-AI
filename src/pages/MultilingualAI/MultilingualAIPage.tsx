@@ -1,11 +1,10 @@
 import { useState } from 'react'
 import {
-  Languages,
-  Sparkles,
   FileText,
   Copy,
   Check,
-  ArrowRight
+  ArrowRight,
+  CheckCircle2
 } from 'lucide-react'
 
 interface SampleFIR {
@@ -73,157 +72,170 @@ export default function MultilingualAIPage() {
   }
 
   return (
-    <div className="space-y-8 animate-fade-in select-none max-w-[1600px] mx-auto pb-12 font-sans">
-
-      {/* SECTION 1: UPLOAD / SELECT FIR & LANGUAGE TOGGLE BAR */}
-      <div className="bg-[#0B1220] border border-[rgba(255,255,255,0.06)] rounded-2xl p-6 space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[rgba(255,255,255,0.06)] pb-4">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-[#2563EB]/15 border border-[#2563EB]/30 rounded-xl text-[#2563EB]">
-              <Languages className="h-5 w-5" />
-            </div>
-            <div>
-              <h2 className="text-xs font-bold text-white uppercase tracking-wider font-mono">
-                Multilingual AI FIR Translator & Legal Information Extractor
-              </h2>
-              <p className="text-[10px] text-[#94A3B8] font-mono mt-0.5">
-                Automatic Language Detection • Information Extraction • English ↔ Kannada Toggle
-              </p>
-            </div>
-          </div>
-
-          {/* Language Toggle: English ↔ Kannada */}
-          <div className="flex items-center gap-1.5 bg-[#080D1A] border border-[rgba(255,255,255,0.08)] p-1.5 rounded-xl font-mono text-xs">
-            <span className="text-[10px] text-[#94A3B8] font-bold uppercase px-2">Display Language:</span>
-            <button
-              onClick={() => setSelectedLang('en')}
-              className={`px-3 py-1.5 rounded-lg font-bold cursor-pointer transition-all ${
-                selectedLang === 'en' ? 'bg-[#2563EB] text-white shadow-sm' : 'text-[#94A3B8] hover:text-white'
-              }`}
-            >
-              English
-            </button>
-            <button
-              onClick={() => setSelectedLang('kn')}
-              className={`px-3 py-1.5 rounded-lg font-bold cursor-pointer transition-all ${
-                selectedLang === 'kn' ? 'bg-[#2563EB] text-white shadow-sm' : 'text-[#94A3B8] hover:text-white'
-              }`}
-            >
-              ಕನ್ನಡ (Kannada)
-            </button>
-          </div>
+    <div className="mx-auto max-w-[1600px] animate-fade-in select-none space-y-6 pb-12 font-sans">
+      <div className="rounded-[24px] border border-[#2563EB]/20 bg-[#0B1220] p-5 lg:p-6">
+        <div className="border-b border-white/10 pb-4">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-[#94A3B8]">
+            Step 1 • Upload FIR
+          </p>
+          <h3 className="mt-1 text-sm font-semibold text-white">
+            Select the record to place into the translation pipeline
+          </h3>
         </div>
 
-        {/* Preset FIR Selection Buttons */}
-        <div className="space-y-2">
-          <label className="text-[10px] font-mono text-[#94A3B8] uppercase font-bold block">
-            Select FIR Record to Translate & Extract:
-          </label>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {SAMPLE_FIRS.map((fir) => (
-              <button
-                key={fir.id}
-                onClick={() => setSelectedFir(fir)}
-                className={`w-full text-left p-3.5 rounded-xl border text-xs transition-all cursor-pointer flex items-center justify-between ${
-                  selectedFir.id === fir.id
-                    ? 'bg-[#2563EB]/15 border-[#2563EB] text-white font-bold'
-                    : 'bg-[#080D1A] border-[rgba(255,255,255,0.06)] text-[#94A3B8] hover:text-white hover:border-[rgba(255,255,255,0.15)]'
-                }`}
-              >
-                <div className="flex items-center gap-2.5">
-                  <FileText className="h-4 w-4 text-[#2563EB]" />
-                  <span>{fir.title}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-[9px] font-mono text-[#10B981] bg-[#10B981]/15 px-2 py-0.5 rounded font-bold">
-                    DETECTED: {fir.sourceLang}
-                  </span>
-                  <ArrowRight className={`h-3.5 w-3.5 ${selectedFir.id === fir.id ? 'text-[#2563EB]' : 'opacity-40'}`} />
-                </div>
-              </button>
-            ))}
-          </div>
+        <div className="mt-4 grid gap-3 lg:grid-cols-2">
+          {SAMPLE_FIRS.map((fir) => (
+            <button
+              key={fir.id}
+              onClick={() => setSelectedFir(fir)}
+              className={`flex h-[72px] w-full items-center justify-between rounded-2xl border p-3.5 text-left transition-all ${
+                selectedFir.id === fir.id
+                  ? 'border-[#2563EB] bg-[#2563EB]/12 text-white'
+                  : 'border-white/10 bg-[#08101d] text-[#94A3B8] hover:border-[#2563EB]/30 hover:text-white'
+              }`}
+            >
+              <div className="flex min-w-0 items-center gap-2.5">
+                <FileText className="h-4 w-4 shrink-0 text-[#2563EB]" />
+                <span className="truncate text-sm font-medium">{fir.title}</span>
+              </div>
+              <div className="flex shrink-0 items-center gap-2">
+                <span className="rounded-full bg-[#10B981]/10 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.2em] text-[#34D399]">
+                  {fir.sourceLang}
+                </span>
+                <ArrowRight className={`h-3.5 w-3.5 shrink-0 ${selectedFir.id === fir.id ? 'text-[#2563EB]' : 'opacity-40'}`} />
+              </div>
+            </button>
+          ))}
         </div>
       </div>
 
-      {/* SECTION 2: TRANSLATED DASHBOARD & INFORMATION EXTRACTION */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        
-        {/* Left Column: Original Vernacular Input */}
-        <div className="lg:col-span-6 space-y-4">
-          <div className="bg-[#0B1220] border border-[rgba(255,255,255,0.06)] rounded-2xl p-6 space-y-4">
-            <div className="flex justify-between items-center border-b border-[rgba(255,255,255,0.06)] pb-3">
-              <h3 className="text-xs font-bold text-white uppercase tracking-wider font-mono">
-                Original FIR Input Document
-              </h3>
-              <span className="text-[10px] font-mono text-[#10B981] bg-[#10B981]/15 border border-[#10B981]/30 px-2 py-0.5 rounded font-bold">
-                AUTO-DETECTED: {selectedFir.sourceLang}
-              </span>
+      <div className="grid grid-cols-1 items-start gap-6 xl:grid-cols-2">
+        <div className="flex flex-col gap-6">
+          <div className="rounded-[24px] border border-white/10 bg-[#0B1220] p-6">
+            <div className="flex items-center gap-3 border-b border-white/10 pb-4">
+              <div className="rounded-2xl border border-[#2563EB]/25 bg-[#2563EB]/10 p-2 text-[#2563EB]">
+                <FileText className="h-4.5 w-4.5" />
+              </div>
+              <div>
+                <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-[#94A3B8]">
+                  Step 2 • Original FIR input
+                </p>
+                <h3 className="mt-1 text-sm font-semibold text-white">Source text preserved for legal review</h3>
+              </div>
             </div>
 
-            <div className="p-4 bg-[#080D1A] border border-[rgba(255,255,255,0.04)] rounded-xl text-xs leading-relaxed text-[#F8FAFC] font-mono min-h-[140px]">
+            <div className="mt-4 h-[180px] overflow-y-auto rounded-2xl border border-white/10 bg-[#08101d] p-4 text-sm leading-7 text-[#E2E8F0] custom-scrollbar">
               {selectedFir.originalText}
             </div>
           </div>
+
+          <div className="flex h-full rounded-[24px] border border-white/10 bg-[#0B1220] p-6">
+            <div className="flex h-full flex-col">
+              <div className="flex items-center justify-between gap-3 border-b border-white/10 pb-4">
+                <div>
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-[#94A3B8]">
+                    Step 4 • Extracted information
+                  </p>
+                  <h3 className="mt-1 text-sm font-semibold text-white">
+                    Structured legal and incident details
+                  </h3>
+                </div>
+                <div className="rounded-full border border-[#2563EB]/20 bg-[#2563EB]/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-[#7FB0FF]">
+                  Review ready
+                </div>
+              </div>
+
+              <div className="mt-5 flex flex-1 grid grid-cols-1 items-stretch gap-3 sm:grid-cols-2">
+              <div className="flex min-h-[88px] flex-col justify-center rounded-2xl border border-white/10 bg-[#08101d] p-3">
+                <span className="block text-[9px] font-semibold uppercase tracking-[0.2em] text-[#94A3B8]">IPC / Offense Section</span>
+                <span className="mt-1 block text-sm font-semibold text-[#2563EB]">{selectedFir.legalEntities.ipcSection}</span>
+              </div>
+
+              <div className="flex min-h-[88px] flex-col justify-center rounded-2xl border border-white/10 bg-[#08101d] p-3">
+                <span className="block text-[9px] font-semibold uppercase tracking-[0.2em] text-[#94A3B8]">Accused / Suspect</span>
+                <span className="mt-1 block text-sm font-semibold text-[#EF4444]">{selectedFir.legalEntities.accused}</span>
+              </div>
+
+              <div className="flex min-h-[88px] flex-col justify-center rounded-2xl border border-white/10 bg-[#08101d] p-3">
+                <span className="block text-[9px] font-semibold uppercase tracking-[0.2em] text-[#94A3B8]">Victim / Complainant</span>
+                <span className="mt-1 block text-sm font-semibold text-[#10B981]">{selectedFir.legalEntities.victim}</span>
+              </div>
+
+              <div className="flex min-h-[88px] flex-col justify-center rounded-2xl border border-white/10 bg-[#08101d] p-3">
+                <span className="block text-[9px] font-semibold uppercase tracking-[0.2em] text-[#94A3B8]">Stolen Property</span>
+                <span className="mt-1 block text-sm font-semibold text-[#F59E0B]">{selectedFir.legalEntities.stolenAssets}</span>
+              </div>
+            </div>
+            </div>
+          </div>
         </div>
 
-        {/* Right Column: Information Extraction in Selected Language */}
-        <div className="lg:col-span-6 space-y-4">
-          <div className="bg-[#0B1220] border border-[#2563EB]/30 rounded-2xl p-6 space-y-4">
-            <div className="flex items-center justify-between border-b border-[rgba(255,255,255,0.06)] pb-3">
-              <div className="flex items-center gap-2">
-                <Sparkles className="h-4.5 w-4.5 text-[#2563EB]" />
-                <h3 className="text-xs font-bold text-white tracking-wider uppercase font-mono">
-                  Extracted FIR Dashboard ({selectedLang === 'en' ? 'English' : 'Kannada'})
+        <div className="flex flex-col gap-6">
+          <div className="rounded-[24px] border border-[#2563EB]/20 bg-[#0B1220] p-6">
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-4">
+              <div>
+                <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-[#94A3B8]">
+                  Step 3 • Translation
+                </p>
+                <h3 className="mt-1 text-sm font-semibold text-white">
+                  Extracted translation output
                 </h3>
               </div>
 
-              <button
-                onClick={handleCopy}
-                className="bg-[#080D1A] hover:bg-[#182235] border border-[rgba(255,255,255,0.08)] text-[#94A3B8] hover:text-white px-2.5 py-1 rounded-lg text-xs transition-all cursor-pointer flex items-center gap-1.5"
-              >
-                {copied ? <Check className="h-3.5 w-3.5 text-[#10B981]" /> : <Copy className="h-3.5 w-3.5" />}
-                <span>Copy</span>
-              </button>
+              <div className="flex flex-wrap items-center gap-2">
+                <div className="flex items-center gap-1 rounded-2xl border border-white/10 bg-[#08101d] p-1 text-xs">
+                  <button
+                    onClick={() => setSelectedLang('en')}
+                    className={`rounded-xl px-3 py-1.5 font-semibold transition-all ${
+                      selectedLang === 'en' ? 'bg-[#2563EB] text-white shadow-sm' : 'text-[#94A3B8] hover:text-white'
+                    }`}
+                  >
+                    English
+                  </button>
+                  <button
+                    onClick={() => setSelectedLang('kn')}
+                    className={`rounded-xl px-3 py-1.5 font-semibold transition-all ${
+                      selectedLang === 'kn' ? 'bg-[#2563EB] text-white shadow-sm' : 'text-[#94A3B8] hover:text-white'
+                    }`}
+                  >
+                    ಕನ್ನಡ
+                  </button>
+                </div>
+
+                <button
+                  onClick={handleCopy}
+                  className="flex items-center gap-1.5 rounded-xl border border-white/10 bg-[#08101d] px-3 py-2 text-xs font-semibold text-[#94A3B8] transition-all hover:text-white"
+                >
+                  {copied ? <Check className="h-3.5 w-3.5 text-[#10B981]" /> : <Copy className="h-3.5 w-3.5" />}
+                  <span>Copy</span>
+                </button>
+              </div>
             </div>
 
-            {/* Translated Statement */}
-            <div className="p-4 bg-[#080D1A] border border-[#2563EB]/20 rounded-xl text-xs text-[#F8FAFC] leading-relaxed font-mono min-h-[140px]">
+            <div className="mt-4 h-[180px] overflow-y-auto rounded-2xl border border-[#2563EB]/20 bg-[#08101d] p-4 text-sm leading-7 text-[#F8FAFC] custom-scrollbar">
               {selectedLang === 'en' ? selectedFir.englishTranslation : selectedFir.kannadaTranslation}
             </div>
+          </div>
 
-            {/* Information Extraction Grid */}
-            <div className="space-y-2 border-t border-[rgba(255,255,255,0.06)] pt-4">
-              <h4 className="text-[10px] font-mono text-[#94A3B8] uppercase font-bold tracking-wider">
-                Extracted Legal Parameters:
-              </h4>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs font-mono">
-                <div className="bg-[#080D1A] p-3 rounded-xl border border-[rgba(255,255,255,0.04)]">
-                  <span className="text-[9px] text-[#94A3B8] uppercase block font-bold">IPC / Offense Section</span>
-                  <span className="text-[#2563EB] font-bold block mt-0.5">{selectedFir.legalEntities.ipcSection}</span>
-                </div>
-
-                <div className="bg-[#080D1A] p-3 rounded-xl border border-[rgba(255,255,255,0.04)]">
-                  <span className="text-[9px] text-[#94A3B8] uppercase block font-bold">Accused / Suspect</span>
-                  <span className="text-[#EF4444] font-bold block mt-0.5">{selectedFir.legalEntities.accused}</span>
-                </div>
-
-                <div className="bg-[#080D1A] p-3 rounded-xl border border-[rgba(255,255,255,0.04)]">
-                  <span className="text-[9px] text-[#94A3B8] uppercase block font-bold">Victim / Complainant</span>
-                  <span className="text-[#10B981] font-bold block mt-0.5">{selectedFir.legalEntities.victim}</span>
-                </div>
-
-                <div className="bg-[#080D1A] p-3 rounded-xl border border-[rgba(255,255,255,0.04)]">
-                  <span className="text-[9px] text-[#94A3B8] uppercase block font-bold">Stolen Property</span>
-                  <span className="text-[#F59E0B] font-bold block mt-0.5">{selectedFir.legalEntities.stolenAssets}</span>
-                </div>
+          <div className="rounded-[24px] border border-[#2563EB]/20 bg-[#0B1220] p-6">
+            <div className="flex items-center gap-3 border-b border-white/10 pb-4">
+              <div className="rounded-2xl border border-[#2563EB]/25 bg-[#2563EB]/10 p-2 text-[#2563EB]">
+                <CheckCircle2 className="h-4.5 w-4.5" />
               </div>
+              <div>
+                <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-[#94A3B8]">
+                  Step 5 • Officer review
+                </p>
+                <h3 className="mt-1 text-sm font-semibold text-white">Case notes ready for the next handoff</h3>
+              </div>
+            </div>
+
+            <div className="mt-4 h-[180px] overflow-y-auto rounded-2xl border border-white/10 bg-[#08101d] p-4 text-sm leading-7 text-[#E2E8F0] custom-scrollbar">
+              Review the translated incident statement, confirm the extracted legal entities, and route the document into the investigative workflow with full context preserved.
             </div>
           </div>
         </div>
       </div>
-
     </div>
   )
 }

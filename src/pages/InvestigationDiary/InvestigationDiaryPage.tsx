@@ -3,24 +3,16 @@ import {
   FileText,
   Paperclip,
   Sparkles,
-  Video,
+
   Camera,
   FileSearch,
   Phone,
-  MapPin,
+
   ShieldCheck,
   Briefcase,
   Save
 } from 'lucide-react'
 import apiClient from '../../api/client'
-
-interface LinkedEvidenceItem {
-  type: string
-  date: string
-  status: string
-  icon: any
-  color: string
-}
 
 export function InvestigationDiaryPage() {
   const [firs, setFirs] = useState<any[]>([])
@@ -134,7 +126,7 @@ export function InvestigationDiaryPage() {
       <div className="bg-[#0B1220] border border-[rgba(255,255,255,0.06)] rounded-2xl p-6 space-y-4">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[rgba(255,255,255,0.06)] pb-4">
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-[#10B981]/15 border border-[#10B981]/30 flex items-center justify-center text-[#10B981]">
+            <div className="h-10 w-10 rounded-xl bg-[#2563EB]/15 border border-[#2563EB]/30 flex items-center justify-center text-[#2563EB]">
               <Briefcase className="h-5 w-5" />
             </div>
             <div>
@@ -149,7 +141,7 @@ export function InvestigationDiaryPage() {
             <select
               value={selectedFirId}
               onChange={(e) => setSelectedFirId(e.target.value)}
-              className="bg-[#080D1A] border border-[rgba(255,255,255,0.1)] text-white text-xs font-mono rounded-xl px-4 py-2.5 outline-none focus:border-[#10B981] w-full md:w-80 cursor-pointer"
+              className="bg-[#080D1A] border border-[rgba(255,255,255,0.1)] text-white text-xs font-mono rounded-xl px-4 py-2.5 outline-none focus:border-[#2563EB] w-full md:w-80 cursor-pointer"
             >
               {firs.map(f => (
                 <option key={f.fir_id} value={f.fir_id}>{f.fir_number} — {f.district_name || 'District'}</option>
@@ -162,7 +154,7 @@ export function InvestigationDiaryPage() {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 font-mono text-xs pt-1">
           <div className="bg-[#080D1A] p-2.5 rounded-lg border border-[rgba(255,255,255,0.04)]">
             <span className="text-[9px] text-[#94A3B8] uppercase block font-bold">Linked FIR</span>
-            <span className="text-[#10B981] font-bold">{selectedFirData?.fir_number || '-'}</span>
+            <span className="text-[#2563EB] font-bold">{selectedFirData?.fir_number || '-'}</span>
           </div>
           <div className="bg-[#080D1A] p-2.5 rounded-lg border border-[rgba(255,255,255,0.04)]">
             <span className="text-[9px] text-[#94A3B8] uppercase block font-bold">Status</span>
@@ -188,7 +180,7 @@ export function InvestigationDiaryPage() {
             <div className="space-y-3">
               <div className="flex items-center justify-between border-b border-[rgba(255,255,255,0.06)] pb-3">
                 <div className="flex items-center gap-2">
-                  <FileText className="h-4.5 w-4.5 text-[#10B981]" />
+                  <FileText className="h-4.5 w-4.5 text-[#2563EB]" />
                   <h3 className="text-xs font-bold text-white uppercase tracking-wider font-mono">
                     Officer Investigation Notes
                   </h3>
@@ -202,12 +194,12 @@ export function InvestigationDiaryPage() {
                   onChange={(e) => setNotesInput(e.target.value)}
                   placeholder="Record daily field observation notes, witness statements, and evidence updates..."
                   rows={4}
-                  className="w-full bg-[#080D1A] border border-[rgba(255,255,255,0.08)] rounded-xl p-4 text-xs text-white placeholder-[#94A3B8]/40 focus:outline-none focus:border-[#10B981] font-mono leading-relaxed resize-none"
+                  className="w-full bg-[#080D1A] border border-[rgba(255,255,255,0.08)] rounded-xl p-4 text-xs text-white placeholder-[#94A3B8]/40 focus:outline-none focus:border-[#2563EB] font-mono leading-relaxed resize-none"
                 />
                 <button
                   onClick={handleSaveNote}
                   disabled={isSaving || !notesInput.trim()}
-                  className="self-end flex items-center gap-2 bg-[#10B981] hover:bg-[#059669] text-white text-xs font-bold px-4 py-2 rounded-lg transition-all cursor-pointer shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="self-end flex items-center gap-2 bg-[#2563EB] hover:bg-[#1D4ED8] text-white text-xs font-bold px-4 py-2 rounded-lg transition-all cursor-pointer shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <Save className="h-4 w-4" />
                   {isSaving ? 'Saving...' : 'Save Entry'}
@@ -219,7 +211,7 @@ export function InvestigationDiaryPage() {
                   <h4 className="text-[10px] text-[#94A3B8] uppercase font-bold tracking-wider font-mono">Historical Notes</h4>
                   {pastNotes.map((note: any, idx) => (
                     <div key={note.log_id || idx} className="bg-[#080D1A] p-3 rounded-xl border border-[rgba(255,255,255,0.04)] font-mono text-[11px] text-[#E2E8F0]">
-                      <div className="text-[9px] text-[#10B981] mb-1 font-bold">{new Date(note.timestamp).toLocaleString()}</div>
+                      <div className="text-[9px] text-[#2563EB] mb-1 font-bold">{new Date(note.timestamp).toLocaleString()}</div>
                       <div>{note.content}</div>
                     </div>
                   ))}
@@ -231,16 +223,16 @@ export function InvestigationDiaryPage() {
 
         {/* Section 3: AI Organized Notes (6 Cols) */}
         <div className="lg:col-span-6 flex flex-col">
-          <div className="bg-[#0B1220] border border-[#10B981]/40 rounded-2xl p-6 space-y-4 h-full flex flex-col justify-between">
+          <div className="bg-[#0B1220] border border-[#2563EB]/40 rounded-2xl p-6 space-y-4 h-full flex flex-col justify-between">
             <div className="space-y-3">
               <div className="flex items-center justify-between border-b border-[rgba(255,255,255,0.06)] pb-3">
                 <div className="flex items-center gap-2">
-                  <Sparkles className="h-4.5 w-4.5 text-[#10B981]" />
+                  <Sparkles className="h-4.5 w-4.5 text-[#2563EB]" />
                   <h3 className="text-xs font-bold text-white uppercase tracking-wider font-mono">
                     AI Organized Notes
                   </h3>
                 </div>
-                <span className="text-[10px] font-mono text-[#10B981]">STRUCTURED AI PARSER</span>
+                <span className="text-[10px] font-mono text-[#2563EB]">STRUCTURED AI PARSER</span>
               </div>
 
               <div className="space-y-2.5 font-mono text-xs">
@@ -261,7 +253,7 @@ export function InvestigationDiaryPage() {
       <div className="bg-[#0B1220] border border-[rgba(255,255,255,0.06)] rounded-2xl p-6 space-y-4">
         <div className="flex items-center justify-between border-b border-[rgba(255,255,255,0.06)] pb-3">
           <div className="flex items-center gap-2">
-            <Paperclip className="h-4.5 w-4.5 text-[#10B981]" />
+            <Paperclip className="h-4.5 w-4.5 text-[#2563EB]" />
             <h3 className="text-xs font-bold text-white uppercase tracking-wider font-mono">
               Linked Case Evidence
             </h3>
@@ -279,7 +271,7 @@ export function InvestigationDiaryPage() {
               >
                 <div className="flex items-center justify-between">
                   <EvIcon className="h-4 w-4 text-[#38BDF8]" />
-                  <span className="text-[9px] text-[#10B981] font-bold bg-[#10B981]/15 px-1.5 py-0.5 rounded">
+                  <span className="text-[9px] text-[#2563EB] font-bold bg-[#2563EB]/15 px-1.5 py-0.5 rounded">
                     VERIFIED
                   </span>
                 </div>
@@ -307,12 +299,12 @@ export function InvestigationDiaryPage() {
             <div className="space-y-3">
               <div className="flex items-center justify-between border-b border-[rgba(255,255,255,0.06)] pb-3">
                 <div className="flex items-center gap-2">
-                  <ShieldCheck className="h-4.5 w-4.5 text-[#10B981]" />
+                  <ShieldCheck className="h-4.5 w-4.5 text-[#2563EB]" />
                   <h3 className="text-xs font-bold text-white uppercase tracking-wider font-mono">
                     Daily Investigation Summary
                   </h3>
                 </div>
-                <span className="text-[10px] font-mono text-[#10B981] bg-[#10B981]/10 border border-[#10B981]/30 px-2 py-0.5 rounded font-bold">
+                <span className="text-[10px] font-mono text-[#2563EB] bg-[#2563EB]/10 border border-[#2563EB]/30 px-2 py-0.5 rounded font-bold">
                   SUMMARY GENERATED
                 </span>
               </div>
@@ -326,10 +318,10 @@ export function InvestigationDiaryPage() {
 
         {/* Suggested Next Investigation Steps (5 Cols) */}
         <div className="lg:col-span-5 flex flex-col">
-          <div className="bg-[#0B1220] border border-[#10B981]/40 rounded-2xl p-6 space-y-4 h-full flex flex-col justify-between">
+          <div className="bg-[#0B1220] border border-[#2563EB]/40 rounded-2xl p-6 space-y-4 h-full flex flex-col justify-between">
             <div className="space-y-3">
               <div className="flex items-center gap-2 border-b border-[rgba(255,255,255,0.06)] pb-3">
-                <Sparkles className="h-4.5 w-4.5 text-[#10B981]" />
+                <Sparkles className="h-4.5 w-4.5 text-[#2563EB]" />
                 <h3 className="text-xs font-bold text-white uppercase tracking-wider font-mono">
                   Suggested Next Investigation Steps
                 </h3>
@@ -341,7 +333,7 @@ export function InvestigationDiaryPage() {
                     key={i}
                     className="bg-[#080D1A] border border-[rgba(255,255,255,0.04)] rounded-xl p-3 flex items-center gap-2.5 text-[#F8FAFC]"
                   >
-                    <span className="text-[#10B981] font-bold text-xs">•</span>
+                    <span className="text-[#2563EB] font-bold text-xs">•</span>
                     <span className="text-[11px] truncate">{rec}</span>
                   </div>
                 ))}

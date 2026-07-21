@@ -35,7 +35,7 @@ type EntityItem = EntityAccused | EntityVehicle | EntityVictim
 
 function InvestigationPage() {
   const [searchParams] = useSearchParams()
-  const [search, setSearch] = useState('')
+
   const initialTab = searchParams.get('diary') === 'true' ? 'Investigation Diary' : 'Case Overview'
   const [activeTab, setActiveTab] = useState(initialTab)
 
