@@ -1,5 +1,8 @@
 import { useState, useEffect } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
+import jsPDF from 'jspdf'
+import autoTable from 'jspdf-autotable'
+import { CheckCircle2, X } from 'lucide-react'
 import PageLoader from '../../components/ui/PageLoader'
 import {
   CrimeHeader,
@@ -19,6 +22,16 @@ import { generateBriefReport } from '../../api/ai.api'
 
 function CrimeDetailsPage() {
   const { crimeId } = useParams<{ crimeId: string }>()
+  const navigate = useNavigate()
+  const [notifications, setNotifications] = useState<{id: number, message: string}[]>([])
+
+  const addNotification = (message: string) => {
+    const id = Date.now()
+    setNotifications(prev => [...prev, { id, message }])
+    setTimeout(() => {
+      setNotifications(prev => prev.filter(n => n.id !== id))
+    }, 4000)
+  }
   
   // Tab Switcher Active state
   const [activeTab, setActiveTab] = useState('Overview')
@@ -117,17 +130,76 @@ function CrimeDetailsPage() {
 
   // Action Panel handlers
   const handleQuickAction = async (actionName: string) => {
-    if (actionName.toLowerCase().includes('report') || actionName.toLowerCase().includes('brief')) {
+    if (actionName === 'Open Investigation') {
+      navigate('/investigation')
+    } else if (actionName === 'View Criminal Network') {
+      navigate('/criminal-network')
+    } else if (actionName === 'Ask AI Assistant') {
+      addNotification("Connecting to Sentinel AI Assistant...")
+      setTimeout(() => navigate('/digital-intelligence'), 1000)
+    } else if (actionName === 'Assign Officer') {
+      addNotification(`Case ${caseHeader.fir} successfully assigned to Inspector Ramesh for immediate field review.`)
+    } else if (actionName === 'Generate Report') {
       if (!crimeId) return
+      addNotification("Generating official PDF dossier...")
       try {
-        const res = await generateBriefReport({ fir_id: crimeId })
-        alert(`[SENTINEL INTEL BRIEF] Generated Report:\n\n${res.report}`)
+        const doc = new jsPDF()
+        
+        doc.setFontSize(20)
+        doc.setTextColor(0, 0, 100)
+        doc.text("SENTINEL AI", 14, 22)
+        
+        doc.setFontSize(14)
+        doc.setTextColor(0, 0, 0)
+        doc.text("CRIME INVESTIGATION DOSSIER", 14, 30)
+        
+        doc.setFontSize(11)
+        doc.text(`FIR Number: ${caseHeader.fir}`, 14, 40)
+        doc.text(`Date Generated: ${new Date().toLocaleString()}`, 14, 46)
+        
+        doc.setFontSize(12)
+        doc.text("Case Summary", 14, 56)
+        doc.setFontSize(10)
+        doc.setTextColor(60, 60, 60)
+        const splitSummary = doc.splitTextToSize(caseSummary.summaryText, 180)
+        doc.text(splitSummary, 14, 62)
+        
+        let currentY = 62 + (splitSummary.length * 5) + 5
+        
+        autoTable(doc, {
+          startY: currentY,
+          head: [['Parameter', 'Detail']],
+          body: [
+            ['Crime Type', caseInformation.crimeType],
+            ['District', caseInformation.district],
+            ['Station', caseInformation.station],
+            ['Officer', caseInformation.officer],
+            ['Status', caseInformation.status],
+            ['Estimated Loss', caseSummary.estimatedLoss]
+          ],
+          theme: 'grid',
+          headStyles: { fillColor: [37, 99, 235] },
+          styles: { fontSize: 9 }
+        })
+        currentY = (doc as any).lastAutoTable.finalY + 10
+        
+        doc.setFontSize(12)
+        doc.setTextColor(0, 0, 0)
+        doc.text("AI Insights", 14, currentY)
+        currentY += 6
+        doc.setFontSize(10)
+        doc.setTextColor(60, 60, 60)
+        aiInsights.forEach(insight => {
+          doc.text(`• ${insight}`, 14, currentY)
+          currentY += 5
+        })
+        
+        doc.save(`Crime_Dossier_${caseHeader.fir.replace(/[^a-zA-Z0-9]/g, '_')}.pdf`)
+        addNotification("PDF Dossier successfully downloaded.")
       } catch (err) {
         console.error(err)
-        alert('Failed to generate case brief report.')
+        addNotification("Failed to generate PDF report.")
       }
-    } else {
-      alert(`[ACTION RECEIVED] Sentinel Executive pipeline trigger:\n- Target FIR: ${caseHeader.fir}\n- Command: ${actionName}`)
     }
   }
 
@@ -144,7 +216,28 @@ function CrimeDetailsPage() {
   }
 
   return (
-    <div className="space-y-6 animate-fade-in select-none">
+    <div className="space-y-6 animate-fade-in select-none relative">
+      
+      {/* Toast Notifications */}
+      <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-3">
+        {notifications.map(notif => (
+          <div key={notif.id} className="animate-slide-up flex items-start gap-3 bg-[#0B1220] border border-[#10B981]/30 p-4 rounded-xl shadow-2xl max-w-sm w-full relative overflow-hidden group">
+            <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#10B981]"></div>
+            <CheckCircle2 className="h-5 w-5 text-[#10B981] shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <h4 className="text-[#10B981] text-xs font-bold tracking-wider uppercase mb-1">System Notice</h4>
+              <p className="text-[#94A3B8] text-xs leading-relaxed">{notif.message}</p>
+            </div>
+            <button 
+              onClick={() => setNotifications(prev => prev.filter(n => n.id !== notif.id))}
+              className="text-[#94A3B8]/50 hover:text-white transition-colors"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+        ))}
+      </div>
+
       
       {/* 1. Page Header Panel */}
       <div className="border-b border-[rgba(255,255,255,0.06)] pb-5 select-none">

@@ -71,10 +71,8 @@ export async function generateBriefReport(body: GenerateBriefReportRequest): Pro
 }
 
 export async function translateText(body: TranslateTextRequest): Promise<TranslateTextResponse> {
-  const baseUrl = import.meta.env.VITE_API_BASE_URL;
-  const apiOrigin = new URL(baseUrl, window.location.origin).origin;
   const response = await apiClient.post<TranslateTextResponse>(
-    `${apiOrigin}${ENDPOINTS.AI.TRANSLATE}`,
+    ENDPOINTS.AI.TRANSLATE,
     body,
   );
   return response.data;

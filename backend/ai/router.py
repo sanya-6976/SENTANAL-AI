@@ -78,7 +78,7 @@ def translate_text(
     current_user: CurrentUser = Depends(get_current_active_user)
 ):
     """Multilingual AI: Translate text into a target language."""
-   _text = translation_service.translate_text(
+    translated_text = translation_service.translate_text(
         request.text,
         request.sourceLanguage,
         request.targetLanguage,

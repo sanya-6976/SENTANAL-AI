@@ -61,13 +61,14 @@ const SAMPLE_FIRS: SampleFIR[] = [
     station: 'Belagavi Border Control Unit',
     originalText: `दिनांक 10 मई 2025 को रात्रि 11:45 बजे बेलागावी राजमार्ग चेकपोस्ट पर एक संदिग्ध काले रंग की एसयूवी (KA-22-M-9081) को रोका गया। वाहन की तलाशी के दौरान अवैध हथियार और जाली भारतीय मुद्रा (₹2.5 लाख) बरामद की गई।`,
     legalEntities: {
-      ipcSection: string,
-      accused: string,
-      victim: string,
-      location: string,
-      stolenAssets: string
+      ipcSection: 'IPC Section 489B, 489C (Counterfeit Currency)',
+      accused: 'Prakash Patil',
+      victim: 'State of Karnataka',
+      location: 'NH-48 Checkpost, Belagavi Rural',
+      stolenAssets: 'Fake Currency ₹2.5L, Unlicensed Pistol'
     }
-  } | null>(null)
+  }
+]
 
 export default function MultilingualAIPage() {
   const [selectedFir, setSelectedFir] = useState<SampleFIR>(SAMPLE_FIRS[0])

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import ReactMarkdown from 'react-markdown'
 import { useSearchParams } from 'react-router-dom'
 import PageLoader from '../../components/ui/PageLoader'
 import {
@@ -266,8 +267,14 @@ function InvestigationPage() {
             {aiLoading ? 'Generating...' : 'Generate Insight'}
           </button>
         </div>
-        <div className="text-sm text-[#94A3B8] leading-relaxed whitespace-pre-wrap bg-[#0B1220] p-6 rounded-lg border border-[rgba(255,255,255,0.06)] flex-1 overflow-y-auto">
-          {aiInsight || 'No AI insights generated yet. Click "Generate Insight" to compile the case brief.'}
+        <div className="text-sm text-[#94A3B8] leading-relaxed bg-[#0B1220] p-6 rounded-lg border border-[rgba(255,255,255,0.06)] flex-1 overflow-y-auto">
+          {aiInsight ? (
+            <div className="prose prose-invert max-w-none prose-sm prose-headings:text-[#2563EB] prose-a:text-blue-400 prose-strong:text-white prose-ul:list-disc prose-ol:list-decimal">
+              <ReactMarkdown>{aiInsight}</ReactMarkdown>
+            </div>
+          ) : (
+            'No AI insights generated yet. Click "Generate Insight" to compile the case brief.'
+          )}
         </div>
       </div>
 
