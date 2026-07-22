@@ -177,6 +177,33 @@ npm run dev
 4. **Investigate:** Open the **Crime Database** and select a case to enter the **Investigation Workspace**. Here, you can review evidence, track suspects, and click **Generate Insight** to have the AI compile a comprehensive strategy.
 5. **Analyze Networks:** Jump into the **Criminal Network** tab to view the Neo4j graph, visually identifying links between suspects across multiple cases.
 
+ ```mermaid
+flowchart TD
+    A[Login to SENTINEL AI] --> B[Dashboard Overview]
+    B --> B1[Review crime statistics]
+    B --> B2[Review GIS heatmaps]
+
+    B --> C[FIR Upload]
+    C --> C1[Upload physical FIR document]
+    C1 --> C2[OCR digitizes document text]
+
+    C2 --> D{Regional language FIR?}
+    D -- Yes --> E[Multilingual AI]
+    E --> E1[Translate FIR]
+    E1 --> E2[Extract legal entities]
+    E2 --> F[Store case data]
+    D -- No --> F
+
+    F --> G[Crime Database]
+    G --> H[Open Investigation Workspace]
+    H --> H1[Review evidence]
+    H --> H2[Track suspects]
+    H --> H3[Generate AI insight and strategy]
+
+    H --> I[Criminal Network]
+    I --> I1[View Neo4j relationship graph]
+    I1 --> I2[Identify cross-case suspect links]
+```
 ---
 
 ## 🔑 Testing & Mock Credentials
