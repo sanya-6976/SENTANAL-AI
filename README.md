@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://img.shields.io/badge/Sentinel%20AI-0F172A?style=for-the-badge&logo=policereact&logoColor=2563EB" alt="Sentinel AI Logo" />
+  <img src="images/https://github.com/sanya-6976/SENTANAL-AI/blob/main/images/WhatsApp%20Image%202026-07-22%20at%201.37.54%20PM.jpeg" alt="Sentinel AI Logo" width = "220"/>
   <h1>Sentinel AI</h1>
   <p><b>Next-Generation AI-Powered Crime Intelligence & Investigation Operating System</b></p>
 
