@@ -18,25 +18,20 @@ dependencies = [
     "pandas>=2.2.0",
     "numpy>=1.26.0",
     "openpyxl>=3.1.0",
-
     # ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ Database ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬
     "sqlalchemy>=2.0.0",
     "psycopg2-binary>=2.9.9",
     "alembic>=1.13.0",
-
     # Backend authentication and API
     "fastapi>=0.110.0",
     "python-multipart>=0.0.9",
     "PyJWT>=2.8.0",
     "pwdlib[argon2]>=0.2.0",
-
     # ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ Neo4j ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬
     "neo4j>=5.15.0",
-
     # ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ GIS ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬
     "geopandas>=0.14.0",
     "shapely>=2.0.0",
-
     # Document and image ingestion
     "Pillow>=10.0.0",
     "PyMuPDF>=1.23.0",
@@ -45,18 +40,16 @@ dependencies = [
     "rapidfuzz>=3.0.0",
     "spacy>=3.7.0",
     "google-genai>=1.0.0",
-
     # ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ Visualization ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬
     "plotly>=5.18.0",
-
     # ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ Configuration ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬
     "python-dotenv>=1.0.0",
     "pydantic>=2.5.0",
     "pydantic-settings>=2.1.0",
-
     # ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ Utilities ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬ÃƒÂ¢Ã¢â‚¬ÂÃ¢â€šÂ¬
     "loguru>=0.7.0",
     "tqdm>=4.66.0",
+    "uvicorn>=0.51.0",
 ]
 
 [project.optional-dependencies]

@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
+import apiClient from '../../api/client'
 import { PageHeader } from '../../components/ui/DashboardComponents'
 import {
   InvestigationIngestion,
@@ -170,28 +171,94 @@ export function AICrimePatternSimilarityPage() {
   const [selectedCaseId, setSelectedCaseId] = useState<string | null>(null)
   const [isAnalyzing, setIsAnalyzing] = useState(false)
   const [activeTabSelected, setActiveTabSelected] = useState<string | null>(null)
+  const [activeMatch, setActiveMatch] = useState<any | null>(null)
 
-  // References to handle timers
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  const handleCaseSelected = (caseId: string, isUploaded = false) => {
-    if (timerRef.current) {
-      clearTimeout(timerRef.current)
-    }
-
+  const handleCaseSelected = async (caseData: any, isUploaded = false) => {
+    if (timerRef.current) clearTimeout(timerRef.current)
     setIsAnalyzing(true)
     setSelectedCaseId(null)
+    setActiveMatch(null)
 
-    // Simulate AI deep pattern matching calculations
-    timerRef.current = setTimeout(() => {
-      setIsAnalyzing(false)
-      if (isUploaded) {
-        // If file is uploaded, map to a realistic mock case (e.g. Burglary target) to show matching details
-        setSelectedCaseId('FIR-2024-119')
-      } else {
-        setSelectedCaseId(caseId)
+    if (isUploaded && caseData instanceof File) {
+      try {
+        const formData = new FormData()
+        formData.append('file', caseData)
+        const baseUrl = import.meta.env.VITE_API_BASE_URL.replace('/api/v1', '')
+        const res = await apiClient.post(`${baseUrl}/api/crime-pattern/upload`, formData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        })
+        
+        const data = res.data
+        const similarCatalog: any[] = []
+        
+        if (data.matched_records) {
+          for (const key of Object.keys(data.matched_records)) {
+             data.matched_records[key].forEach((rec: any) => {
+                similarCatalog.push({
+                  caseId: rec.fir_number || rec.suspect_id || rec.vehicle_id || `REC-${key}`,
+                  crimeType: rec.category_name || rec.description || key,
+                  district: rec.district_name || 'DB Match',
+                  similarityScore: 100,
+                  status: rec.status || 'Verified Match',
+                  confidenceLevel: 'Very High',
+                  date: rec.incident_date || 'N/A',
+                  officer: rec.investigating_officer || 'N/A'
+                })
+             })
+          }
+        }
+        
+        if (data.similar_matches) {
+          data.similar_matches.forEach((sm: any) => {
+             similarCatalog.push({
+                caseId: sm.record?.full_name || sm.record?.registration_number || `SIM-${sm.dataset}`,
+                crimeType: 'Fuzzy Match',
+                district: sm.dataset,
+                similarityScore: sm.similarity_percentage,
+                status: 'Potential Link',
+                confidenceLevel: sm.similarity_percentage > 80 ? 'High' : 'Medium',
+                date: 'N/A',
+                officer: 'N/A'
+             })
+          })
+        }
+
+        const featured = similarCatalog.length > 0 ? similarCatalog[0] : {
+          caseId: 'NO-MATCH', crimeType: 'N/A', district: 'N/A', similarityScore: 0, status: 'N/A', confidenceLevel: 'Low', date: 'N/A', officer: 'N/A'
+        }
+
+        const factors = data.parsed_data ? Object.keys(data.parsed_data)
+          .filter(k => Array.isArray(data.parsed_data[k]) && data.parsed_data[k].length > 0)
+          .map(k => ({
+            factor: `Extracted ${k}`,
+            confidence: 95,
+            matched: true,
+            desc: `Found: ${data.parsed_data[k].join(', ')}`
+          })) : []
+
+        setActiveMatch({
+          featured,
+          factors,
+          attributes: [],
+          insight: data.ai_summary || `Processed file ${data.filename} in ${data.processing_time_ms}ms. ${similarCatalog.length} records found in Postgres DB.`,
+          similarCatalog
+        })
+        setSelectedCaseId(data.filename)
+      } catch (err) {
+        console.error("API Error", err)
+        alert("Failed to connect to Crime Pattern Analyzer backend.")
+      } finally {
+        setIsAnalyzing(false)
       }
-    }, 1200)
+    } else {
+      timerRef.current = setTimeout(() => {
+        setIsAnalyzing(false)
+        setSelectedCaseId(caseData as string)
+        setActiveMatch(CASE_MATCHES_DATABASE[caseData as string])
+      }, 1200)
+    }
   }
 
   useEffect(() => {
@@ -199,9 +266,6 @@ export function AICrimePatternSimilarityPage() {
       if (timerRef.current) clearTimeout(timerRef.current)
     }
   }, [])
-
-  // Retrieve matching dataset based on selected target
-  const activeMatch = selectedCaseId ? CASE_MATCHES_DATABASE[selectedCaseId] : null
 
   const handleGenerateReport = () => {
     if (!selectedCaseId) return
