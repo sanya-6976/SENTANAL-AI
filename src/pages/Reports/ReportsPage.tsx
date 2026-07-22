@@ -130,7 +130,7 @@ function ReportsPage() {
       const newFile: UploadedFileItem = {
         id: `evidence-${Date.now()}`,
         name: fileName,
-        type: 'document',
+        type: 'pdf',
         size: '4.2 MB',
         status: 'Processed'
       }

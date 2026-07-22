@@ -1,4 +1,4 @@
-import { FolderOpen, Search, Download, Image } from 'lucide-react'
+import { FolderOpen, Search, Download } from 'lucide-react'
 
 interface QuickActionsProps {
   onAction: (actionName: string) => void
