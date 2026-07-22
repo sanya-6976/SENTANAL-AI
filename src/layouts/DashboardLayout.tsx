@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Outlet } from 'react-router-dom'
 import Navbar from '../components/layout/Navbar'
 import Sidebar from '../components/layout/Sidebar'
+import GlobalContextMenu from '../components/common/GlobalContextMenu'
 function DashboardLayout() {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [collapsed, setCollapsed] = useState<boolean>(() => {
@@ -59,6 +60,9 @@ function DashboardLayout() {
           <Outlet />
         </main>
       </div>
+
+      {/* Global Right-Click Context Menu */}
+      <GlobalContextMenu />
 
     </div>
   )

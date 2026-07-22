@@ -36,14 +36,14 @@ export function InvestigationIngestion({ onCaseSelected, isAnalyzing }: Investig
 
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       const file = e.dataTransfer.files[0]
-      onCaseSelected(file.name, true)
+      onCaseSelected(file as any, true)
     }
   }
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (isAnalyzing) return
     if (e.target.files && e.target.files[0]) {
-      onCaseSelected(e.target.files[0].name, true)
+      onCaseSelected(e.target.files[0] as any, true)
     }
   }
 

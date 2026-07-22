@@ -76,8 +76,13 @@ def translate_text(
     current_user: CurrentUser = Depends(get_current_active_user)
 ):
     """Multilingual AI: Translate text into a target language."""
-    translation = ai_service.translate_text(request.text, request.target_language)
-    return {"original": request.text, "translation": translation, "language": request.target_language}
+    result = ai_service.translate_text(request.text, request.target_language)
+    return {
+        "original": request.text, 
+        "language": request.target_language,
+        "translation": result.get("translation", ""),
+        "legalEntities": result.get("legalEntities", {})
+    }
 
 
 @ai_router.post("/analyze-digital-evidence")

@@ -17,7 +17,7 @@ import ReportsPage from '../pages/Reports/ReportsPage'
 import SettingsPage from '../pages/Settings/SettingsPage'
 import OCRReviewPage from '../pages/OCRReview/OCRReviewPage'
 import DigitalIntelligenceHubPage from '../pages/DigitalIntelligenceHub/DigitalIntelligenceHubPage'
-import AICrimePatternSimilarityPage from '../pages/CrimePatternSimilarity/AICrimePatternSimilarityPage'
+import AICrimePatternSimilarityPage from '../pages/CrimePatternSimilarity/AICrimePatternSimilarityPageFull'
 import MultilingualAIPage from '../pages/MultilingualAI/MultilingualAIPage'
 
 function AppRoutes() {
