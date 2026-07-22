@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="images/https://github.com/sanya-6976/SENTANAL-AI/blob/main/images/WhatsApp%20Image%202026-07-22%20at%201.37.54%20PM.jpeg" alt="Sentinel AI Logo" width = "220"/>
+  <img src="images/sentinel-ai-logo.jpeg" alt="Sentinel AI Logo" width = "220"/>
   <h1>Sentinel AI</h1>
   <p><b>Next-Generation AI-Powered Crime Intelligence & Investigation Operating System</b></p>
 
