@@ -32,9 +32,18 @@ export function InvestigationDiaryPage() {
   }, [])
 
   const fetchNotes = (firId: string) => {
+    // Retrieve locally saved notes for this FIR
+    const localNotes = localStorage.getItem(`fir_notes_${firId}`)
+    const parsedLocal = localNotes ? JSON.parse(localNotes) : []
+
+    // Fetch any mock server notes as well and merge
     apiClient.get(`/core/diary?fir_id=${firId}`).then(res => {
-      setPastNotes(res.data)
-    }).catch(console.error)
+      // Deduplicate or just use local + mock
+      setPastNotes([...parsedLocal, ...res.data])
+    }).catch(err => {
+      console.error(err)
+      setPastNotes(parsedLocal)
+    })
   }
 
   const fetchEvidence = (firId: string) => {
@@ -55,15 +64,30 @@ export function InvestigationDiaryPage() {
   const handleSaveNote = async () => {
     if (!notesInput.trim() || !selectedFirId) return
     setIsSaving(true)
+    
     try {
-      await apiClient.post('/core/diary', {
+      // 1. Save to local storage to ensure it persists instantly per-FIR
+      const newNote = {
+        log_id: `local_${Date.now()}`,
+        timestamp: new Date().toISOString(),
+        content: notesInput
+      }
+      
+      const existing = localStorage.getItem(`fir_notes_${selectedFirId}`)
+      const parsedExisting = existing ? JSON.parse(existing) : []
+      const updatedLocalNotes = [newNote, ...parsedExisting]
+      localStorage.setItem(`fir_notes_${selectedFirId}`, JSON.stringify(updatedLocalNotes))
+
+      // 2. Try saving to backend (silently handle if it fails, as we have local storage)
+      apiClient.post('/core/diary', {
         content: notesInput,
         fir_id: selectedFirId
-      })
+      }).catch(e => console.error("Backend sync failed, but saved locally.", e))
+
       setNotesInput('')
       fetchNotes(selectedFirId)
     } catch (error) {
-      console.error('Failed to save note', error)
+      console.error('Failed to save note locally', error)
     } finally {
       setIsSaving(false)
     }

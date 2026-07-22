@@ -13,7 +13,7 @@ import {
 } from 'lucide-react'
 
 interface EvidenceUploadPanelProps {
-  onEvidenceSelected: (fileName: string) => void
+  onEvidenceSelected: (file: File) => void
   isProcessing: boolean
 }
 
@@ -52,14 +52,14 @@ export function EvidenceUploadPanel({ onEvidenceSelected, isProcessing }: Eviden
 
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       const file = e.dataTransfer.files[0]
-      onEvidenceSelected(file.name)
+      onEvidenceSelected(file)
     }
   }
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (isProcessing) return
     if (e.target.files && e.target.files[0]) {
-      onEvidenceSelected(e.target.files[0].name)
+      onEvidenceSelected(e.target.files[0])
     }
   }
 

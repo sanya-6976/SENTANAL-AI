@@ -8,8 +8,7 @@ export function QuickActions({ onAction }: QuickActionsProps) {
   const actionsList = [
     { name: 'Open Investigation Workspace', icon: FolderOpen, label: 'Workspace' },
     { name: 'Compare Similar Crimes', icon: Search, label: 'Database' },
-    { name: 'Generate Intelligence Report', icon: Download, label: 'Download Dossier' },
-    { name: 'Export Network Snapshot', icon: Image, label: 'Export Graph Image' }
+    { name: 'Generate Intelligence Report', icon: Download, label: 'Download Dossier' }
   ]
 
   return (

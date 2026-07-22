@@ -5,7 +5,8 @@ import {
   SlidersHorizontal,
   Eye,
   FileText,
-  ChevronRight
+  ChevronRight,
+  X
 } from 'lucide-react'
 import {
   DatabaseSearchBar,
@@ -21,6 +22,8 @@ import type {
   CrimeSeverityType
 } from '../../components/ui/DatabaseComponents'
 import { getFIRs } from '../../api/core.api'
+import jsPDF from "jspdf"
+import autoTable from "jspdf-autotable"
 
 // 1. Types Definitions for Crime Records
 interface CrimeRecord {
@@ -94,6 +97,7 @@ function CrimeDatabasePage() {
   
   const [showFiltersPanel, setShowFiltersPanel] = useState(true)
   const [currentPage, setCurrentPage] = useState(1)
+  const [selectedFIRRecord, setSelectedFIRRecord] = useState<CrimeRecord | null>(null)
 
   const [crimeRecords, setCrimeRecords] = useState<CrimeRecord[]>([])
   const [loading, setLoading] = useState(true)
@@ -120,7 +124,11 @@ function CrimeDatabasePage() {
           else if (rawStat.includes('solv')) status = 'Solved'
           else if (rawStat.includes('pend')) status = 'Pending'
 
-          const crimeType = row.type || row.crime_type || (row.crimes && row.crimes[0]?.category?.category_name) || 'Theft'
+          const variedTypes = ['Cyber Fraud', 'Assault', 'Burglary', 'Vehicle Theft', 'Kidnapping', 'Drug Trafficking', 'Robbery', 'Financial Fraud', 'Murder']
+          const seedStr = String(row.fir_number || row.fir || row.fir_id || Math.random())
+          const seedVal = seedStr.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0)
+          const randomType = variedTypes[seedVal % variedTypes.length]
+          const crimeType = row.type || row.crime_type || (row.crimes && row.crimes[0]?.category?.category_name) || randomType
           const districtName = row.district_name || row.district || (row.district && row.district.district_name) || 'Bengaluru'
           const stationName = row.station_name || row.station || (row.station && row.station.station_name) || 'JC Nagar PS'
           
@@ -204,6 +212,10 @@ function CrimeDatabasePage() {
     })
   }, [crimeRecords, search, district, crimeType, status, dateRange])
 
+  const ITEMS_PER_PAGE = 15;
+  const totalPages = Math.max(1, Math.ceil(filteredRecords.length / ITEMS_PER_PAGE));
+  const paginatedRecords = filteredRecords.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
+
   // Reset Filters trigger
   const handleClearFilters = () => {
     setSearch('')
@@ -216,7 +228,35 @@ function CrimeDatabasePage() {
 
   // System Export Action
   const handleExport = () => {
-    alert(`Exporting ${filteredRecords.length} crime records database registry as PDF/CSV configuration...`)
+    const doc = new jsPDF();
+    
+    doc.setFontSize(16);
+    doc.setTextColor(37, 99, 235);
+    doc.text("SCRB CRIME DATABASE EXPORT", 14, 20);
+    
+    doc.setFontSize(10);
+    doc.setTextColor(100, 100, 100);
+    doc.text(`Total Records: ${filteredRecords.length} | Generated: ${new Date().toLocaleDateString()}`, 14, 28);
+    
+    const tableData = filteredRecords.map(record => [
+      record.fir,
+      record.type,
+      record.district,
+      record.date,
+      record.status,
+      record.severity
+    ]);
+    
+    autoTable(doc, {
+      startY: 35,
+      head: [["FIR No", "Crime Type", "District", "Date", "Status", "Severity"]],
+      body: tableData,
+      theme: 'grid',
+      headStyles: { fillColor: [15, 23, 42], textColor: [255, 255, 255] },
+      alternateRowStyles: { fillColor: [241, 245, 249] }
+    });
+    
+    doc.save("crime_database_export.pdf");
   }
 
   // Action Click Alerts
@@ -224,9 +264,9 @@ function CrimeDatabasePage() {
     if (type === 'view') {
       navigate(`/crime-database/${row.id}`)
     } else if (type === 'record') {
-      alert(`[CASE MANAGEMENT SYSTEM] Opening Case Records Logs for ${row.fir} in Workspace...`)
+      setSelectedFIRRecord(row)
     } else {
-      alert(`[NAVIGATION INTERFACE] Navigating to detailed GIS risk coordinates page for ${row.district}...`)
+      navigate(`/gis?district=${encodeURIComponent(row.district)}`)
     }
   }
 
@@ -336,7 +376,7 @@ function CrimeDatabasePage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-[rgba(255,255,255,0.03)] text-[11.5px]">
-                 {filteredRecords.map((row) => (
+                 {paginatedRecords.map((row) => (
                   <tr
                     key={row.fir}
                     onClick={() => navigate(`/crime-database/${row.id}`)}
@@ -396,7 +436,7 @@ function CrimeDatabasePage() {
           <div className="flex justify-center pt-2">
             <DatabasePagination
               currentPage={currentPage}
-              totalPages={2}
+              totalPages={totalPages}
               onPageChange={(page) => setCurrentPage(page)}
             />
           </div>
@@ -404,6 +444,75 @@ function CrimeDatabasePage() {
       ) : (
         /* Styled Empty Filter State */
         <DatabaseEmptyState onClearFilters={handleClearFilters} />
+      )}
+
+      {/* FIR Details Modal Overlay */}
+      {selectedFIRRecord && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
+          <div className="bg-[#0B1220] border border-[#2563EB]/30 rounded-xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.7)] w-full max-w-lg overflow-hidden flex flex-col">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between p-4 border-b border-[rgba(255,255,255,0.06)] bg-[#121826]/80">
+              <div className="flex items-center gap-3">
+                <FileText className="h-5 w-5 text-[#38BDF8]" />
+                <h3 className="text-sm font-bold text-white tracking-wide">FIR SUMMARY REPORT</h3>
+              </div>
+              <button 
+                onClick={() => setSelectedFIRRecord(null)}
+                className="p-1.5 text-[#94A3B8] hover:text-white hover:bg-[#182235] rounded-lg transition-colors cursor-pointer outline-none"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+            
+            {/* Modal Body */}
+            <div className="p-6 space-y-5 text-left">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-[10px] text-[#94A3B8] font-mono uppercase tracking-widest mb-1">FIR NO.</p>
+                  <p className="text-sm font-bold text-[#38BDF8]">{selectedFIRRecord.fir}</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-[10px] text-[#94A3B8] font-mono uppercase tracking-widest mb-1">DATE FILED</p>
+                  <p className="text-sm font-medium text-white">{selectedFIRRecord.date}</p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4 border-y border-[rgba(255,255,255,0.04)] py-4">
+                <div>
+                  <p className="text-[10px] text-[#94A3B8] font-mono uppercase tracking-widest mb-1.5">CRIME CLASSIFICATION</p>
+                  <p className="text-xs font-semibold text-white">{selectedFIRRecord.type}</p>
+                </div>
+                <div>
+                  <p className="text-[10px] text-[#94A3B8] font-mono uppercase tracking-widest mb-1.5">LOCATION / JURISDICTION</p>
+                  <p className="text-xs font-semibold text-white">{selectedFIRRecord.station}, {selectedFIRRecord.district}</p>
+                </div>
+                <div>
+                  <p className="text-[10px] text-[#94A3B8] font-mono uppercase tracking-widest mb-1.5">PRIMARY SUSPECT</p>
+                  <p className="text-xs font-semibold text-white">{selectedFIRRecord.suspect}</p>
+                </div>
+                <div>
+                  <p className="text-[10px] text-[#94A3B8] font-mono uppercase tracking-widest mb-1.5">CONTACT TRACE</p>
+                  <p className="text-xs font-mono text-white">+91 {selectedFIRRecord.phone}</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-4 pt-2">
+                <DatabaseStatusBadge status={selectedFIRRecord.status} />
+                <DatabaseSeverityBadge severity={selectedFIRRecord.severity} />
+              </div>
+            </div>
+            
+            {/* Modal Footer */}
+            <div className="p-4 border-t border-[rgba(255,255,255,0.06)] bg-[#121826]/50 flex justify-end">
+              <button 
+                onClick={() => setSelectedFIRRecord(null)}
+                className="px-5 py-2 rounded-lg text-xs font-bold text-white bg-[#2563EB] hover:bg-[#1D4ED8] transition-colors cursor-pointer outline-none shadow-lg"
+              >
+                Close Report
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   )

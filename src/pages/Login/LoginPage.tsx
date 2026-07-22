@@ -1,10 +1,33 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Mail, Lock, Eye, EyeOff, ShieldCheck, Check, MapPin, BadgeIcon } from 'lucide-react'
+import { Mail, Lock, Eye, EyeOff, ShieldCheck, Check, MapPin, BadgeIcon, Info, X } from 'lucide-react'
 import kspLogo from '../../assets/ksp-logo.jpg'
 import loginBg from '../../assets/login_bg.png'
 import { login } from "../../api/auth.api";
 import { saveSession } from "../../utils/session";
+
+const KARNATAKA_DISTRICTS = [
+  "Bagalkot", "Ballari", "Belagavi", "Bengaluru Rural",
+  "Bengaluru Urban", "Bidar", "Chamarajanagar", "Chikballapur", "Chikkamagaluru",
+  "Chitradurga", "Dakshina Kannada", "Davanagere", "Dharwad", "Gadag", "Hassan", "Haveri",
+  "Kalaburagi", "Kodagu", "Kolar", "Koppal", "Mandya", "Mysuru", "Raichur",
+  "Ramanagara", "Shivamogga", "Tumakuru", "Udupi", "Uttara Kannada",
+  "Vijayapura", "Yadgir", "Vijayanagara"
+];
+
+const POLICE_RANKS = [
+  "Director General of Police",
+  "Additional Director General of Police",
+  "Inspector General of Police",
+  "Deputy Inspector General of Police",
+  "Superintendent of Police",
+  "Deputy Superintendent of Police",
+  "Inspector",
+  "Sub-Inspector",
+  "Assistant Sub-Inspector",
+  "Head Constable",
+  "Constable"
+];
 
 function LoginPage() {
   const navigate = useNavigate()
@@ -17,6 +40,21 @@ function LoginPage() {
   const [rememberMe, setRememberMe] = useState(false)
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [notifications, setNotifications] = useState<{id: string, message: string}[]>([])
+
+  const [showRankDropdown, setShowRankDropdown] = useState(false);
+  const [showDistrictDropdown, setShowDistrictDropdown] = useState(false);
+
+  const filteredRanks = POLICE_RANKS.filter(r => r.toLowerCase().includes(rank.toLowerCase()));
+  const filteredDistricts = KARNATAKA_DISTRICTS.filter(d => d.toLowerCase().includes(district.toLowerCase()));
+
+  const addNotification = (message: string) => {
+    const id = Math.random().toString(36).substring(2, 9)
+    setNotifications(prev => [...prev, { id, message }])
+    setTimeout(() => {
+      setNotifications(prev => prev.filter(n => n.id !== id))
+    }, 5000)
+  }
 
   // 1. Particle Canvas System & Document Body Background Styling
   useEffect(() => {
@@ -116,7 +154,8 @@ function LoginPage() {
 
       saveSession(
         response.token.access_token,
-        response.user
+        response.user,
+        rememberMe
       );
 
       navigate("/dashboard");
@@ -272,42 +311,86 @@ function LoginPage() {
               </div>
 
               {/* Rank */}
-              <div className="space-y-1.5">
+              <div className="space-y-1.5 relative">
                 <label className="block text-[9.5px] font-mono uppercase tracking-wider text-[#94A3B8]">
                   Officer Rank Verification
                 </label>
                 <div className="relative group">
-                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#94A3B8]/60 group-focus-within:text-[#38BDF8] transition-colors">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#94A3B8]/60 group-focus-within:text-[#38BDF8] transition-colors z-10">
                     <BadgeIcon className="h-4 w-4" />
                   </div>
                   <input
                     type="text"
                     value={rank}
-                    onChange={(e) => setRank(e.target.value)}
-                    className="w-full bg-[#050816]/70 border border-[rgba(80,150,255,0.2)] focus:border-[#38BDF8] focus:ring-1 focus:ring-[#38BDF8] rounded-xl pl-10 pr-4 py-3.5 text-xs font-semibold text-white placeholder-slate-600 outline-none transition-all duration-150"
+                    onChange={(e) => {
+                      setRank(e.target.value);
+                      setShowRankDropdown(true);
+                    }}
+                    onFocus={() => setShowRankDropdown(true)}
+                    onBlur={() => setTimeout(() => setShowRankDropdown(false), 200)}
+                    className="relative w-full bg-[#050816]/70 border border-[rgba(80,150,255,0.2)] focus:border-[#38BDF8] focus:ring-1 focus:ring-[#38BDF8] rounded-xl pl-10 pr-4 py-3.5 text-xs font-semibold text-white placeholder-slate-600 outline-none transition-all duration-150"
                     placeholder="e.g. Inspector, Sub-Inspector"
                     required
+                    autoComplete="off"
                   />
+                  {showRankDropdown && filteredRanks.length > 0 && (
+                    <div className="absolute top-full left-0 right-0 mt-1 bg-[#0B1220] border border-[rgba(80,150,255,0.2)] rounded-xl shadow-2xl z-50 max-h-48 overflow-y-auto custom-scrollbar">
+                      {filteredRanks.map((r, i) => (
+                        <div
+                          key={i}
+                          className="px-4 py-2.5 text-xs text-[#94A3B8] hover:text-white hover:bg-[rgba(56,189,248,0.15)] cursor-pointer transition-colors"
+                          onClick={() => {
+                            setRank(r);
+                            setShowRankDropdown(false);
+                          }}
+                        >
+                          {r}
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
 
               {/* District */}
-              <div className="space-y-1.5">
+              <div className="space-y-1.5 relative">
                 <label className="block text-[9.5px] font-mono uppercase tracking-wider text-[#94A3B8]">
                   Assigned District
                 </label>
                 <div className="relative group">
-                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#94A3B8]/60 group-focus-within:text-[#38BDF8] transition-colors">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#94A3B8]/60 group-focus-within:text-[#38BDF8] transition-colors z-10">
                     <MapPin className="h-4 w-4" />
                   </div>
                   <input
                     type="text"
                     value={district}
-                    onChange={(e) => setDistrict(e.target.value)}
-                    className="w-full bg-[#050816]/70 border border-[rgba(80,150,255,0.2)] focus:border-[#38BDF8] focus:ring-1 focus:ring-[#38BDF8] rounded-xl pl-10 pr-4 py-3.5 text-xs font-semibold text-white placeholder-slate-600 outline-none transition-all duration-150"
+                    onChange={(e) => {
+                      setDistrict(e.target.value);
+                      setShowDistrictDropdown(true);
+                    }}
+                    onFocus={() => setShowDistrictDropdown(true)}
+                    onBlur={() => setTimeout(() => setShowDistrictDropdown(false), 200)}
+                    className="relative w-full bg-[#050816]/70 border border-[rgba(80,150,255,0.2)] focus:border-[#38BDF8] focus:ring-1 focus:ring-[#38BDF8] rounded-xl pl-10 pr-4 py-3.5 text-xs font-semibold text-white placeholder-slate-600 outline-none transition-all duration-150"
                     placeholder="e.g. Bengaluru Urban"
                     required
+                    autoComplete="off"
                   />
+                  {showDistrictDropdown && filteredDistricts.length > 0 && (
+                    <div className="absolute top-full left-0 right-0 mt-1 bg-[#0B1220] border border-[rgba(80,150,255,0.2)] rounded-xl shadow-2xl z-50 max-h-48 overflow-y-auto custom-scrollbar">
+                      {filteredDistricts.map((d, i) => (
+                        <div
+                          key={i}
+                          className="px-4 py-2.5 text-xs text-[#94A3B8] hover:text-white hover:bg-[rgba(56,189,248,0.15)] cursor-pointer transition-colors"
+                          onClick={() => {
+                            setDistrict(d);
+                            setShowDistrictDropdown(false);
+                          }}
+                        >
+                          {d}
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -334,7 +417,7 @@ function LoginPage() {
                   href="#forgot-password"
                   onClick={(e) => {
                     e.preventDefault()
-                    alert('Contact the district SCRB Administrator IT coordinator to reset local credentials.')
+                    addNotification('Contact the district SCRB Administrator IT coordinator to reset local credentials.')
                   }}
                   className="text-[#94A3B8] hover:text-[#38BDF8] font-mono text-[10.5px] transition-colors"
                 >
@@ -378,6 +461,26 @@ function LoginPage() {
 
         </div>
 
+      </div>
+
+      {/* Toast Notifications */}
+      <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-3">
+        {notifications.map(notif => (
+          <div key={notif.id} className="animate-slide-up flex items-start gap-3 bg-[#0B1220] border border-[#38BDF8]/30 p-4 rounded-xl shadow-2xl max-w-sm w-full relative overflow-hidden group">
+            <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#38BDF8]"></div>
+            <Info className="h-5 w-5 text-[#38BDF8] shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <h4 className="text-[#38BDF8] text-xs font-bold tracking-wider uppercase mb-1">System Notification</h4>
+              <p className="text-[#94A3B8] text-xs leading-relaxed">{notif.message}</p>
+            </div>
+            <button 
+              onClick={() => setNotifications(prev => prev.filter(n => n.id !== notif.id))}
+              className="text-[#94A3B8] hover:text-white transition-colors cursor-pointer"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+        ))}
       </div>
 
     </div>

@@ -33,6 +33,8 @@ import {
 } from '../../components/ui/DashboardComponents'
 import apiClient from "../../api/client";
 import DashboardFooter from "../../components/layout/DashboardFooter";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 // Status Badge Components
 interface StatusBadgeProps {
@@ -104,6 +106,31 @@ function DashboardPage() {
   const [recentCases, setRecentCases] = useState<RecentCase[]>([]);
   const [loading, setLoading] = useState(true);
   const [isAssistantExpanded, setIsAssistantExpanded] = useState(false);
+
+  const exportCrimeTrendsPDF = () => {
+    const doc = new jsPDF();
+    
+    doc.setFontSize(16);
+    doc.setTextColor(37, 99, 235); // Sentinel blue
+    doc.text("CRIME TRENDS (LAST 6 MONTHS)", 14, 20);
+    
+    doc.setFontSize(10);
+    doc.setTextColor(100, 100, 100);
+    doc.text("Monthly Registered Crime Statistics", 14, 28);
+    
+    const tableData = crimeTrendData.map(stat => [stat.name, stat.Crimes]);
+    
+    autoTable(doc, {
+      startY: 35,
+      head: [["Month", "Total Crimes"]],
+      body: tableData,
+      theme: 'grid',
+      headStyles: { fillColor: [17, 24, 39], textColor: [255, 255, 255] },
+      alternateRowStyles: { fillColor: [240, 248, 255] }
+    });
+    
+    doc.save("crime_trends_report.pdf");
+  };
 
   useEffect(() => {
     const loadDashboard = async () => {
@@ -293,7 +320,7 @@ function DashboardPage() {
             subtitle="Monthly Registered Crime Statistics"
             className="h-full"
             action={
-              <SecondaryButton onClick={() => alert("Downloading PDF summary report...")}>
+              <SecondaryButton onClick={exportCrimeTrendsPDF}>
                 Export PDF
               </SecondaryButton>
             }
@@ -452,7 +479,7 @@ function DashboardPage() {
             </div>
 
             {/* District alert statuses list representation */}
-            <div className="min-h-0 flex-1 space-y-1.5">
+            <div className="min-h-0 flex-1 overflow-y-auto custom-scrollbar space-y-1.5 pr-1">
               {districtIntelligence.map((dist) => (
                 <div key={dist.name} className="flex items-center justify-between border-b border-[rgba(255,255,255,0.03)] py-1 text-[11px] font-mono last:border-b-0">
                   <div className="flex items-center gap-2">
@@ -490,7 +517,7 @@ function DashboardPage() {
             subtitle="SCRB Live Case Registry Database"
             className="h-full"
             action={
-              <SecondaryButton onClick={() => alert("Loading full operational database search interface...")}>
+              <SecondaryButton onClick={() => navigate('/crime-database')}>
                 View All
               </SecondaryButton>
             }

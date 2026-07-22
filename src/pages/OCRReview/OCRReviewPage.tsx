@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { Database } from 'lucide-react'
+import { Database, X } from 'lucide-react'
 import {
   DocumentPreview,
   ExtractedForm
@@ -11,7 +11,10 @@ function OCRReviewPage() {
   const navigate = useNavigate()
   const location = useLocation()
   
-  const stateData = location.state as { extractedText?: string; fileName?: string } | null
+  const stateData = location.state as { extractedText?: string; fileName?: string; imageUrl?: string } | null
+  
+  // Standard sleek mock document for when they go directly to this page
+  const MOCK_FIR_IMAGE = "/final_report_FIR_2026_55243.pdf"
 
   // Form fields state
   const [formData, setFormData] = useState<ExtractedFormData>({
@@ -39,12 +42,19 @@ function OCRReviewPage() {
   }
 
   // Document action triggers
+  const [showFullView, setShowFullView] = useState(false)
+
   const handleViewDocument = () => {
-    alert('[SYSTEM SCANNER] Opening full high-resolution PDF preview scan...')
+    setShowFullView(true)
   }
 
   const handleDownloadCopy = () => {
-    alert('[SYSTEM SECURE DOWNLOAD] Exporting encrypted local copy of FIR_1254.pdf...')
+    const link = document.createElement('a')
+    link.href = stateData?.imageUrl || MOCK_FIR_IMAGE
+    link.download = stateData?.fileName || "FIR_1254.pdf"
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
   }
 
   const [showSaveDialog, setShowSaveDialog] = useState(false)
@@ -63,7 +73,8 @@ function OCRReviewPage() {
         {/* Left Column (approximately 40% -> col-span-4) */}
         <div className="col-span-1 lg:col-span-4">
           <DocumentPreview
-            fileName="FIR_1254.pdf"
+            fileName={stateData?.fileName || "FIR_1254.pdf"}
+            imageUrl={stateData?.imageUrl || MOCK_FIR_IMAGE}
             uploadTime="13 May 2025, 10:45 AM"
             docType="FIR Report (PDF)"
             onView={handleViewDocument}
@@ -97,6 +108,30 @@ function OCRReviewPage() {
             >
               Continue to Database
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* Full Screen Image View */}
+      {showFullView && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-sm p-4 animate-fade-in">
+          <div className="relative w-full max-w-5xl h-[90vh] flex flex-col bg-[#0B1220] border border-[rgba(255,255,255,0.1)] rounded-2xl overflow-hidden shadow-[0_0_100px_rgba(37,99,235,0.15)]">
+            <div className="flex justify-between items-center p-4 border-b border-[rgba(255,255,255,0.06)] bg-[#121826]/80 shrink-0">
+              <h3 className="text-white font-mono uppercase tracking-widest text-sm font-bold flex items-center gap-2">
+                <div className="h-2 w-2 rounded-full bg-blue-500 animate-pulse" />
+                Document Viewer - {stateData?.fileName || "FIR_1254.pdf"}
+              </h3>
+              <button onClick={() => setShowFullView(false)} className="text-[#94A3B8] hover:text-white transition-colors cursor-pointer p-1.5 rounded-lg hover:bg-white/10 outline-none">
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            <div className="flex-1 overflow-hidden relative flex items-center justify-center p-4">
+              {(stateData?.fileName || "FIR_1254.pdf").toLowerCase().endsWith('.pdf') ? (
+                <embed src={stateData?.imageUrl || MOCK_FIR_IMAGE} type="application/pdf" className="w-full h-full rounded-xl bg-white/5" />
+              ) : (
+                <img src={stateData?.imageUrl || MOCK_FIR_IMAGE} alt="Document View" className="max-w-full max-h-full object-contain rounded-xl shadow-2xl" />
+              )}
+            </div>
           </div>
         </div>
       )}

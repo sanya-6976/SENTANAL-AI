@@ -3,9 +3,9 @@ import kspLogo from '../../assets/ksp-logo.jpg'
 
 export default function DashboardFooter() {
   const helpDeskItems = [
-    { label: 'Help & Support', icon: LifeBuoy },
-    { label: 'Feedback', icon: MessageSquare },
-    { label: 'Contact Technical Team', icon: Wrench },
+    { label: 'Help & Support', icon: LifeBuoy, href: 'mailto:aryansnair546@gmail.com' },
+    { label: 'Feedback', icon: MessageSquare, href: 'https://github.com/sanya-6976' },
+    { label: 'Contact Technical Team', icon: Wrench, href: 'mailto:aryansnair546@gmail.com' },
   ]
 
   const emergencyContacts = [
@@ -49,13 +49,15 @@ export default function DashboardFooter() {
               const IconComp = item.icon
               return (
                 <li key={item.label}>
-                  <button
-                    onClick={() => alert(`Opening ${item.label}...`)}
+                  <a
+                    href={item.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="text-[11px] text-[#94A3B8] hover:text-[#F8FAFC] hover:translate-x-0.5 transition-all duration-150 cursor-pointer flex items-center gap-2 group"
                   >
                     <IconComp className="h-3 w-3 text-[#2563EB]/70 group-hover:text-[#2563EB] transition-colors" />
                     <span>{item.label}</span>
-                  </button>
+                  </a>
                 </li>
               )
             })}

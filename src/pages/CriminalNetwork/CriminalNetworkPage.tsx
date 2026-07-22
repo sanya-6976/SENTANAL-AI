@@ -173,11 +173,46 @@ function CriminalNetworkPage() {
   }, [links, filteredNodes])
 
   // Click Action Handlers
+  const generateDossierPDF = async (profile: any) => {
+    try {
+      const { jsPDF } = await import('jspdf')
+      const doc = new jsPDF()
+
+      doc.setFontSize(22)
+      doc.setTextColor(220, 38, 38)
+      doc.text("CLASSIFIED DOSSIER", 105, 20, { align: "center" })
+
+      doc.setFontSize(16)
+      doc.setTextColor(0, 0, 0)
+      doc.text(`Target Name: ${profile.name}`, 20, 40)
+      
+      doc.setFontSize(12)
+      doc.text(`Entity Type: ${profile.type}`, 20, 50)
+      doc.text(`Aliases: ${profile.aliases}`, 20, 60)
+      doc.text(`Associated Cases: ${profile.associatedCases}`, 20, 70)
+      doc.text(`Linked Evidence: ${profile.linkedEvidence}`, 20, 80)
+      doc.text(`Risk Level: ${profile.riskLevel}`, 20, 90)
+      doc.text(`Status: ${profile.status}`, 20, 100)
+      
+      doc.text("Investigative Notes:", 20, 120)
+      doc.setFontSize(10)
+      const lines = doc.splitTextToSize(profile.notes, 170)
+      doc.text(lines, 20, 130)
+
+      doc.save(`dossier_${profile.name.replace(/\s+/g, '_')}.pdf`)
+    } catch (error) {
+      console.error(error)
+      alert("Failed to generate dossier PDF.")
+    }
+  }
+
   const handleNodeAction = (actionName: string) => {
     if (actionName === 'Open Investigation Workspace') {
       navigate('/investigation')
     } else if (actionName === 'Compare Similar Crimes') {
       navigate('/crime-database')
+    } else if (actionName === 'Generate Intelligence Report') {
+      generateDossierPDF(activeProfile)
     } else {
       alert(`[OPERATION SUCCESS] Triggering action for ${activeProfile.name}:\n- Execution: ${actionName}\n- Secure credentials signed.`)
     }

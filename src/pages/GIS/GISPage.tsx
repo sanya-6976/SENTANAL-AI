@@ -1,9 +1,13 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useSearchParams } from 'react-router-dom'
+import { Check, X } from 'lucide-react'
 import MapToolbar from './components/MapToolbar'
 import GISMap from './components/GISMap'
 import FilterPanel from './components/FilterPanel'
 
 function GISPage() {
+  const [searchParams] = useSearchParams()
+  const districtQuery = searchParams.get('district')
   // Top Toolbar search query state
   const [search, setSearch] = useState('')
 
@@ -18,17 +22,27 @@ function GISPage() {
   const [dateRange, setDateRange] = useState('All Dates')
   const [crimeType, setCrimeType] = useState('All Types')
   const [severity, setSeverity] = useState('All')
-  const [district, setDistrict] = useState('All Districts')
+  const [district, setDistrict] = useState(districtQuery || 'All Districts')
 
   // Render values to pass to Map (synced on Apply Filters click)
-  const [appliedDistrict, setAppliedDistrict] = useState('All Districts')
+  const [appliedDistrict, setAppliedDistrict] = useState(districtQuery || 'All Districts')
   const [appliedSeverity, setAppliedSeverity] = useState('All')
+  
+  const [showToast, setShowToast] = useState(false)
+
+  useEffect(() => {
+    if (districtQuery) {
+      setDistrict(districtQuery)
+      setAppliedDistrict(districtQuery)
+    }
+  }, [districtQuery])
 
   // Trigger filter application overlay
   const handleApplyFilters = () => {
     setAppliedDistrict(district)
     setAppliedSeverity(severity)
-    alert(`[SYSTEM CRIT] Applying GIS filtering parameters:\n- Date: ${dateRange}\n- Crime Category: ${crimeType}\n- Severity Code: ${severity}\n- Target District: ${district}`)
+    setShowToast(true)
+    setTimeout(() => setShowToast(false), 3000)
   }
 
   return (
@@ -82,6 +96,28 @@ function GISPage() {
 
       </div>
 
+      {/* Success Toast Notification */}
+      {showToast && (
+        <div className="fixed bottom-6 right-6 z-50 animate-slide-up">
+          <div className="bg-[#121826]/95 backdrop-blur-md border border-[#22C55E]/30 shadow-[0_8px_30px_rgba(0,0,0,0.4)] rounded-xl p-4 flex items-start gap-4 min-w-[300px]">
+            <div className="h-8 w-8 rounded-full bg-[#22C55E]/20 flex items-center justify-center shrink-0 border border-[#22C55E]/40">
+              <Check className="h-4 w-4 text-[#22C55E]" />
+            </div>
+            <div className="flex-1 pt-0.5">
+              <h4 className="text-[11px] font-bold text-white tracking-wide uppercase mb-1">Filters Applied</h4>
+              <p className="text-[10px] text-[#94A3B8] leading-relaxed font-mono">
+                GIS parameters successfully updated for {district}.
+              </p>
+            </div>
+            <button 
+              onClick={() => setShowToast(false)}
+              className="text-[#94A3B8] hover:text-white transition-colors cursor-pointer outline-none"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

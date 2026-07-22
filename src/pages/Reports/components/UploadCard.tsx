@@ -2,9 +2,9 @@ import { useRef } from 'react'
 import { UploadCloud, FileUp, Camera, Paperclip } from 'lucide-react'
 
 interface UploadCardProps {
-  onUploadFIR: () => void
+  onUploadFIR: (file?: File) => void
   onCapture: () => void
-  onUploadEvidence: () => void
+  onUploadEvidence: (file?: File) => void
 }
 
 export function UploadCard({ onUploadFIR, onCapture, onUploadEvidence }: UploadCardProps) {
@@ -17,7 +17,7 @@ export function UploadCard({ onUploadFIR, onCapture, onUploadEvidence }: UploadC
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
-      onUploadFIR()
+      onUploadFIR(e.target.files[0])
     }
   }
 
@@ -27,7 +27,7 @@ export function UploadCard({ onUploadFIR, onCapture, onUploadEvidence }: UploadC
 
   const handleEvidenceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
-      onUploadEvidence()
+      onUploadEvidence(e.target.files[0])
     }
   }
 

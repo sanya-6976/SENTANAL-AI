@@ -33,12 +33,13 @@ export function DigitalIntelligenceHubPage() {
   // Keep a reference to the active simulation timer
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
-  const handleEvidenceSelected = (fileName: string) => {
+  const handleEvidenceSelected = async (file: File) => {
     // Clear any running simulation
     if (timerRef.current) {
       clearInterval(timerRef.current)
     }
 
+    const fileName = file.name;
     setIsProcessing(true)
     setCurrentStepIndex(0)
     setUploadedFileName(fileName)
@@ -46,6 +47,34 @@ export function DigitalIntelligenceHubPage() {
     setSummary(null)
     setConfidenceScore(null)
     setSourceCount(null)
+
+    // Analyze document and compare it to database formats
+    let computedSimilarity = 0;
+    try {
+      if (file.type.includes('text') || fileName.toLowerCase().endsWith('.json') || fileName.toLowerCase().endsWith('.csv')) {
+        const text = await file.text();
+        const keywords = ['fir', 'crime', 'date', 'location', 'suspect', 'evidence', 'district', 'police', 'report', 'incident', 'weapon', 'witness'];
+        let matches = 0;
+        keywords.forEach(kw => {
+          if (text.toLowerCase().includes(kw)) matches++;
+        });
+        computedSimilarity = Math.min(Math.floor((matches / keywords.length) * 100) + 25, 99);
+      } else {
+        // Binary files (PDF, Images, Video) simulated forensic hash analysis
+        let hash = 0;
+        for (let i = 0; i < fileName.length; i++) {
+          hash = fileName.charCodeAt(i) + ((hash << 5) - hash);
+        }
+        const baseSimilarity = Math.abs(hash % 40) + 40; // Base 40-80%
+        let formatBoost = 0;
+        if (fileName.toLowerCase().includes('fir')) formatBoost += 25;
+        if (fileName.toLowerCase().includes('report')) formatBoost += 15;
+        if (fileName.toLowerCase().includes('analysis')) formatBoost += 10;
+        computedSimilarity = Math.min(baseSimilarity + formatBoost, 99);
+      }
+    } catch (err) {
+      computedSimilarity = 72; // Fallback similarity score
+    }
 
     // Simulate steps running sequentially
     let step = 0
@@ -98,9 +127,10 @@ export function DigitalIntelligenceHubPage() {
           customSummary = `Chat export transcript [${fileName}] decoded via NLP. Entity recognition flagged key conspiratorial keywords, weapon references, and scheduled meetup logistics. Cross-referencing reveals named associates matching active intelligence profiles.`
         }
         
+        
         setSummary(customSummary)
-        // Generate high confidence score (e.g. 91-98%) and node count (e.g. 24-48)
-        setConfidenceScore(Math.floor(Math.random() * 8) + 91)
+        // Set the dynamic database format similarity score computed earlier
+        setConfidenceScore(computedSimilarity)
         setSourceCount(Math.floor(Math.random() * 25) + 24)
       }
     }, 850)

@@ -4,11 +4,12 @@ interface PreviewProps {
   fileName: string
   uploadTime: string
   docType: string
+  imageUrl?: string
   onView: () => void
   onDownload: () => void
 }
 
-export function DocumentPreview({ fileName, uploadTime, docType, onView, onDownload }: PreviewProps) {
+export function DocumentPreview({ fileName, uploadTime, docType, imageUrl, onView, onDownload }: PreviewProps) {
   return (
     <div className="group flex h-full flex-col bg-[#111827] border border-[rgba(255,255,255,0.06)] rounded-3xl p-5 shadow-sm select-none animate-fade-in">
       <div className="flex flex-col gap-4 border-b border-[rgba(255,255,255,0.06)] pb-4">
@@ -34,25 +35,35 @@ export function DocumentPreview({ fileName, uploadTime, docType, onView, onDownl
       </div>
 
       <div className="relative mt-5 overflow-hidden rounded-[28px] border border-[rgba(255,255,255,0.06)] bg-[#0B1220] p-5 shadow-inner">
-        <div className="mx-auto flex h-[280px] max-w-[280px] flex-col justify-between rounded-3xl border border-slate-700/50 bg-slate-950 p-4 shadow-lg">
-          <div className="space-y-2">
-            <div className="h-1.5 w-14 rounded-full bg-slate-800" />
-            <div className="h-1 w-20 rounded-full bg-slate-800" />
+        {imageUrl ? (
+          <div className="mx-auto flex h-[280px] w-full max-w-[280px] items-center justify-center rounded-3xl overflow-hidden shadow-lg border border-slate-700/50 bg-black">
+            {fileName.toLowerCase().endsWith('.pdf') ? (
+              <embed src={imageUrl} type="application/pdf" className="h-full w-full opacity-90" />
+            ) : (
+              <img src={imageUrl} alt={fileName} className="h-full w-full object-cover opacity-90" />
+            )}
           </div>
+        ) : (
+          <div className="mx-auto flex h-[280px] max-w-[280px] flex-col justify-between rounded-3xl border border-slate-700/50 bg-slate-950 p-4 shadow-lg">
+            <div className="space-y-2">
+              <div className="h-1.5 w-14 rounded-full bg-slate-800" />
+              <div className="h-1 w-20 rounded-full bg-slate-800" />
+            </div>
 
-          <div className="space-y-2">
-            <div className="h-3 w-full rounded-full bg-slate-800" />
-            <div className="h-3 w-5/6 rounded-full bg-slate-800" />
-            <div className="h-3 w-11/12 rounded-full bg-slate-800" />
-            <div className="h-3 w-3/4 rounded-full bg-slate-800" />
-            <div className="h-3 w-4/5 rounded-full bg-slate-800" />
-          </div>
+            <div className="space-y-2">
+              <div className="h-3 w-full rounded-full bg-slate-800" />
+              <div className="h-3 w-5/6 rounded-full bg-slate-800" />
+              <div className="h-3 w-11/12 rounded-full bg-slate-800" />
+              <div className="h-3 w-3/4 rounded-full bg-slate-800" />
+              <div className="h-3 w-4/5 rounded-full bg-slate-800" />
+            </div>
 
-          <div className="flex items-center justify-between rounded-2xl border-t border-slate-800 pt-3 text-[10px] text-[#94A3B8]">
-            <span className="inline-flex h-2.5 w-10 rounded-full bg-slate-800" />
-            <span className="inline-flex h-2.5 w-8 rounded-full bg-[#2563EB]/40" />
+            <div className="flex items-center justify-between rounded-2xl border-t border-slate-800 pt-3 text-[10px] text-[#94A3B8]">
+              <span className="inline-flex h-2.5 w-10 rounded-full bg-slate-800" />
+              <span className="inline-flex h-2.5 w-8 rounded-full bg-[#2563EB]/40" />
+            </div>
           </div>
-        </div>
+        )}
 
         <div className="pointer-events-none absolute inset-0 rounded-[28px] bg-[radial-gradient(circle_at_top,_rgba(37,99,235,0.18),_transparent_28%)]" />
         <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-200 group-hover:opacity-100">

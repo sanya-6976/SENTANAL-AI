@@ -123,7 +123,7 @@ export function GraphCanvas({
   }
 
   return (
-    <div className="relative w-full h-full bg-[#0B1220] border border-[rgba(255,255,255,0.06)] rounded-xl overflow-hidden select-none animate-fade-in group shadow-inner">
+    <div id="graph-canvas-container" className="relative w-full h-full bg-[#0B1220] border border-[rgba(255,255,255,0.06)] rounded-xl overflow-hidden select-none animate-fade-in group shadow-inner">
       
       {/* Background grids */}
       <div className="absolute inset-0 opacity-15 bg-[radial-gradient(circle_at_center,rgba(37,99,235,0.08)_0%,transparent_100%)] pointer-events-none" />
