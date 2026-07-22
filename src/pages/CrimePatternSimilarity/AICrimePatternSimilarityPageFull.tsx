@@ -1,4 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
+import { CheckCircle2, X } from 'lucide-react'
+import jsPDF from 'jspdf'
+import autoTable from 'jspdf-autotable'
 import apiClient from '../../api/client'
 import { PageHeader } from '../../components/ui/DashboardComponents'
 import {
@@ -172,6 +175,16 @@ export function AICrimePatternSimilarityPage() {
   const [isAnalyzing, setIsAnalyzing] = useState(false)
   const [activeTabSelected, setActiveTabSelected] = useState<string | null>(null)
   const [activeMatch, setActiveMatch] = useState<any | null>(null)
+  const [notifications, setNotifications] = useState<{id: number, message: string}[]>([])
+
+  const addNotification = (message: string) => {
+    const id = Date.now()
+    setNotifications(prev => [...prev, { id, message }])
+    setTimeout(() => {
+      setNotifications(prev => prev.filter(n => n.id !== id))
+    }, 4000)
+  }
+
 
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
@@ -269,21 +282,110 @@ export function AICrimePatternSimilarityPage() {
 
   const handleGenerateReport = () => {
     if (!selectedCaseId) return
-    alert(`[DOSSIER EXPORT] Compiling similarity match report dossier for target: ${selectedCaseId}.\nReport saved successfully to encrypted KSP drive folder.`)
+    addNotification(`[DOSSIER EXPORT] Compiling similarity match report dossier for target: ${selectedCaseId}. Report saved successfully to encrypted KSP drive folder.`)
   }
 
   const handleAssignInvestigation = () => {
     if (!selectedCaseId) return
-    alert(`[OPERATION SUCCESS] Alert dispatched to Inspector Ramesh.\nCase links flagged on assignment board.`)
+    addNotification(`[OPERATION SUCCESS] Alert dispatched to Inspector Ramesh. Case links flagged on assignment board.`)
   }
 
   const handleExportAnalysis = () => {
-    if (!selectedCaseId) return
-    alert(`[EXPORT SUCCESS] JSON link matrix and behavioural vector logs exported for target case scope: ${selectedCaseId}.`)
+    if (!selectedCaseId || !activeMatch) return
+    
+    // Create new PDF instance
+    const doc = new jsPDF()
+    
+    // Header
+    doc.setFontSize(20)
+    doc.setTextColor(0, 0, 100)
+    doc.text("SENTINEL AI", 14, 22)
+    
+    doc.setFontSize(14)
+    doc.setTextColor(0, 0, 0)
+    doc.text("CRIME PATTERN ANALYSIS DOSSIER", 14, 30)
+    
+    // Target Information
+    doc.setFontSize(11)
+    doc.text(`Target Case Scope: ${selectedCaseId}`, 14, 40)
+    doc.text(`Date Generated: ${new Date().toLocaleString()}`, 14, 46)
+    
+    // AI Insight Summary
+    doc.setFontSize(12)
+    doc.setTextColor(20, 20, 20)
+    doc.text("AI Behavioural Summary", 14, 56)
+    
+    doc.setFontSize(10)
+    doc.setTextColor(60, 60, 60)
+    const splitInsight = doc.splitTextToSize(activeMatch.insight || "No insight generated.", 180)
+    doc.text(splitInsight, 14, 62)
+    
+    let currentY = 62 + (splitInsight.length * 5) + 5
+    
+    // Matching Factors Table
+    if (activeMatch.factors && activeMatch.factors.length > 0) {
+      autoTable(doc, {
+        startY: currentY,
+        head: [['Matching Factor', 'Confidence', 'Description']],
+        body: activeMatch.factors.map((f: any) => [
+          f.factor, 
+          `${f.confidence}%`, 
+          f.desc
+        ]),
+        theme: 'grid',
+        headStyles: { fillColor: [37, 99, 235] },
+        styles: { fontSize: 9 }
+      })
+      currentY = (doc as any).lastAutoTable.finalY + 10
+    }
+    
+    // Similar Cases Link Matrix Table
+    if (activeMatch.similarCatalog && activeMatch.similarCatalog.length > 0) {
+      autoTable(doc, {
+        startY: currentY,
+        head: [['Case ID', 'Crime Type', 'District', 'Similarity', 'Status']],
+        body: activeMatch.similarCatalog.map((c: any) => [
+          c.caseId,
+          c.crimeType,
+          c.district,
+          `${c.similarityScore}%`,
+          c.status
+        ]),
+        theme: 'grid',
+        headStyles: { fillColor: [15, 23, 42] },
+        styles: { fontSize: 9 }
+      })
+    }
+    
+    // Save PDF
+    doc.save(`Sentinel_Analysis_Report_${selectedCaseId.replace(/[^a-zA-Z0-9]/g, '_')}.pdf`)
+    
+    addNotification(`[EXPORT SUCCESS] PDF analysis dossier successfully compiled and downloaded for target: ${selectedCaseId}.`)
   }
 
   return (
-    <div className="space-y-6 animate-fade-in select-none">
+    <div className="space-y-6 animate-fade-in select-none relative">
+      
+      {/* Toast Notifications */}
+      <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-3">
+        {notifications.map(notif => (
+          <div key={notif.id} className="animate-slide-up flex items-start gap-3 bg-[#0B1220] border border-[#10B981]/30 p-4 rounded-xl shadow-2xl max-w-sm w-full relative overflow-hidden group">
+            <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#10B981]"></div>
+            <CheckCircle2 className="h-5 w-5 text-[#10B981] shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <h4 className="text-[#10B981] text-xs font-bold tracking-wider uppercase mb-1">Success</h4>
+              <p className="text-[#94A3B8] text-xs leading-relaxed">{notif.message}</p>
+            </div>
+            <button 
+              onClick={() => setNotifications(prev => prev.filter(n => n.id !== notif.id))}
+              className="text-[#94A3B8]/50 hover:text-white transition-colors"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+        ))}
+      </div>
+
       
       {/* 1. Page Header Panel */}
       <PageHeader
