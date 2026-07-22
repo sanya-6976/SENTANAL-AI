@@ -13,9 +13,69 @@
 
 <br />
 
+<p align="center">
+  <a href="#overview">Overview</a> ·
+  <a href="#key-features">Key Features</a> ·
+  <a href="#technology-stack">Tech Stack</a> ·
+  <a href="#architecture">Architecture</a> ·
+  <a href="#getting-started">Getting Started</a> ·
+  <a href="DEMO.md">Live Demo</a>
+</p>
+
 **Sentinel AI** is an enterprise-grade, comprehensive Crime Intelligence platform designed for modern law enforcement and intelligence agencies. It seamlessly bridges raw operational data, geospatial analytics, graph-based criminal networks, and state-of-the-art Generative AI to accelerate case resolution and provide unprecedented tactical insights.
 
 ---
+<a id="key-features"></a>
+
+## ✨ Key Features
+
+| Capability | What it enables |
+| :--- | :--- |
+| **AI-powered case intake** | Extracts text and investigative entities from uploaded FIRs and evidence documents, then presents the output for review. |
+| **Multilingual intelligence** | Translates regional-language case material and structures key entities for easier investigation. |
+| **Crime pattern matching** | Compares modus operandi, case details, and related signals to surface potentially linked cases. |
+| **Criminal network analysis** | Explores relationships between people, cases, vehicles, devices, and other intelligence entities through an interactive graph. |
+| **GIS and analytics** | Visualizes crime hotspots, geographic patterns, operational metrics, and trends for informed deployment. |
+| **Investigation workspace** | Keeps case summaries, evidence, suspects, timelines, actions, and officer diary entries together in one workflow. |
+| **AI investigation assistant** | Supports natural-language questions, summaries, recommendations, and voice-assisted investigation flows. |
+| **Role-aware access** | Uses JWT authentication and role-based permissions for administrators, officers, and analysts. |
+
+---
+<a id="technology-stack"></a>
+
+## 🧰 Technology Stack
+
+| Layer | Technologies |
+| :--- | :--- |
+| **Frontend** | React 19, TypeScript, Vite, React Router, Tailwind CSS 4 |
+| **User experience** | Recharts, Lucide React, Lottie, React Markdown, jsPDF + AutoTable |
+| **Backend API** | Python, FastAPI, Uvicorn, Pydantic |
+| **Data layer** | PostgreSQL, SQLAlchemy, Alembic, Neon-compatible PostgreSQL |
+| **Graph intelligence** | Neo4j |
+| **AI and language** | Google Gemini, spaCy, RapidFuzz, EasyOCR, Tesseract |
+| **Geospatial and analytics** | GeoPandas, Shapely, Pandas, NumPy, Plotly |
+| **Security** | JWT, Argon2 password hashing via `pwdlib`, role-based access control |
+
+---
+```mermaid
+flowchart LR
+    UI[React Operations Console] --> API[FastAPI API Gateway]
+    UI --> AI[AI Investigation Workflows]
+    API --> AUTH[JWT and RBAC]
+    API --> CORE[Core Case Services]
+    API --> ANALYTICS[Analytics Services]
+    API --> AI
+    AI --> GEMINI[Google Gemini]
+    AI --> OCR[OCR and NLP]
+    CORE --> PG[(PostgreSQL)]
+    ANALYTICS --> PG
+    ANALYTICS --> NEO[(Neo4j)]
+    ANALYTICS --> GIS[GeoPandas and Shapely]
+```
+
+The project is heavily decentralized into four major operational domains to ensure scalability and maintainability. Each domain serves a critical function in the intelligence lifecycle.
+
+<br>
 
 ## 🏗️ Architecture & Domain Deep-Dive
 
@@ -124,7 +184,18 @@ erDiagram
 
 ---
 
-## 🚀 Installation & Setup Guide
+## 🌟 What Makes Sentinel AI Different?
+
+- **One connected intelligence workflow:** It brings document intake, case management, pattern analysis, graph intelligence, GIS, and reporting into the same investigative environment.
+- **Built for local investigative context:** Multilingual processing and structured legal-entity extraction help officers work with regional-language FIRs and case records.
+- **Relationships, not just records:** PostgreSQL preserves structured operational data while Neo4j exposes cross-case networks that relational views can hide.
+- **Human-in-the-loop AI:** OCR and AI-derived intelligence are designed to be reviewed in the investigation workspace rather than treated as unquestioned automation.
+- **Operationally focused interface:** The React console combines maps, dashboards, evidence, timelines, diaries, and assistant tools for high-pressure investigative work.
+
+---
+<a id="getting-started"></a>
+
+## 🚀 Getting Started
 
 ### Prerequisites
 - Node.js (v18 or higher)
