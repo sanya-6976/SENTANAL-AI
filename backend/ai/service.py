@@ -155,14 +155,6 @@ Source Database Records:
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"AI Report generation failed: {str(e)}")
 
-    def translate_text(self, text: str, target_language: str) -> str:
-        """Mock implementation of Multilingual AI translation."""
-        prompt = f"Translate the following text into {target_language}. Return only the translated text.\n\nText: {text}"
-        try:
-            return gemini_service.ask(prompt)
-        except Exception:
-            return f"[Translated to {target_language}]: {text}"
-
     def analyze_digital_evidence(self, db: Session, user: CurrentUser, evidence_id: str) -> str:
         """Mock implementation of Digital Intelligence Analyzer."""
         evidence = db.query(Evidence).filter(Evidence.evidence_id == evidence_id).first()

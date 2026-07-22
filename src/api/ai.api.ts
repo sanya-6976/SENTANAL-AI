@@ -32,6 +32,16 @@ export interface GenerateBriefReportResponse {
   report: string;
 }
 
+export interface TranslateTextRequest {
+  text: string;
+  sourceLanguage: string;
+  targetLanguage: string;
+}
+
+export interface TranslateTextResponse {
+  translatedText: string;
+}
+
 /* ============================
    AI API Endpoints
 ============================ */
@@ -56,6 +66,16 @@ export async function generateBriefReport(body: GenerateBriefReportRequest): Pro
   const response = await apiClient.post<GenerateBriefReportResponse>(
     ENDPOINTS.AI.REPORT,
     body
+  );
+  return response.data;
+}
+
+export async function translateText(body: TranslateTextRequest): Promise<TranslateTextResponse> {
+  const baseUrl = import.meta.env.VITE_API_BASE_URL;
+  const apiOrigin = new URL(baseUrl, window.location.origin).origin;
+  const response = await apiClient.post<TranslateTextResponse>(
+    `${apiOrigin}${ENDPOINTS.AI.TRANSLATE}`,
+    body,
   );
   return response.data;
 }

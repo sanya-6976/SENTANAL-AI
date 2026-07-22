@@ -1,3 +1,3 @@
-from backend.ai.router import ai_router
+"""AI service package."""
 
 __all__ = ["ai_router"]

@@ -42,5 +42,6 @@ export const ENDPOINTS = {
     ASSISTANT: "/ai/assistant",
     OCR: "/ai/ocr",
     REPORT: "/ai/report",
+    TRANSLATE: "/api/translate",
   },
 } as const;

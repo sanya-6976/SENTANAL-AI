@@ -6,6 +6,7 @@ from database.connection import get_db
 from backend.auth.dependencies import get_current_active_user
 from backend.auth.models import CurrentUser
 from backend.ai.service import ai_service
+from backend.ai.translation_service import translation_service
 
 ai_router = APIRouter(prefix="/ai", tags=["ai"])
 
@@ -24,7 +25,8 @@ class ReportRequest(BaseModel):
 
 class TranslateRequest(BaseModel):
     text: str
-    target_language: str
+    sourceLanguage: str
+    targetLanguage: str
 
 class DigitalEvidenceRequest(BaseModel):
     evidence_id: str
@@ -76,8 +78,12 @@ def translate_text(
     current_user: CurrentUser = Depends(get_current_active_user)
 ):
     """Multilingual AI: Translate text into a target language."""
-    translation = ai_service.translate_text(request.text, request.target_language)
-    return {"original": request.text, "translation": translation, "language": request.target_language}
+    translated_text = translation_service.translate_text(
+        request.text,
+        request.sourceLanguage,
+        request.targetLanguage,
+    )
+    return {"translatedText": translated_text}
 
 
 @ai_router.post("/analyze-digital-evidence")
