@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://img.shields.io/badge/Sentinel%20AI-0F172A?style=for-the-badge&logo=policereact&logoColor=2563EB" alt="Sentinel AI Logo" />
+  <img src="images/sentinel-ai-logo.jpeg" alt="Sentinel AI Logo" width = "220"/>
   <h1>Sentinel AI</h1>
   <p><b>Next-Generation AI-Powered Crime Intelligence & Investigation Operating System</b></p>
 
@@ -13,9 +13,69 @@
 
 <br />
 
+<p align="center">
+  <a href="#overview">Overview</a> ·
+  <a href="#key-features">Key Features</a> ·
+  <a href="#technology-stack">Tech Stack</a> ·
+  <a href="#architecture">Architecture</a> ·
+  <a href="#getting-started">Getting Started</a> ·
+  <a href="DEMO.md">Live Demo</a>
+</p>
+
 **Sentinel AI** is an enterprise-grade, comprehensive Crime Intelligence platform designed for modern law enforcement and intelligence agencies. It seamlessly bridges raw operational data, geospatial analytics, graph-based criminal networks, and state-of-the-art Generative AI to accelerate case resolution and provide unprecedented tactical insights.
 
 ---
+<a id="key-features"></a>
+
+## ✨ Key Features
+
+| Capability | What it enables |
+| :--- | :--- |
+| **AI-powered case intake** | Extracts text and investigative entities from uploaded FIRs and evidence documents, then presents the output for review. |
+| **Multilingual intelligence** | Translates regional-language case material and structures key entities for easier investigation. |
+| **Crime pattern matching** | Compares modus operandi, case details, and related signals to surface potentially linked cases. |
+| **Criminal network analysis** | Explores relationships between people, cases, vehicles, devices, and other intelligence entities through an interactive graph. |
+| **GIS and analytics** | Visualizes crime hotspots, geographic patterns, operational metrics, and trends for informed deployment. |
+| **Investigation workspace** | Keeps case summaries, evidence, suspects, timelines, actions, and officer diary entries together in one workflow. |
+| **AI investigation assistant** | Supports natural-language questions, summaries, recommendations, and voice-assisted investigation flows. |
+| **Role-aware access** | Uses JWT authentication and role-based permissions for administrators, officers, and analysts. |
+
+---
+<a id="technology-stack"></a>
+
+## 🧰 Technology Stack
+
+| Layer | Technologies |
+| :--- | :--- |
+| **Frontend** | React 19, TypeScript, Vite, React Router, Tailwind CSS 4 |
+| **User experience** | Recharts, Lucide React, Lottie, React Markdown, jsPDF + AutoTable |
+| **Backend API** | Python, FastAPI, Uvicorn, Pydantic |
+| **Data layer** | PostgreSQL, SQLAlchemy, Alembic, Neon-compatible PostgreSQL |
+| **Graph intelligence** | Neo4j |
+| **AI and language** | Google Gemini, spaCy, RapidFuzz, EasyOCR, Tesseract |
+| **Geospatial and analytics** | GeoPandas, Shapely, Pandas, NumPy, Plotly |
+| **Security** | JWT, Argon2 password hashing via `pwdlib`, role-based access control |
+
+---
+```mermaid
+flowchart LR
+    UI[React Operations Console] --> API[FastAPI API Gateway]
+    UI --> AI[AI Investigation Workflows]
+    API --> AUTH[JWT and RBAC]
+    API --> CORE[Core Case Services]
+    API --> ANALYTICS[Analytics Services]
+    API --> AI
+    AI --> GEMINI[Google Gemini]
+    AI --> OCR[OCR and NLP]
+    CORE --> PG[(PostgreSQL)]
+    ANALYTICS --> PG
+    ANALYTICS --> NEO[(Neo4j)]
+    ANALYTICS --> GIS[GeoPandas and Shapely]
+```
+
+The project is heavily decentralized into four major operational domains to ensure scalability and maintainability. Each domain serves a critical function in the intelligence lifecycle.
+
+<br>
 
 ## 🏗️ Architecture & Domain Deep-Dive
 
@@ -124,7 +184,18 @@ erDiagram
 
 ---
 
-## 🚀 Installation & Setup Guide
+## 🌟 What Makes Sentinel AI Different?
+
+- **One connected intelligence workflow:** It brings document intake, case management, pattern analysis, graph intelligence, GIS, and reporting into the same investigative environment.
+- **Built for local investigative context:** Multilingual processing and structured legal-entity extraction help officers work with regional-language FIRs and case records.
+- **Relationships, not just records:** PostgreSQL preserves structured operational data while Neo4j exposes cross-case networks that relational views can hide.
+- **Human-in-the-loop AI:** OCR and AI-derived intelligence are designed to be reviewed in the investigation workspace rather than treated as unquestioned automation.
+- **Operationally focused interface:** The React console combines maps, dashboards, evidence, timelines, diaries, and assistant tools for high-pressure investigative work.
+
+---
+<a id="getting-started"></a>
+
+## 🚀 Getting Started
 
 ### Prerequisites
 - Node.js (v18 or higher)
@@ -177,6 +248,33 @@ npm run dev
 4. **Investigate:** Open the **Crime Database** and select a case to enter the **Investigation Workspace**. Here, you can review evidence, track suspects, and click **Generate Insight** to have the AI compile a comprehensive strategy.
 5. **Analyze Networks:** Jump into the **Criminal Network** tab to view the Neo4j graph, visually identifying links between suspects across multiple cases.
 
+ ```mermaid
+flowchart TD
+    A[Login to SENTINEL AI] --> B[Dashboard Overview]
+    B --> B1[Review crime statistics]
+    B --> B2[Review GIS heatmaps]
+
+    B --> C[FIR Upload]
+    C --> C1[Upload physical FIR document]
+    C1 --> C2[OCR digitizes document text]
+
+    C2 --> D{Regional language FIR?}
+    D -- Yes --> E[Multilingual AI]
+    E --> E1[Translate FIR]
+    E1 --> E2[Extract legal entities]
+    E2 --> F[Store case data]
+    D -- No --> F
+
+    F --> G[Crime Database]
+    G --> H[Open Investigation Workspace]
+    H --> H1[Review evidence]
+    H --> H2[Track suspects]
+    H --> H3[Generate AI insight and strategy]
+
+    H --> I[Criminal Network]
+    I --> I1[View Neo4j relationship graph]
+    I1 --> I2[Identify cross-case suspect links]
+```
 ---
 
 ## 🔑 Testing & Mock Credentials
