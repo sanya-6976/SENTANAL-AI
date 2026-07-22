@@ -297,5 +297,5 @@ For development and demonstration purposes, the system is seeded with mock data.
 
 <br/>
 <div align="center">
-  <sub>Built with precision for law enforcement and intelligence professionals.</sub>
+  <sub> Built with precision for law enforcement and intelligence professionals.</sub>
 </div>
