@@ -198,7 +198,8 @@ export function AICrimePatternSimilarityPage() {
       try {
         const formData = new FormData()
         formData.append('file', caseData)
-        const baseUrl = import.meta.env.VITE_API_BASE_URL.replace('/api/v1', '')
+        const envBaseUrl = import.meta.env.VITE_API_BASE_URL || "https://sentanal-ai-production.up.railway.app/api/v1"
+        const baseUrl = envBaseUrl.replace('/api/v1', '')
         const res = await apiClient.post(`${baseUrl}/api/crime-pattern/upload`, formData, {
           headers: { 'Content-Type': 'multipart/form-data' }
         })

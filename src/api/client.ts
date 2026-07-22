@@ -5,7 +5,7 @@ console.log(import.meta.env);
 console.log("API BASE URL:", import.meta.env.VITE_API_BASE_URL);
 
 const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
+  baseURL: import.meta.env.VITE_API_BASE_URL || "https://sentanal-ai-production.up.railway.app/api/v1",
   headers: {
     "Content-Type": "application/json",
   },
