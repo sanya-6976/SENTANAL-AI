@@ -13,7 +13,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(
     title="Sentinel AI API Gateway",
-    description="Sentinel AI ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â Data Platform Backend Services",
+    description="Sentinel AI — Data Platform Backend Services",
     version="1.0.0"
 )
 
@@ -44,8 +44,7 @@ def insufficient_permission_handler(request, exc):
 
 from backend.core.router import core_router
 from backend.analytics.router import analytics_router
-from backend.ai.router import ai_router
-from backend.crime_pattern.routes.router import crime_pattern_router
+from backend.ai.router import ai_router, translate_text, TranslateRequest
 
 api_router = APIRouter(prefix="/api/v1")
 api_router.include_router(auth_router)
@@ -54,7 +53,12 @@ api_router.include_router(analytics_router)
 api_router.include_router(ai_router)
 
 app.include_router(api_router)
-app.include_router(crime_pattern_router)
+
+
+@app.post("/api/translate", tags=["ai"])
+def translate(request: TranslateRequest):
+    """Public translation endpoint used by the multilingual UI."""
+    return translate_text(request)
 
 
 @app.get("/")

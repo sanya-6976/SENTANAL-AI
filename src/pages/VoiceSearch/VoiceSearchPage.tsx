@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import {
   Mic,
   MicOff,
@@ -7,32 +7,48 @@ import {
   Radio,
   RefreshCw
 } from 'lucide-react'
+import { SpeechRecognitionService, VOICE_LANGUAGE_CODES } from '../../services/speechRecognition'
 
 export function VoiceSearchPage() {
   const [isListening, setIsListening] = useState(false)
-  const [selectedLanguage, setSelectedLanguage] = useState<'kn' | 'en' | 'hi'>('kn')
-  const [transcript, setTranscript] = useState('Show burglary cases reported in Bengaluru.')
-  const [hasSearched, setHasSearched] = useState(true)
+  const [selectedLanguage, setSelectedLanguage] = useState<'kn' | 'en' | 'hi'>('en')
+  const [transcript, setTranscript] = useState('')
+  const [hasSearched, setHasSearched] = useState(false)
+  const [recognitionError, setRecognitionError] = useState('')
+  const speechRecognition = useRef(new SpeechRecognitionService())
 
-  const toggleListening = () => {
-    if (isListening) {
-      setIsListening(false)
-    } else {
-      setIsListening(true)
-      setTranscript('Listening for voice command...')
-      
-      setTimeout(() => {
-        setIsListening(false)
-        const sampleText = selectedLanguage === 'kn'
-          ? 'ಬೆಂಗಳೂರು ಶೇಷಾದ್ರಿಪುರಂ ಪ್ರದೇಶದಲ್ಲಿ ದಾಖಲಾದ ಕಳ್ಳತನ ಪ್ರಕರಣಗಳನ್ನು ತೋರಿಸಿ'
-          : selectedLanguage === 'hi'
-            ? 'बेंगलुरु में दर्ज डकैती के मामले दिखाएं'
-            : 'Show burglary cases in Bengaluru.'
-        setTranscript(sampleText)
-        setHasSearched(true)
-      }, 2500)
-    }
+  const recognitionLanguages = {
+    en: VOICE_LANGUAGE_CODES.English,
+    kn: VOICE_LANGUAGE_CODES.Kannada,
+    hi: VOICE_LANGUAGE_CODES.Hindi,
   }
+
+  const toggleListening = async () => {
+    if (isListening) {
+      speechRecognition.current.stop()
+      return
+    }
+
+    setRecognitionError('')
+    setTranscript('')
+    setHasSearched(false)
+    const hasStarted = await speechRecognition.current.start({
+      language: recognitionLanguages[selectedLanguage],
+      onInterimResult: setTranscript,
+      onFinalResult: (finalTranscript) => {
+        setTranscript(finalTranscript)
+        setHasSearched(Boolean(finalTranscript))
+      },
+      onError: (message) => {
+        setRecognitionError(message)
+        setIsListening(false)
+      },
+      onEnd: () => setIsListening(false),
+    })
+    setIsListening(hasStarted)
+  }
+
+  useEffect(() => () => speechRecognition.current.stop(), [])
 
   return (
     <div className="space-y-8 animate-fade-in select-none max-w-[1600px] mx-auto pb-12 font-sans">
@@ -112,7 +128,7 @@ export function VoiceSearchPage() {
           <div className="flex items-center gap-3">
             <Volume2 className="h-4.5 w-4.5 text-[#38BDF8] shrink-0" />
             <span className="text-white font-medium text-sm">
-              "{transcript}"
+              "{recognitionError || transcript}"
             </span>
           </div>
 
