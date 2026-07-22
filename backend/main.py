@@ -45,6 +45,7 @@ def insufficient_permission_handler(request, exc):
 from backend.core.router import core_router
 from backend.analytics.router import analytics_router
 from backend.ai.router import ai_router, translate_text, TranslateRequest
+from backend.crime_pattern.routes.router import crime_pattern_router
 
 api_router = APIRouter(prefix="/api/v1")
 api_router.include_router(auth_router)
@@ -53,6 +54,7 @@ api_router.include_router(analytics_router)
 api_router.include_router(ai_router)
 
 app.include_router(api_router)
+app.include_router(crime_pattern_router)
 
 
 @app.post("/api/translate", tags=["ai"])
