@@ -17,34 +17,54 @@
 
 ---
 
-## 🏗️ Architecture & Domain Explanations
+## 🏗️ Architecture & Domain Deep-Dive
 
-The project is heavily decentralized into four major operational domains to ensure scalability and maintainability.
+The project is heavily decentralized into four major operational domains to ensure scalability and maintainability. Each domain serves a critical function in the intelligence lifecycle.
+
+<br>
 
 ### 🧠 1. Artificial Intelligence (AI) Domain
-The AI domain is the core differentiator of Sentinel, acting as a force multiplier for investigating officers.
-*   **Multilingual AI Translation Engine:** Translates vernacular documents (e.g., FIRs in Kannada, Hindi, Marathi) into English instantly. Crucially, it doesn't just translate text; it actively extracts legal parameters like **IPC/BNS Sections**, **Stolen Assets**, and **Suspect Names** into structured JSON for the database.
-*   **Pattern Similarity & Modus Operandi Matching:** Employs advanced Natural Language Processing to scan the entire crime database and identify serial offenses. By matching Modus Operandi (MO) and victimology, it links seemingly isolated cases.
-*   **Interactive Case Assistant:** A sandboxed LLM instance (powered by Gemini) that acts as a co-investigator. It reads case files and answers natural language queries (e.g., *"What is the timeline of events for FIR-123?"*).
-*   **Automated PDF Dossiers:** Synthesizes raw database segments into highly readable, official PDF intelligence briefs using `jsPDF`.
+> *The AI domain acts as a digital force multiplier for investigating officers, automating thousands of hours of manual paperwork and data synthesis.*
+
+| Feature | Technical Breakdown & Capability |
+| :--- | :--- |
+| 🌐 **Multilingual AI Translation** | **Breaks down regional language barriers.** <br/> Vernacular documents (FIRs in Kannada, Hindi, Marathi) are instantly translated into English using advanced LLMs. *Crucially*, the AI actively performs **Named Entity Recognition (NER)** to extract IPC/BNS Sections, Stolen Assets, and Suspect Names directly into structured PostgreSQL JSON fields. |
+| 🔍 **Pattern Similarity (MO Matching)** | **Identifies serial offenders automatically.** <br/> Employs complex Natural Language Processing to scan the entire crime database. By mathematically matching *Modus Operandi (MO)* vectors and victimology profiles, it links seemingly isolated cases across different districts. |
+| 🤖 **Interactive Case Assistant** | **Your personal AI co-investigator.** <br/> A securely sandboxed Generative AI instance loaded with your specific case files. Ask natural language queries like *"What is the timeline of events for FIR-123?"* or *"Cross-reference this suspect's aliases"* and get instant, cited answers. |
+| 📄 **Automated PDF Dossiers** | **Instant Intelligence Briefs.** <br/> With a single click, the engine synthesizes raw database segments, timeline events, and AI insights into highly readable, official PDF intelligence briefs using `jsPDF`—ready for courtroom submission or senior officer review. |
+
+<br>
 
 ### 🕸️ 2. Data Intelligence (Data & GIS) Domain
-The Data layer handles complex relationships and geospatial intelligence that standard relational tables struggle with.
-*   **Graph Network Analysis:** Utilizing **Neo4j**, the system maps out syndicates. It visualizes links between suspects, shared vehicles, communication nodes (IPs/Phone numbers), and multiple FIRs.
-*   **Geospatial Intelligence (GIS):** Leveraging **GeoPandas** and **Shapely**, the system renders interactive heatmaps and geographic clusters. It helps control rooms deploy patrol units based on historical crime density.
-*   **Digital Forensics:** Automatically parses CDRs (Call Detail Records) and IP logs for anomalous behavior and cross-references them against known blacklists.
+> *Standard relational tables struggle with complex criminal relationships. Our Data Intelligence layer maps the invisible connections between syndicates and geographies.*
+
+| Feature | Technical Breakdown & Capability |
+| :--- | :--- |
+| 🔗 **Graph Network Analysis** | **Visualize the criminal underworld.** <br/> Powered by **Neo4j Graph Database**, the system maps out organized syndicates. It draws interactive, visual links between suspects, shared vehicles, burner phones, communication nodes, and multiple FIRs. |
+| 🗺️ **Geospatial Intelligence (GIS)** | **Predictive policing through heatmaps.** <br/> Leveraging Python's **GeoPandas** and **Shapely**, the system renders high-performance interactive heatmaps and geographic clusters. This allows control rooms to deploy patrol units dynamically based on historical crime density and active threat alerts. |
+| 🔬 **Digital Forensics** | **Uncover hidden digital trails.** <br/> Automatically parses raw CDRs (Call Detail Records) and IP activity logs. The system flags anomalous behavior, geo-fencing breaches, and cross-references active IPs against known cyber-threat blacklists. |
+
+<br>
 
 ### 🖥️ 3. Frontend Operations Domain
-Built for high-pressure control room environments.
-*   **Immersive Dark-Mode UI:** Engineered with **React 19** and **TailwindCSS v4**, the interface prioritizes readability in low-light environments (reducing eye strain for 24/7 operators).
-*   **Investigation Workspace:** A highly interactive hub featuring Tabbed navigation, Evidence Boards, Suspect Grids, and integrated Toast notifications.
-*   **Officer Investigation Diary:** A secure ledger where officers can digitally log updates, attach encrypted checksums, and dispatch reports directly to their superiors.
+> *Engineered specifically for high-pressure, 24/7 control room environments where readability and speed are paramount.*
+
+| Feature | Technical Breakdown & Capability |
+| :--- | :--- |
+| 🌘 **Immersive Dark-Mode UI** | **Built for low-light operator environments.** <br/> Engineered with **React 19** and **TailwindCSS v4**, the interface prioritizes extreme readability. Smooth micro-animations, glassmorphism, and targeted color palettes reduce eye strain during prolonged monitoring sessions. |
+| 📂 **Investigation Workspace** | **The central hub of truth.** <br/> A highly interactive, tabbed hub featuring comprehensive Evidence Boards, Suspect Grids, Timeline tracking, and integrated Toast notifications. Everything an officer needs is accessible within a maximum of two clicks. |
+| 📓 **Officer Investigation Diary** | **Audited and secure.** <br/> A tamper-evident digital ledger where officers log daily updates, attach encrypted checksums to evidence, and dispatch compiled electronic dockets directly to their Superintendent of Police. |
+
+<br>
 
 ### ⚙️ 4. Backend Architecture Domain
-The robust foundation providing security and speed.
-*   **Asynchronous Processing:** Built on **FastAPI** and **Uvicorn**, ensuring that heavy tasks (like OCR or LLM generation) do not block routine database queries.
-*   **Database & ORM:** Powered by **SQLAlchemy** connected to a serverless **PostgreSQL (Neon)** cluster, with strict schema enforcement via **Pydantic**.
-*   **Enterprise Security:** Implements JWT-based Stateless Authentication, Argon2 password hashing, and Role-Based Access Control (RBAC).
+> *The robust, high-performance foundation providing iron-clad security and sub-second response times.*
+
+| Feature | Technical Breakdown & Capability |
+| :--- | :--- |
+| ⚡ **Asynchronous Processing** | **Non-blocking high performance.** <br/> Built natively on **FastAPI** and **Uvicorn**, ensuring that heavy I/O tasks (like waiting for LLM generation, processing image OCR, or querying Neo4j) never block routine database queries from other users on the network. |
+| 🗄️ **Database & ORM** | **Strict data integrity.** <br/> Powered by **SQLAlchemy** connected to a serverless **PostgreSQL (Neon)** cluster. Every API payload and database model is strictly validated and serialized via **Pydantic**, ensuring malformed data never enters the system. |
+| 🔐 **Enterprise Security** | **Defense in depth.** <br/> Implements JWT-based Stateless Authentication, Argon2 military-grade password hashing (`pwdlib`), and strict Role-Based Access Control (RBAC). API routes are completely isolated to prevent cross-tenant data leaks. |
 
 ---
 
