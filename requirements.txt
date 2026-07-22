@@ -18,6 +18,7 @@ fastapi
 python-multipart
 PyJWT
 pwdlib[argon2]
+uvicorn[standard]
 
 # Neo4j
 neo4j
