@@ -18,7 +18,6 @@ import {
   QuickActions
 } from './components'
 import { getFIRDetails } from '../../api/core.api'
-import { generateBriefReport } from '../../api/ai.api'
 
 function CrimeDetailsPage() {
   const { crimeId } = useParams<{ crimeId: string }>()
