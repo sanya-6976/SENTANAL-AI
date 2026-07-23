@@ -210,7 +210,7 @@ erDiagram
 | **Communication Intelligence** | CDR, SMS, WhatsApp & Email Linkage | Links **850+** communication records into the investigation graph with retrieval latency below **250 ms**. | Graph connectivity and retrieval efficiency |
 
 ---
-<a> id ="key-metrics"</a>
+<a id ="key-metrics"></a>
 # 📌 Key Project Metrics
 
 | Metric | Value |
