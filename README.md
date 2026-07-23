@@ -18,7 +18,6 @@
   <a href="#key-features">Key Features</a> ·
   <a href="#technology-stack">Tech Stack</a> ·
   <a href="#architecture">Architecture</a> ·
-  <a href="#core-module">Core-Modules</a> ·
   <a href="#getting-started">Getting Started</a> ·
   <a href="https://sentinal.onslate.in">Live Demo</a>
 </p>
