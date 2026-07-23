@@ -26,7 +26,7 @@
 
 ## Real time Crime intelligence dashboard 
 <p align="center">
-  <img src="images/" width="100%">
+  <img src="images/LOGIN-PAGE(README).jpeg" width="100%">
 </p>
 ---
 <a id="key-features"></a>
