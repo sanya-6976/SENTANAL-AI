@@ -327,8 +327,6 @@ For development and demonstration purposes, the system is seeded with mock data.
 
 | Rank | Email / Username | Password |District|
 
-| :--- | :--- | :--- |
-
 | **Inspector** | `sho-asha` | `SecurePassword123!` |Bengaluru Urban
 
 
