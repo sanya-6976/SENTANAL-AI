@@ -24,7 +24,7 @@
 
 **Sentinel AI** is an enterprise-grade, comprehensive Crime Intelligence platform designed for modern law enforcement and intelligence agencies. It seamlessly bridges raw operational data, geospatial analytics, graph-based criminal networks, and state-of-the-art Generative AI to accelerate case resolution and provide unprecedented tactical insights.
 
-## Real time Crime intelligence dashboard 
+## Real time Crime Login Page
 <p align="center">
   <img src="images/LOGIN-PAGE(README).jpeg" width="100%">
 </p>
