@@ -19,7 +19,7 @@
   <a href="#technology-stack">Tech Stack</a> ·
   <a href="#architecture">Architecture</a> ·
   <a href="#getting-started">Getting Started</a> ·
-  <a href="https.//sentinal.onslate.in">Live Demo</a>
+  <a href="https://sentinal.onslate.in">Live Demo</a>
 </p>
 
 **Sentinel AI** is an enterprise-grade, comprehensive Crime Intelligence platform designed for modern law enforcement and intelligence agencies. It seamlessly bridges raw operational data, geospatial analytics, graph-based criminal networks, and state-of-the-art Generative AI to accelerate case resolution and provide unprecedented tactical insights.
