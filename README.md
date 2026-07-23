@@ -19,6 +19,7 @@
   <a href="#technology-stack">Tech Stack</a> ·
   <a href="#architecture">Architecture</a> ·
   <a href="#core-modules">Core Module</a> ·
+   <a href="#key-metrics">Key Project Metrics</a> ·
   <a href="#getting-started">Getting Started</a> ·
   <a href="https://sentinal.onslate.in">Live Demo</a>
 </p>
@@ -209,6 +210,7 @@ erDiagram
 | **Communication Intelligence** | CDR, SMS, WhatsApp & Email Linkage | Links **850+** communication records into the investigation graph with retrieval latency below **250 ms**. | Graph connectivity and retrieval efficiency |
 
 ---
+<a> id ="key-metrics"</a>
 # 📌 Key Project Metrics
 
 | Metric | Value |
