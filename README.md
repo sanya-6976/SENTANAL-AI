@@ -325,11 +325,10 @@ flowchart TD
 
 For development and demonstration purposes, the system is seeded with mock data. You can log in using the following test credentials:
 
-| Role | Email / Username | Password |
+| Rank | Email / Username | Password |District
 | :--- | :--- | :--- |
-| **System Administrator** | `admin@sentinel.gov` | `admin123` |
-| **Investigating Officer** | `officer@sentinel.gov` | `securepass` |
-| **Intelligence Analyst** | `analyst@sentinel.gov` | `intel2026` |
+| **Inspector** | `sho-asha` | `SecurePassword123!` |Bengaluru Urban
+
 
 *(Note: Ensure your backend migrations and seed scripts have been run if you are setting up a fresh database instance).*
 
