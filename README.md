@@ -325,8 +325,10 @@ flowchart TD
 
 For development and demonstration purposes, the system is seeded with mock data. You can log in using the following test credentials:
 
-| Rank | Email / Username | Password |District
+| Rank | Email / Username | Password |District|
+
 | :--- | :--- | :--- |
+
 | **Inspector** | `sho-asha` | `SecurePassword123!` |Bengaluru Urban
 
 
